@@ -68,7 +68,7 @@ class WebResearcher:
         For real-time web search, you would integrate with a search API.
         """
         prompt = f"""Generate {num_results} relevant URLs for the following search query:
-        
+
 Query: {query}
 
 Return a JSON list of URLs. Each URL should be realistic and relevant to the query.

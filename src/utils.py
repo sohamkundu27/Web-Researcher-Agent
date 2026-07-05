@@ -1,7 +1,6 @@
 """Utility functions for Web Researcher Agent."""
 
 import hashlib
-import json
 import re
 from typing import List, Dict, Any
 from urllib.parse import urlparse

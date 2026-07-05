@@ -1,6 +1,5 @@
 """Example usage of the Web Researcher Agent."""
 
-import os
 from src.agent import ResearchAgent
 
 
@@ -27,7 +26,7 @@ def main():
     if result["status"] == "success":
         print(f"Topic: {result['topic']}")
         print(f"Timestamp: {result['timestamp']}")
-        print(f"\nAnalysis:")
+        print("\nAnalysis:")
         print(result.get("analysis", "No analysis available"))
 
         print(f"\n\nFindings ({len(result.get('findings', []))} sources):")

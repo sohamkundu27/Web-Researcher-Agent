@@ -261,7 +261,7 @@ class TestWebResearcher:
         mock_search.return_value = [
             {"url": "https://example.com", "title": "Test"}
         ]
-        result = researcher.search("test query", num_results=5)
+        researcher.search("test query", num_results=5)
         mock_search.assert_called_once_with("test query", num_results=5)
 
 

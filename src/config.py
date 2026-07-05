@@ -1,7 +1,6 @@
 """Configuration management for Web Researcher Agent."""
 
 import os
-from typing import Optional
 from dataclasses import dataclass
 
 
