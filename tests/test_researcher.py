@@ -281,3 +281,102 @@ def test_agent_get_sources():
     agent = ResearchAgent(api_key="test-key")
     agent.researcher.sources = ["https://example.com"]
     assert agent.get_sources() == ["https://example.com"]
+
+
+def test_agent_clear_history():
+    """Test clearing history in agent."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    agent.researcher.sources = ["https://example.com"]
+    agent.last_research = {"topic": "test", "status": "success"}
+
+    agent.clear_history()
+
+    assert agent.researcher.sources == []
+    assert agent.researcher.research_history == []
+    assert agent.last_research is None
+
+
+@patch("src.researcher.WebResearcher.fetch_and_summarize")
+def test_agent_summarize(mock_fetch):
+    """Test summarizing multiple URLs."""
+    from src.agent import ResearchAgent
+
+    mock_fetch.side_effect = [
+        {"status": "success", "summary": "Summary 1", "url": "https://example.com"},
+        {"status": "success", "summary": "Summary 2", "url": "https://test.com"},
+    ]
+
+    agent = ResearchAgent(api_key="test-key")
+    urls = ["https://example.com", "https://test.com"]
+    result = agent.summarize(urls)
+
+    assert result["status"] == "success"
+    assert result["sources_count"] == 2
+    assert len(result["summaries"]) == 2
+    assert result["summaries"]["https://example.com"]["summary"] == "Summary 1"
+    assert result["summaries"]["https://test.com"]["summary"] == "Summary 2"
+
+
+def test_agent_get_formatted_report_no_research():
+    """Test getting formatted report when no research conducted."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    report = agent.get_formatted_report()
+
+    assert report == "No research conducted yet."
+
+
+def test_agent_get_formatted_report_with_research():
+    """Test getting formatted report with completed research."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    agent.last_research = {
+        "topic": "Python",
+        "analysis": "Python is a programming language.",
+        "findings": [
+            {
+                "status": "success",
+                "url": "https://python.org",
+                "summary": "Official Python website",
+            },
+            {
+                "status": "error",
+                "url": "https://invalid.url",
+                "error": "Failed to fetch",
+            },
+        ],
+    }
+    agent.researcher.sources = ["https://python.org"]
+
+    report = agent.get_formatted_report()
+
+    assert "# Research Report: Python" in report
+    assert "## Analysis" in report
+    assert "Python is a programming language." in report
+    assert "## Findings" in report
+    assert "https://python.org" in report
+    assert "Official Python website" in report
+    assert "## Sources" in report
+    # Invalid finding should not be in report
+    assert "Failed to fetch" not in report
+
+
+def test_agent_num_sources_clamping():
+    """Test that num_sources is clamped to max_search_results."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key", max_search_results=5)
+    assert agent.config.max_search_results == 5
+
+    with patch.object(agent.researcher, "research_topic") as mock_research:
+        mock_research.return_value = {"topic": "test", "status": "success"}
+
+        # Request more sources than allowed
+        agent.research("test query", num_sources=10)
+
+        # Verify it was clamped to max_search_results
+        mock_research.assert_called_once_with(topic="test query", num_sources=5)
