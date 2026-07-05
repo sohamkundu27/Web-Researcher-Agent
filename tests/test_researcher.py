@@ -1,6 +1,7 @@
 """Unit tests for Web Researcher Agent."""
 
 import pytest
+import requests
 from unittest.mock import Mock, patch
 
 from src.config import ResearchConfig
@@ -11,6 +12,10 @@ from src.utils import (
     sanitize_text,
     hash_content,
     chunk_text,
+    extract_text_from_html,
+    fetch_url_content,
+    merge_dicts,
+    format_sources,
 )
 
 
@@ -64,6 +69,17 @@ class TestUtilityFunctions:
         assert "Hello world!" in result
         assert "@#$" not in result
 
+    def test_sanitize_text_edge_cases(self):
+        """Test text sanitization edge cases."""
+        # Empty string
+        assert sanitize_text("") == ""
+        # Only whitespace
+        assert sanitize_text("   \t\n   ") == ""
+        # Already clean text
+        assert sanitize_text("Hello world") == "Hello world"
+        # Multiple spaces replaced with single space
+        assert sanitize_text("Hello     world") == "Hello world"
+
     def test_hash_content(self):
         """Test content hashing."""
         content = "test content"
@@ -80,6 +96,114 @@ class TestUtilityFunctions:
         # Each chunk should be <= 1000 characters
         for chunk in chunks:
             assert len(chunk) <= 1000
+
+    def test_extract_text_from_html_basic(self):
+        """Test basic HTML text extraction."""
+        html = "<html><body><h1>Title</h1><p>Content here</p></body></html>"
+        result = extract_text_from_html(html)
+        assert "Title" in result
+        assert "Content here" in result
+
+    def test_extract_text_from_html_removes_script_style(self):
+        """Test that script and style tags are removed."""
+        html = "<html><body><script>var x = 1;</script><style>body {color: red;}</style><p>Text</p></body></html>"
+        result = extract_text_from_html(html)
+        assert "var x" not in result
+        assert "color: red" not in result
+        assert "Text" in result
+
+    def test_extract_text_from_html_max_length(self):
+        """Test max_length parameter."""
+        html = "<p>" + "a" * 1000 + "</p>"
+        result = extract_text_from_html(html, max_length=100)
+        assert len(result) <= 100
+
+    def test_extract_text_from_html_invalid(self):
+        """Test handling of invalid HTML."""
+        result = extract_text_from_html("<invalid>not closed")
+        assert isinstance(result, str)
+
+    def test_extract_text_from_html_empty(self):
+        """Test empty HTML."""
+        result = extract_text_from_html("")
+        assert result == ""
+
+    def test_merge_dicts_simple(self):
+        """Test simple dictionary merge."""
+        dict1 = {"a": 1, "b": 2}
+        dict2 = {"c": 3}
+        result = merge_dicts(dict1, dict2)
+        assert result == {"a": 1, "b": 2, "c": 3}
+
+    def test_merge_dicts_overwrite(self):
+        """Test dictionary merge with value overwriting."""
+        dict1 = {"a": 1, "b": 2}
+        dict2 = {"b": 20, "c": 3}
+        result = merge_dicts(dict1, dict2)
+        assert result == {"a": 1, "b": 20, "c": 3}
+
+    def test_merge_dicts_nested(self):
+        """Test deep nested dictionary merge."""
+        dict1 = {"a": {"x": 1, "y": 2}, "b": 3}
+        dict2 = {"a": {"y": 20, "z": 30}, "c": 4}
+        result = merge_dicts(dict1, dict2)
+        assert result == {"a": {"x": 1, "y": 20, "z": 30}, "b": 3, "c": 4}
+
+    def test_merge_dicts_mixed_types(self):
+        """Test merge with mixed dict and non-dict values."""
+        dict1 = {"a": {"x": 1}, "b": 2}
+        dict2 = {"a": "string", "b": 20}
+        result = merge_dicts(dict1, dict2)
+        # Non-dict value should overwrite dict value
+        assert result == {"a": "string", "b": 20}
+
+    def test_format_sources_empty(self):
+        """Test formatting empty sources list."""
+        result = format_sources([])
+        assert result == ""
+
+    def test_format_sources_single(self):
+        """Test formatting single source."""
+        result = format_sources(["https://www.example.com/page"])
+        assert "## Sources" in result
+        assert "example.com" in result
+        assert "https://www.example.com/page" in result
+
+    def test_format_sources_multiple(self):
+        """Test formatting multiple sources."""
+        sources = ["https://www.example.com", "https://test.org/path"]
+        result = format_sources(sources)
+        assert "## Sources" in result
+        assert "1." in result
+        assert "2." in result
+        assert "example.com" in result
+        assert "test.org" in result
+
+    @patch("src.utils.requests.get")
+    def test_fetch_url_content_success(self, mock_get):
+        """Test successful URL fetch."""
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.text = "<p>Test content</p>"
+        mock_response.headers = {"Content-Type": "text/html"}
+        mock_get.return_value = mock_response
+
+        result = fetch_url_content("https://example.com")
+        assert result["status"] == "success"
+        assert result["url"] == "https://example.com"
+        assert result["status_code"] == 200
+        assert "Test content" in result["content"]
+        assert "Content-Type" in result["headers"]
+
+    @patch("src.utils.requests.get")
+    def test_fetch_url_content_error(self, mock_get):
+        """Test URL fetch with network error."""
+        mock_get.side_effect = requests.RequestException("Connection failed")
+
+        result = fetch_url_content("https://example.com")
+        assert result["status"] == "error"
+        assert result["url"] == "https://example.com"
+        assert "Connection failed" in result["error"]
 
 
 class TestResearchConfig:
