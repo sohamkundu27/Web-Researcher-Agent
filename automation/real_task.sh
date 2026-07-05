@@ -41,6 +41,9 @@ COMMIT_PATHS=(src tests examples docs README.md Makefile setup.py pytest.ini .fl
 
 # Make cron's minimal environment find node/claude/git.
 export PATH="/home/soham/.nvm/versions/node/v24.16.0/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+# Non-interactive SSH for `git push` from cron: never prompt for passphrase or
+# host-key confirmation (origin is git@github.com; key has no passphrase).
+export GIT_SSH_COMMAND="ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new"
 CLAUDE_BIN="${CLAUDE_BIN:-$(command -v claude || echo /home/soham/.nvm/versions/node/v24.16.0/bin/claude)}"
 
 DRY_RUN="${DRY_RUN:-false}"   # DRY_RUN=true skips the Claude call and any commit
