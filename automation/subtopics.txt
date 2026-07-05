@@ -1,0 +1,14 @@
+# Subtopics for the automated research/maintenance loop.
+# One per line. Blank lines and lines starting with '#' are ignored.
+# The runner rotates through these in order (no repeat until all are used),
+# so keep this list to things that genuinely have ongoing work.
+# Edit freely — add/remove/reorder to match what's actually useful.
+
+Test coverage for untested utility functions (extract_text_from_html, fetch_url_content, merge_dicts, format_sources, sanitize_text edge cases)
+Test coverage for ResearchAgent methods (summarize, get_formatted_report, clear_history, num_sources clamping)
+Lint and code-quality cleanup (resolve flake8 findings: unused imports, empty f-strings, whitespace, unused locals)
+Type-hint completeness and mypy compliance across src/
+Docstring and inline-documentation completeness in src/
+Error handling and input validation robustness (utils fetch/parse paths, ResearchConfig validation)
+README and usage-example accuracy (align docs with the real API, e.g. research() takes num_sources, not search_type)
+ContentCache correctness review (TTL boundaries, cache-key strategy, eviction behavior)

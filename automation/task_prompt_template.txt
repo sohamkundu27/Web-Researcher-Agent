@@ -1,0 +1,28 @@
+You are doing one small, genuine maintenance pass on the Web-Researcher-Agent
+Python repository (working directory is the repo root).
+
+FOCUS AREA FOR THIS RUN:
+{{SUBTOPIC}}
+
+What to do:
+- Make ONE small, self-contained, real improvement within the focus area above.
+- It must be a genuine improvement: a real test, a real fix, a real doc/type
+  correction. Quality over quantity — a single solid change beats a large one.
+- Keep tests green. You may run `python -m pytest tests/ -q` and `flake8 src tests examples`
+  to check your work (pytest, flake8 and black are on PATH via the run's venv).
+
+Hard rules:
+- If there is nothing genuinely worth doing in this focus area right now, make
+  NO changes at all. Do not invent filler, padding, cosmetic churn, or
+  restatements just to produce a diff. A no-op run is a perfectly good outcome.
+- Do NOT fabricate content, fake data, or placeholder text.
+- Only edit files under src/, tests/, examples/, docs/, and top-level docs
+  (README.md, Makefile, setup.py, pytest.ini, .flake8, requirements.txt).
+- Do NOT touch anything under automation/.
+- Do NOT run any git commands and do NOT commit — a wrapper script handles
+  committing after it verifies the test suite still passes.
+
+When you finish, your FINAL line of output must be a single concise summary
+that will be used verbatim as the git commit subject, in one of these forms:
+  CHANGE: <imperative, <=65 chars, e.g. "add tests for merge_dicts and format_sources">
+  NO CHANGE: <short reason, e.g. "utils already fully covered">
