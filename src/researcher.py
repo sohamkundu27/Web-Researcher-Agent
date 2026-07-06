@@ -134,7 +134,14 @@ Only return the JSON list, no other text."""
         return result
 
     def _summarize_content(self, content: str) -> str:
-        """Summarize content using Claude."""
+        """Summarize content using Claude.
+
+        Args:
+            content: The text content to summarize
+
+        Returns:
+            A concatenated summary of the content chunks
+        """
         # Chunk content if too long
         chunks = chunk_text(content, chunk_size=3000)
 
@@ -162,7 +169,21 @@ Summary should be 2-3 sentences max."""
         topic: str,
         num_sources: int = 5,
     ) -> Dict[str, Any]:
-        """Conduct comprehensive research on a topic."""
+        """Conduct comprehensive research on a topic.
+
+        Args:
+            topic: The research topic to investigate
+            num_sources: Number of sources to fetch (default: 5)
+
+        Returns:
+            Dictionary containing:
+            - topic: The research topic
+            - status: "success" or "error"
+            - findings: List of summaries from each source
+            - analysis: Comprehensive analysis of findings
+            - sources: List of URLs used
+            - timestamp: When research was conducted
+        """
         print(f"Starting research on: {topic}")
 
         # Generate search queries
@@ -200,7 +221,15 @@ Summary should be 2-3 sentences max."""
         return research_result
 
     def _generate_analysis(self, topic: str, findings: List[Dict[str, Any]]) -> str:
-        """Generate comprehensive analysis from findings."""
+        """Generate comprehensive analysis from findings.
+
+        Args:
+            topic: The research topic being analyzed
+            findings: List of findings dictionaries from sources
+
+        Returns:
+            A comprehensive analysis including key insights, trends, and takeaways
+        """
         summaries = [
             f.get("summary", f.get("error", ""))
             for f in findings
