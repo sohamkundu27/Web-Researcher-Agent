@@ -1,5 +1,6 @@
 """Unit tests for Web Researcher Agent."""
 
+import os
 import pytest
 import requests
 from unittest.mock import Mock, patch
@@ -222,6 +223,97 @@ class TestResearchConfig:
         assert config.max_depth == 3
         assert config.timeout == 30
         assert config.cache_enabled is True
+
+    def test_config_with_api_key_empty_api_key(self):
+        """Test that empty api_key raises ValueError."""
+        with pytest.raises(ValueError, match="api_key cannot be empty"):
+            ResearchConfig.with_api_key("")
+
+    def test_config_with_api_key_invalid_max_search_results(self):
+        """Test that non-positive max_search_results raises ValueError."""
+        with pytest.raises(ValueError, match="max_search_results must be greater than 0"):
+            ResearchConfig.with_api_key("test-key", max_search_results=0)
+
+        with pytest.raises(ValueError, match="max_search_results must be greater than 0"):
+            ResearchConfig.with_api_key("test-key", max_search_results=-1)
+
+    def test_config_with_api_key_invalid_max_depth(self):
+        """Test that non-positive max_depth raises ValueError."""
+        with pytest.raises(ValueError, match="max_depth must be greater than 0"):
+            ResearchConfig.with_api_key("test-key", max_depth=0)
+
+        with pytest.raises(ValueError, match="max_depth must be greater than 0"):
+            ResearchConfig.with_api_key("test-key", max_depth=-5)
+
+    def test_config_with_api_key_invalid_timeout(self):
+        """Test that non-positive timeout raises ValueError."""
+        with pytest.raises(ValueError, match="timeout must be greater than 0"):
+            ResearchConfig.with_api_key("test-key", timeout=0)
+
+        with pytest.raises(ValueError, match="timeout must be greater than 0"):
+            ResearchConfig.with_api_key("test-key", timeout=-10)
+
+    def test_config_with_api_key_invalid_cache_ttl(self):
+        """Test that negative cache_ttl raises ValueError."""
+        with pytest.raises(ValueError, match="cache_ttl must be non-negative"):
+            ResearchConfig.with_api_key("test-key", cache_ttl=-1)
+
+    @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key"}, clear=True)
+    def test_config_from_env_missing_api_key(self):
+        """Test that missing ANTHROPIC_API_KEY raises ValueError."""
+        import os
+        if "ANTHROPIC_API_KEY" in os.environ:
+            del os.environ["ANTHROPIC_API_KEY"]
+        with pytest.raises(ValueError, match="ANTHROPIC_API_KEY environment variable not set"):
+            ResearchConfig.from_env()
+
+    @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "MAX_SEARCH_RESULTS": "not_a_number"})
+    def test_config_from_env_invalid_max_search_results(self):
+        """Test that invalid MAX_SEARCH_RESULTS raises descriptive ValueError."""
+        with pytest.raises(ValueError, match="MAX_SEARCH_RESULTS must be a valid integer"):
+            ResearchConfig.from_env()
+
+    @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "MAX_DEPTH": "invalid"})
+    def test_config_from_env_invalid_max_depth(self):
+        """Test that invalid MAX_DEPTH raises descriptive ValueError."""
+        with pytest.raises(ValueError, match="MAX_DEPTH must be a valid integer"):
+            ResearchConfig.from_env()
+
+    @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "TIMEOUT": "xyz"})
+    def test_config_from_env_invalid_timeout(self):
+        """Test that invalid TIMEOUT raises descriptive ValueError."""
+        with pytest.raises(ValueError, match="TIMEOUT must be a valid integer"):
+            ResearchConfig.from_env()
+
+    @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "CACHE_TTL": "not_int"})
+    def test_config_from_env_invalid_cache_ttl(self):
+        """Test that invalid CACHE_TTL raises descriptive ValueError."""
+        with pytest.raises(ValueError, match="CACHE_TTL must be a valid integer"):
+            ResearchConfig.from_env()
+
+    @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "MAX_SEARCH_RESULTS": "0"})
+    def test_config_from_env_zero_max_search_results(self):
+        """Test that zero MAX_SEARCH_RESULTS raises ValueError."""
+        with pytest.raises(ValueError, match="MAX_SEARCH_RESULTS must be greater than 0"):
+            ResearchConfig.from_env()
+
+    @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "MAX_DEPTH": "-5"})
+    def test_config_from_env_negative_max_depth(self):
+        """Test that negative MAX_DEPTH raises ValueError."""
+        with pytest.raises(ValueError, match="MAX_DEPTH must be greater than 0"):
+            ResearchConfig.from_env()
+
+    @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "TIMEOUT": "-1"})
+    def test_config_from_env_negative_timeout(self):
+        """Test that negative TIMEOUT raises ValueError."""
+        with pytest.raises(ValueError, match="TIMEOUT must be greater than 0"):
+            ResearchConfig.from_env()
+
+    @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "CACHE_TTL": "-10"})
+    def test_config_from_env_negative_cache_ttl(self):
+        """Test that negative CACHE_TTL raises ValueError."""
+        with pytest.raises(ValueError, match="CACHE_TTL must be non-negative"):
+            ResearchConfig.from_env()
 
 
 class TestWebResearcher:

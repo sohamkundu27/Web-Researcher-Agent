@@ -23,17 +23,66 @@ class ResearchConfig:
         if not api_key:
             raise ValueError("ANTHROPIC_API_KEY environment variable not set")
 
+        try:
+            max_search_results = int(os.getenv("MAX_SEARCH_RESULTS", "10"))
+        except ValueError:
+            raise ValueError(
+                f"MAX_SEARCH_RESULTS must be a valid integer, got '{os.getenv('MAX_SEARCH_RESULTS')}'"
+            )
+
+        try:
+            max_depth = int(os.getenv("MAX_DEPTH", "3"))
+        except ValueError:
+            raise ValueError(
+                f"MAX_DEPTH must be a valid integer, got '{os.getenv('MAX_DEPTH')}'"
+            )
+
+        try:
+            timeout = int(os.getenv("TIMEOUT", "30"))
+        except ValueError:
+            raise ValueError(
+                f"TIMEOUT must be a valid integer, got '{os.getenv('TIMEOUT')}'"
+            )
+
+        try:
+            cache_ttl = int(os.getenv("CACHE_TTL", "3600"))
+        except ValueError:
+            raise ValueError(
+                f"CACHE_TTL must be a valid integer, got '{os.getenv('CACHE_TTL')}'"
+            )
+
+        if max_search_results <= 0:
+            raise ValueError("MAX_SEARCH_RESULTS must be greater than 0")
+        if max_depth <= 0:
+            raise ValueError("MAX_DEPTH must be greater than 0")
+        if timeout <= 0:
+            raise ValueError("TIMEOUT must be greater than 0")
+        if cache_ttl < 0:
+            raise ValueError("CACHE_TTL must be non-negative")
+
         return cls(
             api_key=api_key,
             model=os.getenv("RESEARCH_MODEL", "claude-3-5-sonnet-20241022"),
-            max_search_results=int(os.getenv("MAX_SEARCH_RESULTS", "10")),
-            max_depth=int(os.getenv("MAX_DEPTH", "3")),
-            timeout=int(os.getenv("TIMEOUT", "30")),
+            max_search_results=max_search_results,
+            max_depth=max_depth,
+            timeout=timeout,
             cache_enabled=os.getenv("CACHE_ENABLED", "true").lower() == "true",
-            cache_ttl=int(os.getenv("CACHE_TTL", "3600")),
+            cache_ttl=cache_ttl,
         )
 
     @classmethod
     def with_api_key(cls, api_key: str, **kwargs) -> "ResearchConfig":
         """Create configuration with explicit API key."""
+        if not api_key:
+            raise ValueError("api_key cannot be empty")
+
+        if "max_search_results" in kwargs and kwargs["max_search_results"] <= 0:
+            raise ValueError("max_search_results must be greater than 0")
+        if "max_depth" in kwargs and kwargs["max_depth"] <= 0:
+            raise ValueError("max_depth must be greater than 0")
+        if "timeout" in kwargs and kwargs["timeout"] <= 0:
+            raise ValueError("timeout must be greater than 0")
+        if "cache_ttl" in kwargs and kwargs["cache_ttl"] < 0:
+            raise ValueError("cache_ttl must be non-negative")
+
         return cls(api_key=api_key, **kwargs)
