@@ -30,8 +30,8 @@ class ResearchAgent:
         else:
             config = ResearchConfig.from_env()
 
-        self.config = config
-        self.researcher = WebResearcher(config)
+        self.config: ResearchConfig = config
+        self.researcher: WebResearcher = WebResearcher(config)
         self.last_research: Optional[Dict[str, Any]] = None
 
     def research(

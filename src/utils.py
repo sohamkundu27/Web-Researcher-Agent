@@ -99,7 +99,7 @@ def format_sources(sources: List[str]) -> str:
     return formatted
 
 
-def merge_dicts(dict1: Dict, dict2: Dict) -> Dict:
+def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
     """Deep merge two dictionaries."""
     result = dict1.copy()
     for key, value in dict2.items():

@@ -50,9 +50,9 @@ class WebResearcher:
 
     def __init__(self, config: ResearchConfig):
         """Initialize researcher with configuration."""
-        self.config = config
-        self.client = Anthropic()
-        self.cache = ContentCache(ttl=config.cache_ttl) if config.cache_enabled else None
+        self.config: ResearchConfig = config
+        self.client: Anthropic = Anthropic()
+        self.cache: Optional[ContentCache] = ContentCache(ttl=config.cache_ttl) if config.cache_enabled else None
         self.sources: List[str] = []
         self.research_history: List[Dict[str, Any]] = []
 
@@ -199,7 +199,7 @@ Summary should be 2-3 sentences max."""
         self.research_history.append(research_result)
         return research_result
 
-    def _generate_analysis(self, topic: str, findings: List[Dict]) -> str:
+    def _generate_analysis(self, topic: str, findings: List[Dict[str, Any]]) -> str:
         """Generate comprehensive analysis from findings."""
         summaries = [
             f.get("summary", f.get("error", ""))
