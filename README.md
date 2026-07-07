@@ -87,7 +87,7 @@ agent = ResearchAgent(
 
 result = agent.research(
     topic="Climate change solutions",
-    search_type="academic"
+    num_sources=10
 )
 ```
 
@@ -99,7 +99,7 @@ Main agent class for conducting research.
 
 **Methods:**
 
-- `research(topic: str, search_type: str = "general") -> Dict` - Conduct research on a topic
+- `research(topic: str, num_sources: int = 5) -> Dict` - Conduct research on a topic
 - `summarize(urls: List[str]) -> str` - Summarize content from multiple URLs
 - `get_sources() -> List[str]` - Get list of sources used in the last research
 
