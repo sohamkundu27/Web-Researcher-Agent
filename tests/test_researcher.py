@@ -220,6 +220,19 @@ class TestUtilityFunctions:
         assert result["url"] == "https://example.com"
         assert "Connection failed" in result["error"]
 
+    @patch("src.utils.requests.get")
+    def test_fetch_url_content_http_error(self, mock_get):
+        """Test URL fetch with HTTP error (404, 500, etc)."""
+        mock_response = Mock()
+        mock_response.status_code = 404
+        mock_response.raise_for_status.side_effect = requests.HTTPError("404 Not Found")
+        mock_get.return_value = mock_response
+
+        result = fetch_url_content("https://example.com")
+        assert result["status"] == "error"
+        assert result["url"] == "https://example.com"
+        assert "404 Not Found" in result["error"]
+
 
 class TestResearchConfig:
     """Test ResearchConfig class."""
