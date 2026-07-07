@@ -38,6 +38,20 @@ class TestContentCache:
         time.sleep(0.1)
         assert cache.get("key1") is None
 
+    def test_cache_cleanup_on_expiration(self):
+        """Test that expired items are removed from cache dict."""
+        cache = ContentCache(ttl=0)
+        cache.set("key1", "value1")
+        assert len(cache.cache) == 1
+
+        import time
+        time.sleep(0.1)
+
+        # Accessing expired item should return None and clean it up
+        result = cache.get("key1")
+        assert result is None
+        assert len(cache.cache) == 0, "Expired item should be removed from cache dict"
+
     def test_cache_clear(self):
         """Test clearing cache."""
         cache = ContentCache()
