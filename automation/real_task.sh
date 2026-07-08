@@ -176,13 +176,12 @@ if git diff --cached --quiet; then
   exit 0
 fi
 
-git commit -q -m "chore(auto): ${SUBJECT}" -m "Subtopic: ${SUBTOPIC}
+git commit -q -m "${SUBJECT}" -m "Subtopic: ${SUBTOPIC}
 Run: $(date -Iseconds)
-Verified: pytest suite passing; flake8 advisory=${FLAKE_COUNT}
-Automated-by: web-researcher-agent maintenance loop (model=${MODEL})"
+Verified: pytest suite passing; flake8 advisory=${FLAKE_COUNT}"
 
 NEW_REF="$(git rev-parse --short HEAD)"
-log "committed ${NEW_REF}: chore(auto): ${SUBJECT}"
+log "committed ${NEW_REF}: ${SUBJECT}"
 
 if [ "$DO_PUSH" = "true" ]; then
   if git push >>"$LOG_FILE" 2>&1; then
