@@ -3,7 +3,7 @@
 from src.agent import ResearchAgent
 
 
-def main():
+def main() -> None:
     """Run research example."""
     # Initialize agent with API key from environment
     try:
