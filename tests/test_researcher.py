@@ -484,6 +484,42 @@ def test_agent_get_formatted_report_with_research():
     assert "Failed to fetch" not in report
 
 
+def test_agent_get_formatted_report_all_failures():
+    """Test getting formatted report when all findings fail."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    agent.last_research = {
+        "topic": "Python",
+        "analysis": "Python is a programming language.",
+        "findings": [
+            {
+                "status": "error",
+                "url": "https://url1.com",
+                "error": "Failed to fetch",
+            },
+            {
+                "status": "error",
+                "url": "https://url2.com",
+                "error": "Timeout",
+            },
+        ],
+    }
+    agent.researcher.sources = []
+
+    report = agent.get_formatted_report()
+
+    assert "# Research Report: Python" in report
+    assert "## Analysis" in report
+    assert "Python is a programming language." in report
+    assert "## Findings" in report
+    # Failed findings should not appear in report
+    assert "Failed to fetch" not in report
+    assert "Timeout" not in report
+    # With no sources, Sources section should not appear
+    assert "## Sources" not in report
+
+
 def test_agent_num_sources_clamping():
     """Test that num_sources is clamped to max_search_results."""
     from src.agent import ResearchAgent
