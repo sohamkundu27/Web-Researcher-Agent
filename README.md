@@ -100,8 +100,10 @@ Main agent class for conducting research.
 **Methods:**
 
 - `research(topic: str, num_sources: int = 5) -> Dict` - Conduct research on a topic
-- `summarize(urls: List[str]) -> str` - Summarize content from multiple URLs
+- `summarize(urls: List[str]) -> Dict` - Summarize content from multiple URLs
 - `get_sources() -> List[str]` - Get list of sources used in the last research
+- `get_formatted_report() -> str` - Get formatted markdown research report
+- `clear_history() -> None` - Clear research history and cache
 
 ## Development
 
