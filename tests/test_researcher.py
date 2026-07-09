@@ -70,12 +70,37 @@ class TestUtilityFunctions:
         url = "https://www.example.com/path/to/page"
         assert extract_domain(url) == "www.example.com"
 
+    def test_extract_domain_invalid_type_none(self):
+        """Test domain extraction with None."""
+        with pytest.raises(TypeError, match="url must be a string"):
+            extract_domain(None)
+
+    def test_extract_domain_invalid_type_int(self):
+        """Test domain extraction with non-string type."""
+        with pytest.raises(TypeError, match="url must be a string"):
+            extract_domain(123)
+
+    def test_extract_domain_invalid_type_list(self):
+        """Test domain extraction with list type."""
+        with pytest.raises(TypeError, match="url must be a string"):
+            extract_domain([])
+
     def test_is_valid_url(self):
         """Test URL validation."""
         assert is_valid_url("https://example.com") is True
         assert is_valid_url("http://example.com") is True
         assert is_valid_url("not a url") is False
         assert is_valid_url("ftp://example.com") is False
+
+    def test_is_valid_url_none(self):
+        """Test URL validation with None."""
+        assert is_valid_url(None) is False
+
+    def test_is_valid_url_invalid_type(self):
+        """Test URL validation with non-string types."""
+        assert is_valid_url(123) is False
+        assert is_valid_url([]) is False
+        assert is_valid_url({}) is False
 
     def test_sanitize_text(self):
         """Test text sanitization."""
@@ -86,14 +111,25 @@ class TestUtilityFunctions:
 
     def test_sanitize_text_edge_cases(self):
         """Test text sanitization edge cases."""
-        # Empty string
         assert sanitize_text("") == ""
-        # Only whitespace
         assert sanitize_text("   \t\n   ") == ""
-        # Already clean text
         assert sanitize_text("Hello world") == "Hello world"
-        # Multiple spaces replaced with single space
         assert sanitize_text("Hello     world") == "Hello world"
+
+    def test_sanitize_text_invalid_type_none(self):
+        """Test text sanitization with None."""
+        with pytest.raises(TypeError, match="text must be a string"):
+            sanitize_text(None)
+
+    def test_sanitize_text_invalid_type_int(self):
+        """Test text sanitization with non-string type."""
+        with pytest.raises(TypeError, match="text must be a string"):
+            sanitize_text(123)
+
+    def test_sanitize_text_invalid_type_list(self):
+        """Test text sanitization with list type."""
+        with pytest.raises(TypeError, match="text must be a string"):
+            sanitize_text([])
 
     def test_hash_content(self):
         """Test content hashing."""
@@ -108,9 +144,48 @@ class TestUtilityFunctions:
         text = "a" * 2500
         chunks = chunk_text(text, chunk_size=1000, overlap=100)
         assert len(chunks) > 1
-        # Each chunk should be <= 1000 characters
         for chunk in chunks:
             assert len(chunk) <= 1000
+
+    def test_chunk_text_invalid_chunk_size_zero(self):
+        """Test chunk_text with zero chunk_size."""
+        with pytest.raises(ValueError, match="chunk_size must be a positive integer"):
+            chunk_text("text", chunk_size=0)
+
+    def test_chunk_text_invalid_chunk_size_negative(self):
+        """Test chunk_text with negative chunk_size."""
+        with pytest.raises(ValueError, match="chunk_size must be a positive integer"):
+            chunk_text("text", chunk_size=-100)
+
+    def test_chunk_text_invalid_overlap_negative(self):
+        """Test chunk_text with negative overlap."""
+        with pytest.raises(ValueError, match="overlap must be a non-negative integer"):
+            chunk_text("text", chunk_size=100, overlap=-1)
+
+    def test_chunk_text_overlap_equals_chunk_size(self):
+        """Test chunk_text when overlap equals chunk_size."""
+        with pytest.raises(ValueError, match="overlap .* must be less than chunk_size"):
+            chunk_text("text", chunk_size=100, overlap=100)
+
+    def test_chunk_text_overlap_greater_than_chunk_size(self):
+        """Test chunk_text when overlap is greater than chunk_size."""
+        with pytest.raises(ValueError, match="overlap .* must be less than chunk_size"):
+            chunk_text("text", chunk_size=100, overlap=150)
+
+    def test_chunk_text_invalid_text_type(self):
+        """Test chunk_text with non-string text."""
+        with pytest.raises(TypeError, match="text must be a string"):
+            chunk_text(123, chunk_size=100)
+
+    def test_chunk_text_invalid_chunk_size_type(self):
+        """Test chunk_text with non-integer chunk_size."""
+        with pytest.raises(ValueError, match="chunk_size must be a positive integer"):
+            chunk_text("text", chunk_size="100")
+
+    def test_chunk_text_invalid_overlap_type(self):
+        """Test chunk_text with non-integer overlap."""
+        with pytest.raises(ValueError, match="overlap must be a non-negative integer"):
+            chunk_text("text", chunk_size=100, overlap="10")
 
     def test_extract_text_from_html_basic(self):
         """Test basic HTML text extraction."""
@@ -193,6 +268,21 @@ class TestUtilityFunctions:
         assert "2." in result
         assert "example.com" in result
         assert "test.org" in result
+
+    def test_format_sources_invalid_type_none(self):
+        """Test format_sources with None."""
+        with pytest.raises(TypeError, match="sources must be a list"):
+            format_sources(None)
+
+    def test_format_sources_invalid_type_string(self):
+        """Test format_sources with string instead of list."""
+        with pytest.raises(TypeError, match="sources must be a list"):
+            format_sources("https://example.com")
+
+    def test_format_sources_invalid_type_dict(self):
+        """Test format_sources with dict instead of list."""
+        with pytest.raises(TypeError, match="sources must be a list"):
+            format_sources({"url": "https://example.com"})
 
     @patch("src.utils.requests.get")
     def test_fetch_url_content_success(self, mock_get):

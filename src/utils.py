@@ -10,21 +10,25 @@ from bs4 import BeautifulSoup
 
 def extract_domain(url: str) -> str:
     """Extract domain from URL."""
+    if not isinstance(url, str):
+        raise TypeError(f"url must be a string, got {type(url).__name__}")
     parsed = urlparse(url)
     return parsed.netloc
 
 
 def is_valid_url(url: str) -> bool:
     """Validate if string is a valid URL."""
+    if not isinstance(url, str):
+        return False
     url_pattern = r"^https?://"
     return re.match(url_pattern, url) is not None
 
 
 def sanitize_text(text: str) -> str:
     """Clean and normalize text content."""
-    # Remove extra whitespace
+    if not isinstance(text, str):
+        raise TypeError(f"text must be a string, got {type(text).__name__}")
     text = " ".join(text.split())
-    # Remove special characters but keep basic punctuation
     text = re.sub(r"[^\w\s.,!?-]", "", text)
     return text.strip()
 
@@ -74,6 +78,17 @@ def fetch_url_content(url: str, timeout: int = 10) -> Dict[str, Any]:
 
 def chunk_text(text: str, chunk_size: int = 1000, overlap: int = 100) -> List[str]:
     """Split text into overlapping chunks."""
+    if not isinstance(text, str):
+        raise TypeError(f"text must be a string, got {type(text).__name__}")
+    if not isinstance(chunk_size, int) or chunk_size <= 0:
+        raise ValueError(f"chunk_size must be a positive integer, got {chunk_size}")
+    if not isinstance(overlap, int) or overlap < 0:
+        raise ValueError(f"overlap must be a non-negative integer, got {overlap}")
+    if overlap >= chunk_size:
+        raise ValueError(
+            f"overlap ({overlap}) must be less than chunk_size ({chunk_size})"
+        )
+
     chunks = []
     for i in range(0, len(text), chunk_size - overlap):
         chunk = text[i : i + chunk_size]
@@ -89,6 +104,8 @@ def hash_content(content: str) -> str:
 
 def format_sources(sources: List[str]) -> str:
     """Format sources list as markdown."""
+    if not isinstance(sources, list):
+        raise TypeError(f"sources must be a list, got {type(sources).__name__}")
     if not sources:
         return ""
 
