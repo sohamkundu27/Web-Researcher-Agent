@@ -35,6 +35,8 @@ def sanitize_text(text: str) -> str:
 
 def extract_text_from_html(html: str, max_length: int = 5000) -> str:
     """Extract clean text from HTML content."""
+    if not isinstance(max_length, int) or max_length <= 0:
+        raise ValueError(f"max_length must be a positive integer, got {max_length}")
     try:
         soup = BeautifulSoup(html, "html.parser")
 
@@ -50,6 +52,8 @@ def extract_text_from_html(html: str, max_length: int = 5000) -> str:
 
         # Limit length
         return text[:max_length]
+    except ValueError:
+        raise
     except Exception as e:
         print(f"Error extracting text from HTML: {e}")
         return ""

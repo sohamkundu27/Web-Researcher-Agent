@@ -223,6 +223,21 @@ class TestUtilityFunctions:
         result = extract_text_from_html("")
         assert result == ""
 
+    def test_extract_text_from_html_zero_max_length(self):
+        """Test extract_text_from_html with zero max_length."""
+        with pytest.raises(ValueError, match="max_length must be a positive integer"):
+            extract_text_from_html("<p>Test</p>", max_length=0)
+
+    def test_extract_text_from_html_negative_max_length(self):
+        """Test extract_text_from_html with negative max_length."""
+        with pytest.raises(ValueError, match="max_length must be a positive integer"):
+            extract_text_from_html("<p>Test</p>", max_length=-1)
+
+    def test_extract_text_from_html_invalid_max_length_type(self):
+        """Test extract_text_from_html with non-integer max_length."""
+        with pytest.raises(ValueError, match="max_length must be a positive integer"):
+            extract_text_from_html("<p>Test</p>", max_length="100")
+
     def test_merge_dicts_simple(self):
         """Test simple dictionary merge."""
         dict1 = {"a": 1, "b": 2}
