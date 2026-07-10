@@ -548,6 +548,31 @@ def test_agent_summarize(mock_fetch):
     assert result["summaries"]["https://test.com"]["summary"] == "Summary 2"
 
 
+@patch("src.researcher.WebResearcher.fetch_and_summarize")
+def test_agent_summarize_with_mixed_results(mock_fetch):
+    """Test summarizing URLs with some failures."""
+    from src.agent import ResearchAgent
+
+    mock_fetch.side_effect = [
+        {"status": "success", "summary": "Summary 1", "url": "https://example.com"},
+        {"status": "error", "error": "Connection failed", "url": "https://invalid.com"},
+    ]
+
+    agent = ResearchAgent(api_key="test-key")
+    urls = ["https://example.com", "https://invalid.com"]
+    result = agent.summarize(urls)
+
+    assert result["status"] == "success"
+    assert result["sources_count"] == 2
+    assert len(result["summaries"]) == 2
+    # Success result should include summary
+    assert result["summaries"]["https://example.com"]["status"] == "success"
+    assert result["summaries"]["https://example.com"]["summary"] == "Summary 1"
+    # Error result should include error
+    assert result["summaries"]["https://invalid.com"]["status"] == "error"
+    assert "Connection failed" in result["summaries"]["https://invalid.com"]["error"]
+
+
 def test_agent_get_formatted_report_no_research():
     """Test getting formatted report when no research conducted."""
     from src.agent import ResearchAgent
