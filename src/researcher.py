@@ -19,7 +19,16 @@ class ContentCache:
     """Simple in-memory cache for web content."""
 
     def __init__(self, ttl: int = 3600):
-        """Initialize cache with time-to-live."""
+        """Initialize cache with time-to-live.
+
+        Args:
+            ttl: Time-to-live in seconds (must be non-negative)
+
+        Raises:
+            ValueError: If ttl is negative
+        """
+        if ttl < 0:
+            raise ValueError("ttl must be non-negative")
         self.ttl = ttl
         self.cache: Dict[str, Dict[str, Any]] = {}
 

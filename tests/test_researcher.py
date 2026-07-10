@@ -61,6 +61,11 @@ class TestContentCache:
         assert cache.get("key1") is None
         assert cache.get("key2") is None
 
+    def test_cache_negative_ttl(self):
+        """Test that negative TTL raises ValueError."""
+        with pytest.raises(ValueError, match="ttl must be non-negative"):
+            ContentCache(ttl=-1)
+
 
 class TestUtilityFunctions:
     """Test utility functions."""
