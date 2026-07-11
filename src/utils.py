@@ -60,7 +60,28 @@ def extract_text_from_html(html: str, max_length: int = 5000) -> str:
 
 
 def fetch_url_content(url: str, timeout: int = 10) -> Dict[str, Any]:
-    """Fetch and parse content from URL."""
+    """Fetch and parse content from URL.
+
+    Retrieves the content of a URL using HTTP GET request and extracts
+    clean text from the HTML response. Handles timeouts and HTTP errors gracefully.
+
+    Args:
+        url: The URL to fetch content from (must start with http:// or https://)
+        timeout: Request timeout in seconds (default: 10)
+
+    Returns:
+        A dictionary containing the result of the fetch operation.
+        On success (status == "success"):
+            - status: "success"
+            - url: The requested URL
+            - content: Extracted and cleaned text from HTML (limited to 5000 chars)
+            - status_code: HTTP status code (e.g., 200)
+            - headers: Response headers as dict
+        On error (status == "error"):
+            - status: "error"
+            - url: The requested URL
+            - error: Error message describing what went wrong
+    """
     try:
         response = requests.get(url, timeout=timeout)
         response.raise_for_status()
