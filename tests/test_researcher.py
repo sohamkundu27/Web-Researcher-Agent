@@ -395,12 +395,9 @@ class TestResearchConfig:
         with pytest.raises(ValueError, match="cache_ttl must be non-negative"):
             ResearchConfig.with_api_key("test-key", cache_ttl=-1)
 
-    @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key"}, clear=True)
+    @patch.dict(os.environ, {}, clear=True)
     def test_config_from_env_missing_api_key(self):
         """Test that missing ANTHROPIC_API_KEY raises ValueError."""
-        import os
-        if "ANTHROPIC_API_KEY" in os.environ:
-            del os.environ["ANTHROPIC_API_KEY"]
         with pytest.raises(ValueError, match="ANTHROPIC_API_KEY environment variable not set"):
             ResearchConfig.from_env()
 
