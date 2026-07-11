@@ -1,7 +1,7 @@
 """Web research functionality for Web Researcher Agent."""
 
 import json
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, TypedDict
 from datetime import datetime, timedelta
 
 from anthropic import Anthropic
@@ -13,6 +13,13 @@ from src.utils import (
     chunk_text,
 )
 from src.config import ResearchConfig
+
+
+class CacheEntry(TypedDict):
+    """Type definition for cache entry structure."""
+
+    value: Any
+    expires: datetime
 
 
 class ContentCache:
@@ -30,7 +37,7 @@ class ContentCache:
         if ttl < 0:
             raise ValueError("ttl must be non-negative")
         self.ttl = ttl
-        self.cache: Dict[str, Dict[str, Any]] = {}
+        self.cache: Dict[str, CacheEntry] = {}
 
     def get(self, key: str) -> Optional[Any]:
         """Retrieve item from cache if not expired."""
