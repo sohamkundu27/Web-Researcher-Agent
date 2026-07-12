@@ -117,7 +117,7 @@ Only return the JSON list, no other text."""
         # Check cache
         if self.cache:
             cached = self.cache.get(hash_content(url))
-            if cached:
+            if cached is not None:
                 return cached
 
         # Fetch content

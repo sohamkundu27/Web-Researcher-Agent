@@ -66,6 +66,30 @@ class TestContentCache:
         with pytest.raises(ValueError, match="ttl must be non-negative"):
             ContentCache(ttl=-1)
 
+    def test_cache_with_falsy_values(self):
+        """Test that cache correctly stores and retrieves falsy values."""
+        cache = ContentCache(ttl=60)
+
+        # Test with 0
+        cache.set("key1", 0)
+        assert cache.get("key1") == 0
+
+        # Test with False
+        cache.set("key2", False)
+        assert cache.get("key2") is False
+
+        # Test with empty string
+        cache.set("key3", "")
+        assert cache.get("key3") == ""
+
+        # Test with empty dict
+        cache.set("key4", {})
+        assert cache.get("key4") == {}
+
+        # Test with empty list
+        cache.set("key5", [])
+        assert cache.get("key5") == []
+
 
 class TestUtilityFunctions:
     """Test utility functions."""
