@@ -80,7 +80,10 @@ class ResearchAgent:
             urls: List of URLs to summarize
 
         Returns:
-            Dictionary with summaries for each URL
+            Dictionary containing:
+            - status: "success"
+            - summaries: Dict mapping each URL to its summary result
+            - sources_count: Number of URLs provided
         """
         summaries = {}
         for url in urls:
