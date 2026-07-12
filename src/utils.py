@@ -67,7 +67,7 @@ def fetch_url_content(url: str, timeout: int = 10) -> Dict[str, Any]:
 
     Args:
         url: The URL to fetch content from (must start with http:// or https://)
-        timeout: Request timeout in seconds (default: 10)
+        timeout: Request timeout in seconds (default: 10, must be positive)
 
     Returns:
         A dictionary containing the result of the fetch operation.
@@ -81,7 +81,18 @@ def fetch_url_content(url: str, timeout: int = 10) -> Dict[str, Any]:
             - status: "error"
             - url: The requested URL
             - error: Error message describing what went wrong
+
+    Raises:
+        TypeError: If url is not a string or timeout is not an integer
+        ValueError: If url is not a valid HTTP(S) URL or timeout is not positive
     """
+    if not isinstance(url, str):
+        raise TypeError(f"url must be a string, got {type(url).__name__}")
+    if not is_valid_url(url):
+        raise ValueError(f"url must be a valid HTTP(S) URL, got '{url}'")
+    if not isinstance(timeout, int) or timeout <= 0:
+        raise ValueError(f"timeout must be a positive integer, got {timeout}")
+
     try:
         response = requests.get(url, timeout=timeout)
         response.raise_for_status()

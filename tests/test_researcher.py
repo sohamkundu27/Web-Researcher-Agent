@@ -304,6 +304,46 @@ class TestUtilityFunctions:
         with pytest.raises(TypeError, match="sources must be a list"):
             format_sources({"url": "https://example.com"})
 
+    def test_fetch_url_content_invalid_url_type_none(self):
+        """Test fetch_url_content with None URL."""
+        with pytest.raises(TypeError, match="url must be a string"):
+            fetch_url_content(None)
+
+    def test_fetch_url_content_invalid_url_type_int(self):
+        """Test fetch_url_content with integer URL."""
+        with pytest.raises(TypeError, match="url must be a string"):
+            fetch_url_content(123)
+
+    def test_fetch_url_content_invalid_url_type_list(self):
+        """Test fetch_url_content with list URL."""
+        with pytest.raises(TypeError, match="url must be a string"):
+            fetch_url_content([])
+
+    def test_fetch_url_content_invalid_url_format_no_protocol(self):
+        """Test fetch_url_content with URL missing protocol."""
+        with pytest.raises(ValueError, match="url must be a valid HTTP\\(S\\) URL"):
+            fetch_url_content("example.com")
+
+    def test_fetch_url_content_invalid_url_format_ftp(self):
+        """Test fetch_url_content with FTP URL."""
+        with pytest.raises(ValueError, match="url must be a valid HTTP\\(S\\) URL"):
+            fetch_url_content("ftp://example.com")
+
+    def test_fetch_url_content_invalid_timeout_type(self):
+        """Test fetch_url_content with non-integer timeout."""
+        with pytest.raises(ValueError, match="timeout must be a positive integer"):
+            fetch_url_content("https://example.com", timeout="10")
+
+    def test_fetch_url_content_invalid_timeout_zero(self):
+        """Test fetch_url_content with zero timeout."""
+        with pytest.raises(ValueError, match="timeout must be a positive integer"):
+            fetch_url_content("https://example.com", timeout=0)
+
+    def test_fetch_url_content_invalid_timeout_negative(self):
+        """Test fetch_url_content with negative timeout."""
+        with pytest.raises(ValueError, match="timeout must be a positive integer"):
+            fetch_url_content("https://example.com", timeout=-5)
+
     @patch("src.utils.requests.get")
     def test_fetch_url_content_success(self, mock_get):
         """Test successful URL fetch."""
