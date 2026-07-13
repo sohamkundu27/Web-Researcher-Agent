@@ -760,3 +760,62 @@ def test_agent_num_sources_clamping():
 
         # Verify it was clamped to max_search_results
         mock_research.assert_called_once_with(topic="test query", num_sources=5)
+
+
+def test_agent_get_formatted_report_numbered_sources_correctly():
+    """Test that successful sources are numbered sequentially (1, 2, 3) when there are mixed success/error findings."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    agent.last_research = {
+        "topic": "Test Topic",
+        "analysis": "Test analysis.",
+        "findings": [
+            {
+                "status": "success",
+                "url": "https://first.com",
+                "summary": "First source",
+            },
+            {
+                "status": "error",
+                "url": "https://failed.com",
+                "error": "Failed to fetch",
+            },
+            {
+                "status": "success",
+                "url": "https://second.com",
+                "summary": "Second source",
+            },
+            {
+                "status": "error",
+                "url": "https://also-failed.com",
+                "error": "Connection timeout",
+            },
+            {
+                "status": "success",
+                "url": "https://third.com",
+                "summary": "Third source",
+            },
+        ],
+    }
+    agent.researcher.sources = ["https://first.com", "https://second.com", "https://third.com"]
+
+    report = agent.get_formatted_report()
+
+    # Verify that successful sources are numbered sequentially
+    assert "### Source 1" in report
+    assert "### Source 2" in report
+    assert "### Source 3" in report
+    # Verify gap numbering doesn't appear
+    assert "### Source 4" not in report
+    assert "### Source 5" not in report
+    # Verify all successful sources are present
+    assert "https://first.com" in report
+    assert "First source" in report
+    assert "https://second.com" in report
+    assert "Second source" in report
+    assert "https://third.com" in report
+    assert "Third source" in report
+    # Verify failed sources are not present
+    assert "Failed to fetch" not in report
+    assert "Connection timeout" not in report

@@ -117,11 +117,13 @@ class ResearchAgent:
 
         report += "## Findings\n\n"
         findings = self.last_research.get("findings", [])
-        for i, finding in enumerate(findings, 1):
+        source_num = 1
+        for finding in findings:
             if finding.get("status") == "success":
-                report += f"### Source {i}\n"
+                report += f"### Source {source_num}\n"
                 report += f"**URL:** {finding.get('url', 'N/A')}\n\n"
                 report += f"**Summary:** {finding.get('summary', 'N/A')}\n\n"
+                source_num += 1
 
         report += format_sources(self.get_sources())
 
