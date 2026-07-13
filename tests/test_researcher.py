@@ -291,6 +291,35 @@ class TestUtilityFunctions:
         # Non-dict value should overwrite dict value
         assert result == {"a": "string", "b": 20}
 
+    def test_merge_dicts_empty_dicts(self):
+        """Test merge with empty dictionaries."""
+        # Merge empty dict with non-empty
+        result = merge_dicts({}, {"a": 1, "b": 2})
+        assert result == {"a": 1, "b": 2}
+
+        # Merge non-empty with empty dict
+        result = merge_dicts({"a": 1, "b": 2}, {})
+        assert result == {"a": 1, "b": 2}
+
+        # Merge two empty dicts
+        result = merge_dicts({}, {})
+        assert result == {}
+
+    def test_merge_dicts_deeply_nested(self):
+        """Test merge with deeply nested (3+ levels) dictionaries."""
+        dict1 = {"a": {"b": {"c": {"d": 1, "e": 2}}}}
+        dict2 = {"a": {"b": {"c": {"e": 20, "f": 30}, "x": 100}}}
+        result = merge_dicts(dict1, dict2)
+        expected = {"a": {"b": {"c": {"d": 1, "e": 20, "f": 30}, "x": 100}}}
+        assert result == expected
+
+    def test_merge_dicts_with_none_values(self):
+        """Test merge with None values in dictionaries."""
+        dict1 = {"a": None, "b": 2}
+        dict2 = {"a": 1, "c": None}
+        result = merge_dicts(dict1, dict2)
+        assert result == {"a": 1, "b": 2, "c": None}
+
     def test_format_sources_empty(self):
         """Test formatting empty sources list."""
         result = format_sources([])
