@@ -488,6 +488,50 @@ class TestResearchConfig:
         with pytest.raises(ValueError, match="cache_ttl must be non-negative"):
             ResearchConfig.with_api_key("test-key", cache_ttl=-1)
 
+    def test_config_with_api_key_invalid_max_search_results_type(self):
+        """Test that non-integer max_search_results raises TypeError."""
+        with pytest.raises(TypeError, match="max_search_results must be an integer"):
+            ResearchConfig.with_api_key("test-key", max_search_results="10")
+
+        with pytest.raises(TypeError, match="max_search_results must be an integer"):
+            ResearchConfig.with_api_key("test-key", max_search_results=10.5)
+
+        with pytest.raises(TypeError, match="max_search_results must be an integer"):
+            ResearchConfig.with_api_key("test-key", max_search_results=[10])
+
+    def test_config_with_api_key_invalid_max_depth_type(self):
+        """Test that non-integer max_depth raises TypeError."""
+        with pytest.raises(TypeError, match="max_depth must be an integer"):
+            ResearchConfig.with_api_key("test-key", max_depth="3")
+
+        with pytest.raises(TypeError, match="max_depth must be an integer"):
+            ResearchConfig.with_api_key("test-key", max_depth=3.5)
+
+        with pytest.raises(TypeError, match="max_depth must be an integer"):
+            ResearchConfig.with_api_key("test-key", max_depth={"value": 3})
+
+    def test_config_with_api_key_invalid_timeout_type(self):
+        """Test that non-integer timeout raises TypeError."""
+        with pytest.raises(TypeError, match="timeout must be an integer"):
+            ResearchConfig.with_api_key("test-key", timeout="30")
+
+        with pytest.raises(TypeError, match="timeout must be an integer"):
+            ResearchConfig.with_api_key("test-key", timeout=30.5)
+
+        with pytest.raises(TypeError, match="timeout must be an integer"):
+            ResearchConfig.with_api_key("test-key", timeout=None)
+
+    def test_config_with_api_key_invalid_cache_ttl_type(self):
+        """Test that non-integer cache_ttl raises TypeError."""
+        with pytest.raises(TypeError, match="cache_ttl must be an integer"):
+            ResearchConfig.with_api_key("test-key", cache_ttl="3600")
+
+        with pytest.raises(TypeError, match="cache_ttl must be an integer"):
+            ResearchConfig.with_api_key("test-key", cache_ttl=3600.5)
+
+        with pytest.raises(TypeError, match="cache_ttl must be an integer"):
+            ResearchConfig.with_api_key("test-key", cache_ttl=[3600])
+
     @patch.dict(os.environ, {}, clear=True)
     def test_config_from_env_missing_api_key(self):
         """Test that missing ANTHROPIC_API_KEY raises ValueError."""

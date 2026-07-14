@@ -77,13 +77,33 @@ class ResearchConfig:
         if not api_key:
             raise ValueError("api_key cannot be empty")
 
-        if "max_search_results" in kwargs and kwargs["max_search_results"] <= 0:
-            raise ValueError("max_search_results must be greater than 0")
-        if "max_depth" in kwargs and kwargs["max_depth"] <= 0:
-            raise ValueError("max_depth must be greater than 0")
-        if "timeout" in kwargs and kwargs["timeout"] <= 0:
-            raise ValueError("timeout must be greater than 0")
-        if "cache_ttl" in kwargs and kwargs["cache_ttl"] < 0:
-            raise ValueError("cache_ttl must be non-negative")
+        if "max_search_results" in kwargs:
+            if not isinstance(kwargs["max_search_results"], int):
+                raise TypeError(
+                    f"max_search_results must be an integer, got {type(kwargs['max_search_results']).__name__}"
+                )
+            if kwargs["max_search_results"] <= 0:
+                raise ValueError("max_search_results must be greater than 0")
+        if "max_depth" in kwargs:
+            if not isinstance(kwargs["max_depth"], int):
+                raise TypeError(
+                    f"max_depth must be an integer, got {type(kwargs['max_depth']).__name__}"
+                )
+            if kwargs["max_depth"] <= 0:
+                raise ValueError("max_depth must be greater than 0")
+        if "timeout" in kwargs:
+            if not isinstance(kwargs["timeout"], int):
+                raise TypeError(
+                    f"timeout must be an integer, got {type(kwargs['timeout']).__name__}"
+                )
+            if kwargs["timeout"] <= 0:
+                raise ValueError("timeout must be greater than 0")
+        if "cache_ttl" in kwargs:
+            if not isinstance(kwargs["cache_ttl"], int):
+                raise TypeError(
+                    f"cache_ttl must be an integer, got {type(kwargs['cache_ttl']).__name__}"
+                )
+            if kwargs["cache_ttl"] < 0:
+                raise ValueError("cache_ttl must be non-negative")
 
         return cls(api_key=api_key, **kwargs)
