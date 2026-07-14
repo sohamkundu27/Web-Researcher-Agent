@@ -2,6 +2,7 @@
 
 import os
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass
@@ -71,7 +72,7 @@ class ResearchConfig:
         )
 
     @classmethod
-    def with_api_key(cls, api_key: str, **kwargs) -> "ResearchConfig":
+    def with_api_key(cls, api_key: str, **kwargs: Any) -> "ResearchConfig":
         """Create configuration with explicit API key."""
         if not api_key:
             raise ValueError("api_key cannot be empty")
