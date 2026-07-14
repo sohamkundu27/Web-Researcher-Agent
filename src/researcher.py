@@ -65,7 +65,19 @@ class WebResearcher:
     """Web researcher that conducts research using Claude AI."""
 
     def __init__(self, config: ResearchConfig):
-        """Initialize researcher with configuration."""
+        """Initialize researcher with configuration.
+
+        Args:
+            config: ResearchConfig instance containing API key, model, and operational parameters.
+
+        Attributes:
+            config: ResearchConfig instance for accessing API key, model, and settings.
+            client: Anthropic API client for making requests to Claude.
+            cache: ContentCache instance for caching fetched URLs and summaries. Created only if
+                   config.cache_enabled is True; otherwise None.
+            sources: List of URLs that have been successfully processed during research.
+            research_history: List of research results from all completed research() calls.
+        """
         self.config: ResearchConfig = config
         self.client: Anthropic = Anthropic()
         self.cache: Optional[ContentCache] = ContentCache(ttl=config.cache_ttl) if config.cache_enabled else None
