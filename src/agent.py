@@ -24,7 +24,7 @@ class ResearchAgent:
             api_key: Anthropic API key. If not provided, loads from ANTHROPIC_API_KEY env var.
             model: Claude model to use for research (default: claude-3-5-sonnet-20241022).
             max_search_results: Maximum number of search results to fetch per query (default: 10).
-            max_depth: Maximum depth for recursive research queries (default: 3).
+            max_depth: Reserved for future use (default: 3).
             **kwargs: Additional arguments passed to ResearchConfig (e.g., timeout, cache_ttl).
         """
         if api_key:
