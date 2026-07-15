@@ -90,6 +90,33 @@ class TestContentCache:
         cache.set("key5", [])
         assert cache.get("key5") == []
 
+    def test_cache_ttl_boundary_exact(self):
+        """Test cache respects exact TTL boundary by directly setting expiration times."""
+        from datetime import datetime, timedelta
+
+        cache = ContentCache(ttl=10)
+        now = datetime.now()
+
+        # Test 1: Item that expires in the future should be accessible
+        future_expires = now + timedelta(seconds=10)
+        cache.cache["future_key"] = {"value": "future_value", "expires": future_expires}
+        assert cache.get("future_key") == "future_value"
+
+        # Test 2: Item that expired just now should not be accessible
+        past_expires = now - timedelta(seconds=0.001)
+        cache.cache["past_key"] = {"value": "past_value", "expires": past_expires}
+        result = cache.get("past_key")
+        assert result is None, "Item should be expired when expiration time is in the past"
+        assert "past_key" not in cache.cache, "Expired item should be removed from cache dict"
+
+        # Test 3: Item that expires exactly at now should not be accessible
+        # (comparison uses < not <=, so at equality, item is expired)
+        exact_expires = now
+        cache.cache["exact_key"] = {"value": "exact_value", "expires": exact_expires}
+        result = cache.get("exact_key")
+        assert result is None, "Item should be expired when expiration time equals now"
+        assert "exact_key" not in cache.cache, "Expired item should be removed from cache"
+
 
 class TestUtilityFunctions:
     """Test utility functions."""
