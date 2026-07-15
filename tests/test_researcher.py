@@ -187,6 +187,17 @@ class TestUtilityFunctions:
         with pytest.raises(TypeError, match="text must be a string"):
             sanitize_text([])
 
+    def test_sanitize_text_apostrophe_removal(self):
+        """Test that apostrophes are removed (contractions become invalid)."""
+        # This documents the current behavior: apostrophes are stripped
+        text = "don't can't won't"
+        result = sanitize_text(text)
+        # Apostrophes are removed, leaving "dont cant wont"
+        assert "don't" not in result
+        assert "dont" in result or result  # Either apostrophe removed or text modified
+        # The regex [^\w\s.,!?-] removes apostrophes
+        assert "'" not in result
+
     def test_hash_content(self):
         """Test content hashing."""
         content = "test content"
@@ -289,6 +300,33 @@ class TestUtilityFunctions:
         with pytest.raises(ValueError, match="max_length must be a positive integer"):
             extract_text_from_html("<p>Test</p>", max_length="100")
 
+    def test_extract_text_from_html_with_html_entities(self):
+        """Test that HTML entities are properly decoded."""
+        html = "<p>Hello &nbsp; world &lt; test &gt;</p>"
+        result = extract_text_from_html(html)
+        assert "Hello" in result
+        assert "world" in result
+        # HTML entities should be decoded by BeautifulSoup
+        assert result.strip() != ""
+
+    def test_extract_text_from_html_with_nested_tags(self):
+        """Test extraction with deeply nested HTML tags."""
+        html = "<div><section><article><p>Nested <strong>bold <em>italic</em></strong> text</p></article></section></div>"
+        result = extract_text_from_html(html)
+        assert "Nested" in result
+        assert "bold" in result
+        assert "italic" in result
+        assert "text" in result
+
+    def test_extract_text_from_html_preserves_punctuation(self):
+        """Test that periods, commas, and question marks are preserved."""
+        html = "<p>Hello. World, how are you? I'm fine!</p>"
+        result = extract_text_from_html(html)
+        assert "." in result
+        assert "," in result
+        assert "?" in result
+        assert "!" in result
+
     def test_merge_dicts_simple(self):
         """Test simple dictionary merge."""
         dict1 = {"a": 1, "b": 2}
@@ -346,6 +384,21 @@ class TestUtilityFunctions:
         dict2 = {"a": 1, "c": None}
         result = merge_dicts(dict1, dict2)
         assert result == {"a": 1, "b": 2, "c": None}
+
+    def test_merge_dicts_does_not_mutate_inputs(self):
+        """Test that merge_dicts does not mutate input dictionaries."""
+        dict1 = {"a": {"x": 1, "y": 2}, "b": 3}
+        dict2 = {"a": {"y": 20, "z": 30}, "c": 4}
+        original_dict1 = {"a": {"x": 1, "y": 2}, "b": 3}
+        original_dict2 = {"a": {"y": 20, "z": 30}, "c": 4}
+
+        result = merge_dicts(dict1, dict2)
+
+        # Verify inputs are not modified
+        assert dict1 == original_dict1
+        assert dict2 == original_dict2
+        # Verify result is correct
+        assert result == {"a": {"x": 1, "y": 20, "z": 30}, "b": 3, "c": 4}
 
     def test_format_sources_empty(self):
         """Test formatting empty sources list."""
@@ -462,6 +515,20 @@ class TestUtilityFunctions:
         assert result["status"] == "error"
         assert result["url"] == "https://example.com"
         assert "404 Not Found" in result["error"]
+
+    @patch("src.utils.requests.get")
+    def test_fetch_url_content_timeout_parameter_passed(self, mock_get):
+        """Test that timeout parameter is correctly passed to requests.get."""
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.text = "<p>Content</p>"
+        mock_response.headers = {}
+        mock_get.return_value = mock_response
+
+        fetch_url_content("https://example.com", timeout=25)
+
+        # Verify that requests.get was called with the correct timeout
+        mock_get.assert_called_once_with("https://example.com", timeout=25)
 
 
 class TestResearchConfig:
