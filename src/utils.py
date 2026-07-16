@@ -2,10 +2,31 @@
 
 import hashlib
 import re
-from typing import List, Dict, Any
+from typing import List, Dict, Any, TypedDict, Union
 from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
+
+
+class FetchUrlSuccess(TypedDict):
+    """Successful URL fetch response."""
+
+    status: str  # "success"
+    url: str
+    content: str
+    status_code: int
+    headers: Dict[str, Any]
+
+
+class FetchUrlError(TypedDict):
+    """Error URL fetch response."""
+
+    status: str  # "error"
+    url: str
+    error: str
+
+
+FetchUrlResult = Union[FetchUrlSuccess, FetchUrlError]
 
 
 def extract_domain(url: str) -> str:
@@ -59,7 +80,7 @@ def extract_text_from_html(html: str, max_length: int = 5000) -> str:
         return ""
 
 
-def fetch_url_content(url: str, timeout: int = 10) -> Dict[str, Any]:
+def fetch_url_content(url: str, timeout: int = 10) -> FetchUrlResult:
     """Fetch and parse content from URL.
 
     Retrieves the content of a URL using HTTP GET request and extracts
