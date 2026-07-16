@@ -801,6 +801,18 @@ def test_agent_summarize_with_mixed_results(mock_fetch):
     assert "Connection failed" in result["summaries"]["https://invalid.com"]["error"]
 
 
+def test_agent_summarize_empty_urls():
+    """Test summarizing empty URL list."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    result = agent.summarize([])
+
+    assert result["status"] == "success"
+    assert result["sources_count"] == 0
+    assert result["summaries"] == {}
+
+
 def test_agent_get_formatted_report_no_research():
     """Test getting formatted report when no research conducted."""
     from src.agent import ResearchAgent
