@@ -437,6 +437,31 @@ class TestUtilityFunctions:
         with pytest.raises(TypeError, match="sources must be a list"):
             format_sources({"url": "https://example.com"})
 
+    def test_format_sources_invalid_item_type_int(self):
+        """Test format_sources with integer item in list."""
+        with pytest.raises(TypeError, match="all sources must be strings.*index 0.*int"):
+            format_sources([123])
+
+    def test_format_sources_invalid_item_type_none(self):
+        """Test format_sources with None item in list."""
+        with pytest.raises(TypeError, match="all sources must be strings.*index 0.*NoneType"):
+            format_sources([None])
+
+    def test_format_sources_invalid_item_type_mixed(self):
+        """Test format_sources with mixed string and non-string items."""
+        with pytest.raises(TypeError, match="all sources must be strings.*index 1.*int"):
+            format_sources(["https://example.com", 456])
+
+    def test_format_sources_invalid_item_type_list(self):
+        """Test format_sources with list item in sources list."""
+        with pytest.raises(TypeError, match="all sources must be strings.*index 0.*list"):
+            format_sources([["https://example.com"]])
+
+    def test_format_sources_invalid_item_type_dict_in_list(self):
+        """Test format_sources with dict item in sources list."""
+        with pytest.raises(TypeError, match="all sources must be strings.*index 1.*dict"):
+            format_sources(["https://example.com", {"url": "https://test.com"}])
+
     def test_fetch_url_content_invalid_url_type_none(self):
         """Test fetch_url_content with None URL."""
         with pytest.raises(TypeError, match="url must be a string"):

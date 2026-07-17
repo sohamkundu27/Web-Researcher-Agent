@@ -166,6 +166,12 @@ def format_sources(sources: List[str]) -> str:
     if not sources:
         return ""
 
+    for i, source in enumerate(sources):
+        if not isinstance(source, str):
+            raise TypeError(
+                f"all sources must be strings, item at index {i} is {type(source).__name__}"
+            )
+
     formatted = "## Sources\n\n"
     for i, source in enumerate(sources, 1):
         formatted += f"{i}. [{extract_domain(source)}]({source})\n"
