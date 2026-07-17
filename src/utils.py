@@ -174,7 +174,21 @@ def format_sources(sources: List[str]) -> str:
 
 
 def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
-    """Deep merge two dictionaries."""
+    """Deep merge two dictionaries.
+
+    Recursively merges dict2 into dict1, combining nested dictionaries while
+    preserving all values. Non-dict values in dict2 overwrite values in dict1.
+    Input dictionaries are not modified.
+
+    Args:
+        dict1: The base dictionary to merge into
+        dict2: The dictionary whose values are merged into dict1
+
+    Returns:
+        A new dictionary with merged values, where dict2 values take precedence
+        in case of conflicts at the same key level. Nested dictionaries are
+        recursively merged rather than replaced.
+    """
     result = dict1.copy()
     for key, value in dict2.items():
         if key in result and isinstance(result[key], dict) and isinstance(value, dict):
