@@ -117,6 +117,41 @@ class TestContentCache:
         assert result is None, "Item should be expired when expiration time equals now"
         assert "exact_key" not in cache.cache, "Expired item should be removed from cache"
 
+    def test_cache_with_none_value(self):
+        """Test that cache correctly stores and retrieves None as a cached value."""
+        cache = ContentCache(ttl=60)
+
+        # Store None explicitly
+        cache.set("none_key", None)
+        result = cache.get("none_key")
+
+        # Verify None is retrieved correctly
+        assert result is None
+        # Verify the key is actually in the cache (not just a cache miss)
+        assert "none_key" in cache.cache
+
+    def test_cache_get_nonexistent_key(self):
+        """Test that get() returns None for keys that don't exist in cache."""
+        cache = ContentCache(ttl=60)
+        result = cache.get("nonexistent_key")
+        assert result is None
+        assert "nonexistent_key" not in cache.cache
+
+    def test_cache_update_key(self):
+        """Test that setting a key multiple times updates the value and expiration."""
+        cache = ContentCache(ttl=60)
+
+        # Set initial value
+        cache.set("key", "value1")
+        assert cache.get("key") == "value1"
+
+        # Update with new value
+        cache.set("key", "value2")
+        assert cache.get("key") == "value2"
+
+        # Verify only one entry exists
+        assert len(cache.cache) == 1
+
 
 class TestUtilityFunctions:
     """Test utility functions."""

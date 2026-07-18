@@ -40,7 +40,16 @@ class ContentCache:
         self.cache: Dict[str, CacheEntry] = {}
 
     def get(self, key: str) -> Optional[Any]:
-        """Retrieve item from cache if not expired."""
+        """Retrieve item from cache if not expired.
+
+        Args:
+            key: The cache key to retrieve.
+
+        Returns:
+            The cached value if the key exists and has not expired, None otherwise.
+            Expired items are automatically deleted from the cache dict when accessed.
+            Items expire when current time >= expiration time (uses strict < comparison).
+        """
         if key in self.cache:
             item = self.cache[key]
             if datetime.now() < item["expires"]:
@@ -50,14 +59,26 @@ class ContentCache:
         return None
 
     def set(self, key: str, value: Any) -> None:
-        """Store item in cache with expiration."""
+        """Store item in cache with expiration.
+
+        Args:
+            key: The cache key to store the value under.
+            value: The value to cache (any type, including falsy values).
+
+        Returns:
+            None. The item is added to the cache and will expire after ttl seconds.
+        """
         self.cache[key] = {
             "value": value,
             "expires": datetime.now() + timedelta(seconds=self.ttl),
         }
 
     def clear(self) -> None:
-        """Clear all cache entries."""
+        """Clear all cache entries.
+
+        Removes all cached items from the cache dict.
+        This is useful for resetting the cache state.
+        """
         self.cache.clear()
 
 
