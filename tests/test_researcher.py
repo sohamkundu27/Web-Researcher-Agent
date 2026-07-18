@@ -982,6 +982,65 @@ def test_agent_num_sources_clamping():
         mock_research.assert_called_once_with(topic="test query", num_sources=5)
 
 
+def test_agent_num_sources_zero():
+    """Test that num_sources=0 raises ValueError."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(ValueError, match="num_sources must be a positive integer"):
+        agent.research("test query", num_sources=0)
+
+
+def test_agent_num_sources_negative():
+    """Test that negative num_sources raises ValueError."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(ValueError, match="num_sources must be a positive integer"):
+        agent.research("test query", num_sources=-5)
+
+
+def test_agent_num_sources_float():
+    """Test that float num_sources raises ValueError."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(ValueError, match="num_sources must be a positive integer"):
+        agent.research("test query", num_sources=5.5)
+
+
+def test_agent_num_sources_boundary():
+    """Test that num_sources at boundary (equals max_search_results) works."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key", max_search_results=5)
+
+    with patch.object(agent.researcher, "research_topic") as mock_research:
+        mock_research.return_value = {"topic": "test", "status": "success"}
+
+        # Request exactly max_search_results
+        agent.research("test query", num_sources=5)
+
+        # Verify it was NOT clamped (should be 5, not less)
+        mock_research.assert_called_once_with(topic="test query", num_sources=5)
+
+
+def test_agent_num_sources_minimum():
+    """Test that num_sources=1 (minimum valid) works."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key", max_search_results=5)
+
+    with patch.object(agent.researcher, "research_topic") as mock_research:
+        mock_research.return_value = {"topic": "test", "status": "success"}
+
+        # Request minimum valid sources
+        agent.research("test query", num_sources=1)
+
+        # Verify it was passed as-is
+        mock_research.assert_called_once_with(topic="test query", num_sources=1)
+
+
 def test_agent_get_formatted_report_numbered_sources_correctly():
     """Test that successful sources are numbered sequentially (1, 2, 3) when there are mixed success/error findings."""
     from src.agent import ResearchAgent

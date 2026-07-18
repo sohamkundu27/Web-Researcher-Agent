@@ -51,7 +51,7 @@ class ResearchAgent:
 
         Args:
             topic: The topic to research
-            num_sources: Number of sources to fetch (default: 5)
+            num_sources: Number of sources to fetch (default: 5). Must be a positive integer.
 
         Returns:
             Dictionary containing research results with:
@@ -61,7 +61,13 @@ class ResearchAgent:
             - analysis: Comprehensive analysis of findings
             - sources: List of URLs used
             - timestamp: When research was conducted
+
+        Raises:
+            ValueError: If num_sources is not a positive integer
         """
+        if not isinstance(num_sources, int) or num_sources <= 0:
+            raise ValueError("num_sources must be a positive integer")
+
         if num_sources > self.config.max_search_results:
             num_sources = self.config.max_search_results
 
