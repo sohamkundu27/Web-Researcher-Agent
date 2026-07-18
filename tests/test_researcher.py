@@ -497,6 +497,16 @@ class TestUtilityFunctions:
         with pytest.raises(TypeError, match="all sources must be strings.*index 1.*dict"):
             format_sources(["https://example.com", {"url": "https://test.com"}])
 
+    def test_format_sources_with_empty_string_item(self):
+        """Test format_sources with empty string in sources list."""
+        # Empty string is accepted but produces invalid markdown link []()
+        result = format_sources(["https://example.com", ""])
+        assert "## Sources" in result
+        assert "example.com" in result
+        # Verify empty string creates an empty link
+        assert "[]" in result
+        assert "()" in result
+
     def test_fetch_url_content_invalid_url_type_none(self):
         """Test fetch_url_content with None URL."""
         with pytest.raises(TypeError, match="url must be a string"):
