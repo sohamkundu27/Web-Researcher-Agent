@@ -2,7 +2,7 @@
 
 import hashlib
 import re
-from typing import List, Dict, Any, TypedDict, Union
+from typing import List, Dict, Any, TypedDict, Union, Literal
 from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 class FetchUrlSuccess(TypedDict):
     """Successful URL fetch response."""
 
-    status: str  # "success"
+    status: Literal["success"]
     url: str
     content: str
     status_code: int
@@ -21,7 +21,7 @@ class FetchUrlSuccess(TypedDict):
 class FetchUrlError(TypedDict):
     """Error URL fetch response."""
 
-    status: str  # "error"
+    status: Literal["error"]
     url: str
     error: str
 
