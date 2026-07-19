@@ -143,7 +143,26 @@ Only return the JSON list, no other text."""
         self,
         url: str,
     ) -> Dict[str, Any]:
-        """Fetch URL content and summarize using Claude."""
+        """Fetch URL content and generate a summary using Claude.
+
+        Validates the URL, fetches its content, extracts clean text, and
+        generates a concise summary. Results are cached if caching is enabled.
+        The URL is added to the sources list on successful fetch.
+
+        Args:
+            url: The URL to fetch and summarize (must be a valid HTTP(S) URL).
+
+        Returns:
+            On success (status == "success"):
+                - url: The requested URL
+                - status: "success"
+                - summary: Concise summary of the URL content
+                - content_preview: First 500 characters of extracted content
+            On error, returns a dict with:
+                - url: The requested URL
+                - error: Error message describing what went wrong
+                - status: Not included for invalid URLs
+        """
         if not is_valid_url(url):
             return {"error": f"Invalid URL: {url}", "url": url}
 
