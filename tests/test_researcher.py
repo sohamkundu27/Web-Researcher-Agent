@@ -152,6 +152,28 @@ class TestContentCache:
         # Verify only one entry exists
         assert len(cache.cache) == 1
 
+    def test_cache_set_ttl_calculation(self):
+        """Test that set() correctly calculates expiration time based on TTL."""
+        from datetime import datetime, timedelta
+
+        cache = ContentCache(ttl=10)
+
+        before = datetime.now()
+        cache.set("key1", "value1")
+        after = datetime.now()
+
+        # Get the expiration time from the cache
+        entry = cache.cache["key1"]
+        expires = entry["expires"]
+
+        # Verify that expiration time is approximately now + ttl seconds
+        # Account for the time elapsed between capturing before and after
+        expected_expires_min = before + timedelta(seconds=10)
+        expected_expires_max = after + timedelta(seconds=10)
+
+        assert expected_expires_min <= expires <= expected_expires_max, \
+            f"Expiration time {expires} should be between {expected_expires_min} and {expected_expires_max}"
+
 
 class TestUtilityFunctions:
     """Test utility functions."""
