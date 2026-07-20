@@ -1,14 +1,14 @@
 # Web-Researcher-Agent
 
-A sophisticated AI-powered web research agent that can autonomously browse the web, gather information, analyze content, and provide comprehensive research summaries.
+A sophisticated AI-powered research agent that generates research URLs using Claude AI, fetches content, and provides comprehensive analysis and summaries.
 
 ## Features
 
-- 🔍 **Autonomous Web Research** - Browse and research topics automatically
+- 🔍 **AI-Powered URL Generation** - Generate relevant research URLs using Claude's knowledge
 - 📊 **Content Analysis** - Extract and summarize key information from web pages
-- 🤖 **AI-Powered** - Uses Claude AI for intelligent research and analysis
+- 🤖 **Intelligent Research** - Uses Claude AI for intelligent content analysis
 - 📝 **Structured Reports** - Generate comprehensive research reports
-- 🔗 **Link Following** - Navigate multiple pages for deep research
+- 🔗 **Multi-Source Research** - Fetch and analyze content from multiple URLs
 - 💾 **Result Caching** - Optimize API calls with intelligent caching
 
 ## Project Structure
