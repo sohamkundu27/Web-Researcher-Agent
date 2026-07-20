@@ -155,7 +155,19 @@ def chunk_text(text: str, chunk_size: int = 1000, overlap: int = 100) -> List[st
 
 
 def hash_content(content: str) -> str:
-    """Generate hash of content for caching."""
+    """Generate hash of content for caching.
+
+    Args:
+        content: The content to hash (must be a string)
+
+    Returns:
+        A 64-character hexadecimal SHA256 hash of the content
+
+    Raises:
+        TypeError: If content is not a string
+    """
+    if not isinstance(content, str):
+        raise TypeError(f"content must be a string, got {type(content).__name__}")
     return hashlib.sha256(content.encode()).hexdigest()
 
 

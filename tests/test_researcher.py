@@ -241,6 +241,32 @@ class TestUtilityFunctions:
         assert hash1 == hash2
         assert len(hash1) == 64  # SHA256 hash length
 
+    def test_hash_content_invalid_type_none(self):
+        """Test hash_content with None."""
+        with pytest.raises(TypeError, match="content must be a string"):
+            hash_content(None)
+
+    def test_hash_content_invalid_type_int(self):
+        """Test hash_content with integer."""
+        with pytest.raises(TypeError, match="content must be a string"):
+            hash_content(123)
+
+    def test_hash_content_invalid_type_list(self):
+        """Test hash_content with list."""
+        with pytest.raises(TypeError, match="content must be a string"):
+            hash_content([])
+
+    def test_hash_content_invalid_type_dict(self):
+        """Test hash_content with dict."""
+        with pytest.raises(TypeError, match="content must be a string"):
+            hash_content({})
+
+    def test_hash_content_empty_string(self):
+        """Test hash_content with empty string."""
+        result = hash_content("")
+        assert isinstance(result, str)
+        assert len(result) == 64  # SHA256 hash length
+
     def test_chunk_text(self):
         """Test text chunking."""
         text = "a" * 2500
