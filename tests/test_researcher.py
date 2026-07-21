@@ -1158,3 +1158,43 @@ def test_agent_get_formatted_report_numbered_sources_correctly():
     # Verify failed sources are not present
     assert "Failed to fetch" not in report
     assert "Connection timeout" not in report
+
+
+def test_agent_get_formatted_report_missing_finding_keys():
+    """Test that missing 'url' and 'summary' keys default to 'N/A' in findings."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    agent.last_research = {
+        "topic": "Test Topic",
+        "analysis": "Test analysis.",
+        "findings": [
+            {
+                "status": "success",
+                # Missing 'url' key - should show "N/A"
+                "summary": "First summary",
+            },
+            {
+                "status": "success",
+                "url": "https://second.com",
+                # Missing 'summary' key - should show "N/A"
+            },
+            {
+                "status": "success",
+                # Missing both 'url' and 'summary' keys
+            },
+        ],
+    }
+    agent.researcher.sources = []
+
+    report = agent.get_formatted_report()
+
+    # Verify that N/A appears for missing keys
+    assert "**URL:** N/A" in report
+    assert "**Summary:** N/A" in report
+    # Verify that sources are still numbered correctly
+    assert "### Source 1" in report
+    assert "### Source 2" in report
+    assert "### Source 3" in report
+    # Verify valid URL and summary are present
+    assert "https://second.com" in report
