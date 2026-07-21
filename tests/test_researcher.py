@@ -255,6 +255,18 @@ class TestUtilityFunctions:
         # The regex [^\w\s.,!?-] removes apostrophes
         assert "'" not in result
 
+    def test_sanitize_text_special_chars_with_spaces(self):
+        """Test that whitespace is normalized after removing special characters."""
+        # Special chars surrounded by spaces should not leave double spaces
+        result = sanitize_text("Hello @#$ world")
+        assert result == "Hello world"
+        # Adjacent special chars should be removed without leaving gaps
+        result = sanitize_text("Hello@#$world")
+        assert result == "Helloworld"
+        # Mixed punctuation and special chars
+        result = sanitize_text("Hello!?@#$world")
+        assert result == "Hello!?world"
+
     def test_hash_content(self):
         """Test content hashing."""
         content = "test content"
