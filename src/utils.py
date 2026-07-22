@@ -135,7 +135,25 @@ def fetch_url_content(url: str, timeout: int = 10) -> FetchUrlResult:
 
 
 def chunk_text(text: str, chunk_size: int = 1000, overlap: int = 100) -> List[str]:
-    """Split text into overlapping chunks."""
+    """Split text into overlapping chunks for batch processing.
+
+    Divides text into fixed-size chunks with optional overlap between consecutive chunks.
+    Overlapping regions preserve context across chunk boundaries. Empty chunks are filtered out.
+
+    Args:
+        text: The text to chunk (must be a string)
+        chunk_size: Size of each chunk in characters (default: 1000, must be positive)
+        overlap: Number of characters to overlap between consecutive chunks (default: 100,
+                 must be non-negative and less than chunk_size)
+
+    Returns:
+        A list of text chunks, each at most chunk_size characters. Empty chunks are excluded.
+
+    Raises:
+        TypeError: If text is not a string
+        ValueError: If chunk_size is not a positive integer, overlap is not a non-negative integer,
+                   or overlap is >= chunk_size
+    """
     if not isinstance(text, str):
         raise TypeError(f"text must be a string, got {type(text).__name__}")
     if not isinstance(chunk_size, int) or chunk_size <= 0:
