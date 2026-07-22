@@ -225,7 +225,15 @@ def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
         A new dictionary with merged values, where dict2 values take precedence
         in case of conflicts at the same key level. Nested dictionaries are
         recursively merged rather than replaced.
+
+    Raises:
+        TypeError: If dict1 or dict2 is not a dictionary
     """
+    if not isinstance(dict1, dict):
+        raise TypeError(f"dict1 must be a dictionary, got {type(dict1).__name__}")
+    if not isinstance(dict2, dict):
+        raise TypeError(f"dict2 must be a dictionary, got {type(dict2).__name__}")
+
     result = dict1.copy()
     for key, value in dict2.items():
         if key in result and isinstance(result[key], dict) and isinstance(value, dict):

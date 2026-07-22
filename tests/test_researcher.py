@@ -495,6 +495,46 @@ class TestUtilityFunctions:
         # Verify result is correct
         assert result == {"a": {"x": 1, "y": 20, "z": 30}, "b": 3, "c": 4}
 
+    def test_merge_dicts_invalid_dict1_type_none(self):
+        """Test merge_dicts with None as dict1."""
+        with pytest.raises(TypeError, match="dict1 must be a dictionary"):
+            merge_dicts(None, {"b": 2})
+
+    def test_merge_dicts_invalid_dict1_type_string(self):
+        """Test merge_dicts with string as dict1."""
+        with pytest.raises(TypeError, match="dict1 must be a dictionary"):
+            merge_dicts("not a dict", {"b": 2})
+
+    def test_merge_dicts_invalid_dict1_type_list(self):
+        """Test merge_dicts with list as dict1."""
+        with pytest.raises(TypeError, match="dict1 must be a dictionary"):
+            merge_dicts([1, 2, 3], {"b": 2})
+
+    def test_merge_dicts_invalid_dict1_type_int(self):
+        """Test merge_dicts with int as dict1."""
+        with pytest.raises(TypeError, match="dict1 must be a dictionary"):
+            merge_dicts(42, {"b": 2})
+
+    def test_merge_dicts_invalid_dict2_type_none(self):
+        """Test merge_dicts with None as dict2."""
+        with pytest.raises(TypeError, match="dict2 must be a dictionary"):
+            merge_dicts({"a": 1}, None)
+
+    def test_merge_dicts_invalid_dict2_type_string(self):
+        """Test merge_dicts with string as dict2."""
+        with pytest.raises(TypeError, match="dict2 must be a dictionary"):
+            merge_dicts({"a": 1}, "not a dict")
+
+    def test_merge_dicts_invalid_dict2_type_list(self):
+        """Test merge_dicts with list as dict2."""
+        with pytest.raises(TypeError, match="dict2 must be a dictionary"):
+            merge_dicts({"a": 1}, [1, 2, 3])
+
+    def test_merge_dicts_invalid_dict2_type_int(self):
+        """Test merge_dicts with int as dict2."""
+        with pytest.raises(TypeError, match="dict2 must be a dictionary"):
+            merge_dicts({"a": 1}, 42)
+
     def test_format_sources_empty(self):
         """Test formatting empty sources list."""
         result = format_sources([])
