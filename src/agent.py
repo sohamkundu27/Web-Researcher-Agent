@@ -1,10 +1,18 @@
 """Main agent for Web Researcher Agent."""
 
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, TypedDict
 
 from src.config import ResearchConfig
 from src.researcher import WebResearcher
 from src.utils import format_sources
+
+
+class SummarizeResult(TypedDict):
+    """Type definition for summarize method result."""
+
+    status: str
+    summaries: Dict[str, Dict[str, Any]]
+    sources_count: int
 
 
 class ResearchAgent:
@@ -79,7 +87,7 @@ class ResearchAgent:
         self.last_research = result
         return result
 
-    def summarize(self, urls: List[str]) -> Dict[str, Any]:
+    def summarize(self, urls: List[str]) -> SummarizeResult:
         """Summarize content from multiple URLs.
 
         Args:
