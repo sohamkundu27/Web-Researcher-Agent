@@ -422,6 +422,26 @@ class TestUtilityFunctions:
         assert "?" in result
         assert "!" in result
 
+    def test_extract_text_from_html_invalid_html_type_none(self):
+        """Test extract_text_from_html with None."""
+        with pytest.raises(TypeError, match="html must be a string"):
+            extract_text_from_html(None)
+
+    def test_extract_text_from_html_invalid_html_type_int(self):
+        """Test extract_text_from_html with integer."""
+        with pytest.raises(TypeError, match="html must be a string"):
+            extract_text_from_html(123)
+
+    def test_extract_text_from_html_invalid_html_type_list(self):
+        """Test extract_text_from_html with list."""
+        with pytest.raises(TypeError, match="html must be a string"):
+            extract_text_from_html([])
+
+    def test_extract_text_from_html_invalid_html_type_dict(self):
+        """Test extract_text_from_html with dict."""
+        with pytest.raises(TypeError, match="html must be a string"):
+            extract_text_from_html({})
+
     def test_merge_dicts_simple(self):
         """Test simple dictionary merge."""
         dict1 = {"a": 1, "b": 2}
