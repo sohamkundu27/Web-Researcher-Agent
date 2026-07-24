@@ -1258,3 +1258,33 @@ def test_agent_get_formatted_report_missing_finding_keys():
     assert "### Source 3" in report
     # Verify valid URL and summary are present
     assert "https://second.com" in report
+
+
+def test_agent_get_formatted_report_missing_analysis():
+    """Test that missing 'analysis' key defaults to 'No analysis available'."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    agent.last_research = {
+        "topic": "Test Topic",
+        # Missing "analysis" key - should default to "No analysis available"
+        "findings": [
+            {
+                "status": "success",
+                "url": "https://test.com",
+                "summary": "Test summary",
+            },
+        ],
+    }
+    agent.researcher.sources = ["https://test.com"]
+
+    report = agent.get_formatted_report()
+
+    # Verify that the default message appears when analysis is missing
+    assert "No analysis available" in report
+    # Verify other parts are still present
+    assert "# Research Report: Test Topic" in report
+    assert "## Analysis" in report
+    assert "## Findings" in report
+    assert "https://test.com" in report
+    assert "Test summary" in report
