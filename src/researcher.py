@@ -1,7 +1,7 @@
 """Web research functionality for Web Researcher Agent."""
 
 import json
-from typing import List, Dict, Any, Optional, TypedDict
+from typing import List, Dict, Any, Optional, TypedDict, Union
 from datetime import datetime, timedelta
 
 from anthropic import Anthropic
@@ -20,6 +20,54 @@ class CacheEntry(TypedDict):
 
     value: Any
     expires: datetime
+
+
+class SearchResult(TypedDict):
+    """Type definition for search result from search method."""
+
+    url: str
+    title: str
+
+
+class FetchAndSummarizeSuccess(TypedDict):
+    """Type definition for successful fetch_and_summarize result."""
+
+    url: str
+    status: str
+    summary: str
+    content_preview: str
+
+
+class FetchAndSummarizeError(TypedDict):
+    """Type definition for error fetch_and_summarize result."""
+
+    url: str
+    error: str
+
+
+FetchAndSummarizeResult = Union[FetchAndSummarizeSuccess, FetchAndSummarizeError]
+
+
+class ResearchTopicSuccess(TypedDict):
+    """Type definition for successful research_topic result."""
+
+    topic: str
+    status: str
+    findings: List[Dict[str, Any]]
+    analysis: str
+    sources: List[str]
+    timestamp: str
+
+
+class ResearchTopicError(TypedDict):
+    """Type definition for error research_topic result."""
+
+    topic: str
+    status: str
+    error: str
+
+
+ResearchTopicResult = Union[ResearchTopicSuccess, ResearchTopicError]
 
 
 class ContentCache:
@@ -109,7 +157,7 @@ class WebResearcher:
         self,
         query: str,
         num_results: int = 5,
-    ) -> List[Dict[str, str]]:
+    ) -> List[SearchResult]:
         """
         Perform web search using Claude's knowledge.
 
@@ -142,7 +190,7 @@ Only return the JSON list, no other text."""
     def fetch_and_summarize(
         self,
         url: str,
-    ) -> Dict[str, Any]:
+    ) -> FetchAndSummarizeResult:
         """Fetch URL content and generate a summary using Claude.
 
         Validates the URL, fetches its content, extracts clean text, and
@@ -236,7 +284,7 @@ Summary should be 2-3 sentences max."""
         self,
         topic: str,
         num_sources: int = 5,
-    ) -> Dict[str, Any]:
+    ) -> ResearchTopicResult:
         """Conduct comprehensive research on a topic.
 
         Args:
