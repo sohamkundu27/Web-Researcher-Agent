@@ -77,6 +77,13 @@ class ResearchConfig:
         if not api_key:
             raise ValueError("api_key cannot be empty")
 
+        if "model" in kwargs:
+            if not isinstance(kwargs["model"], str):
+                raise TypeError(
+                    f"model must be a string, got {type(kwargs['model']).__name__}"
+                )
+            if not kwargs["model"]:
+                raise ValueError("model cannot be empty")
         if "max_search_results" in kwargs:
             if not isinstance(kwargs["max_search_results"], int):
                 raise TypeError(
@@ -98,6 +105,11 @@ class ResearchConfig:
                 )
             if kwargs["timeout"] <= 0:
                 raise ValueError("timeout must be greater than 0")
+        if "cache_enabled" in kwargs:
+            if not isinstance(kwargs["cache_enabled"], bool):
+                raise TypeError(
+                    f"cache_enabled must be a boolean, got {type(kwargs['cache_enabled']).__name__}"
+                )
         if "cache_ttl" in kwargs:
             if not isinstance(kwargs["cache_ttl"], int):
                 raise TypeError(

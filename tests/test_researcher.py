@@ -816,6 +816,46 @@ class TestResearchConfig:
         with pytest.raises(TypeError, match="cache_ttl must be an integer"):
             ResearchConfig.with_api_key("test-key", cache_ttl=[3600])
 
+    def test_config_with_api_key_invalid_model_type(self):
+        """Test that non-string model raises TypeError."""
+        with pytest.raises(TypeError, match="model must be a string"):
+            ResearchConfig.with_api_key("test-key", model=123)
+
+        with pytest.raises(TypeError, match="model must be a string"):
+            ResearchConfig.with_api_key("test-key", model=["model"])
+
+        with pytest.raises(TypeError, match="model must be a string"):
+            ResearchConfig.with_api_key("test-key", model=None)
+
+    def test_config_with_api_key_empty_model(self):
+        """Test that empty model raises ValueError."""
+        with pytest.raises(ValueError, match="model cannot be empty"):
+            ResearchConfig.with_api_key("test-key", model="")
+
+    def test_config_with_api_key_invalid_cache_enabled_type(self):
+        """Test that non-boolean cache_enabled raises TypeError."""
+        with pytest.raises(TypeError, match="cache_enabled must be a boolean"):
+            ResearchConfig.with_api_key("test-key", cache_enabled="true")
+
+        with pytest.raises(TypeError, match="cache_enabled must be a boolean"):
+            ResearchConfig.with_api_key("test-key", cache_enabled=1)
+
+        with pytest.raises(TypeError, match="cache_enabled must be a boolean"):
+            ResearchConfig.with_api_key("test-key", cache_enabled=None)
+
+    def test_config_with_api_key_valid_model(self):
+        """Test that valid model is accepted."""
+        config = ResearchConfig.with_api_key("test-key", model="gpt-4")
+        assert config.model == "gpt-4"
+
+    def test_config_with_api_key_valid_cache_enabled(self):
+        """Test that valid cache_enabled is accepted."""
+        config1 = ResearchConfig.with_api_key("test-key", cache_enabled=True)
+        assert config1.cache_enabled is True
+
+        config2 = ResearchConfig.with_api_key("test-key", cache_enabled=False)
+        assert config2.cache_enabled is False
+
     @patch.dict(os.environ, {}, clear=True)
     def test_config_from_env_missing_api_key(self):
         """Test that missing ANTHROPIC_API_KEY raises ValueError."""
