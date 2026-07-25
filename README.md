@@ -99,13 +99,17 @@ Main agent class for conducting research.
 
 **Constructor:**
 
-- `ResearchAgent(api_key: Optional[str] = None, model: str = "claude-3-5-sonnet-20241022", max_search_results: int = 10, max_depth: int = 3)`
+- `ResearchAgent(api_key: Optional[str] = None, model: str = "claude-3-5-sonnet-20241022", max_search_results: int = 10, max_depth: int = 3, **kwargs)`
 
 **Constructor Parameters:**
 - `api_key`: Anthropic API key. If not provided, loads from ANTHROPIC_API_KEY environment variable.
 - `model`: Claude model to use (default: claude-3-5-sonnet-20241022)
 - `max_search_results`: Maximum number of search results to fetch per query (default: 10)
 - `max_depth`: Reserved for future use (default: 3)
+- `**kwargs`: Additional configuration options passed to ResearchConfig:
+  - `timeout`: Request timeout in seconds (default: 30)
+  - `cache_enabled`: Enable result caching (default: True)
+  - `cache_ttl`: Cache time-to-live in seconds (default: 3600)
 
 **Methods:**
 
