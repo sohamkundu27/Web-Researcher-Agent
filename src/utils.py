@@ -30,7 +30,20 @@ FetchUrlResult = Union[FetchUrlSuccess, FetchUrlError]
 
 
 def extract_domain(url: str) -> str:
-    """Extract domain from URL."""
+    """Extract domain from URL.
+
+    Parses the URL and returns the network location (domain/host) component.
+
+    Args:
+        url: The URL to extract the domain from (must be a string).
+
+    Returns:
+        The domain/host portion of the URL (e.g., "www.example.com" from
+        "https://www.example.com/path").
+
+    Raises:
+        TypeError: If url is not a string.
+    """
     if not isinstance(url, str):
         raise TypeError(f"url must be a string, got {type(url).__name__}")
     parsed = urlparse(url)
@@ -38,7 +51,17 @@ def extract_domain(url: str) -> str:
 
 
 def is_valid_url(url: str) -> bool:
-    """Validate if string is a valid URL."""
+    """Validate if string is a valid URL.
+
+    Checks if the provided value is a string and matches the HTTP(S) URL pattern
+    (must start with http:// or https://).
+
+    Args:
+        url: The value to validate as a URL.
+
+    Returns:
+        True if url is a string starting with http:// or https://, False otherwise.
+    """
     if not isinstance(url, str):
         return False
     url_pattern = r"^https?://"
@@ -46,7 +69,21 @@ def is_valid_url(url: str) -> bool:
 
 
 def sanitize_text(text: str) -> str:
-    """Clean and normalize text content."""
+    """Clean and normalize text content.
+
+    Normalizes whitespace, removes special characters (keeping only word characters,
+    spaces, and common punctuation), and trims leading/trailing whitespace.
+
+    Args:
+        text: The text to sanitize (must be a string).
+
+    Returns:
+        The cleaned text with normalized whitespace and special characters removed.
+        Allowed punctuation includes: . , ! ? -
+
+    Raises:
+        TypeError: If text is not a string.
+    """
     if not isinstance(text, str):
         raise TypeError(f"text must be a string, got {type(text).__name__}")
     text = " ".join(text.split())
@@ -56,7 +93,24 @@ def sanitize_text(text: str) -> str:
 
 
 def extract_text_from_html(html: str, max_length: int = 5000) -> str:
-    """Extract clean text from HTML content."""
+    """Extract clean text from HTML content.
+
+    Parses HTML using BeautifulSoup, removes script and style tags, extracts
+    plain text, and applies text sanitization.
+
+    Args:
+        html: The HTML content to extract text from (must be a string).
+        max_length: Maximum length of returned text in characters (default: 5000,
+                    must be a positive integer).
+
+    Returns:
+        Sanitized plain text extracted from the HTML, truncated to max_length
+        characters. Returns empty string if extraction fails.
+
+    Raises:
+        TypeError: If html is not a string or max_length is not an integer.
+        ValueError: If max_length is not a positive integer.
+    """
     if not isinstance(html, str):
         raise TypeError(f"html must be a string, got {type(html).__name__}")
     if not isinstance(max_length, int) or max_length <= 0:
@@ -193,7 +247,22 @@ def hash_content(content: str) -> str:
 
 
 def format_sources(sources: List[str]) -> str:
-    """Format sources list as markdown."""
+    """Format sources list as markdown.
+
+    Converts a list of URLs into a markdown formatted "Sources" section with
+    numbered links using the domain as the link text.
+
+    Args:
+        sources: List of URLs to format (all items must be strings).
+
+    Returns:
+        Markdown formatted sources section with header and numbered links.
+        Returns empty string if sources list is empty.
+        Format: "## Sources\n\n1. [domain](url)\n2. [domain](url)\n..."
+
+    Raises:
+        TypeError: If sources is not a list, or any item in sources is not a string.
+    """
     if not isinstance(sources, list):
         raise TypeError(f"sources must be a list, got {type(sources).__name__}")
     if not sources:

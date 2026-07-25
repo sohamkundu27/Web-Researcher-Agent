@@ -120,7 +120,21 @@ class ResearchAgent:
         self.last_research = None
 
     def get_formatted_report(self) -> str:
-        """Get formatted research report."""
+        """Get formatted research report.
+
+        Generates a markdown-formatted research report from the last research conducted.
+        Includes the research topic, comprehensive analysis, findings from each source
+        with URLs and summaries, and a formatted sources section.
+
+        Returns:
+            A markdown-formatted research report string. If no research has been
+            conducted yet, returns "No research conducted yet.".
+            Report format includes:
+            - Level 1 header with topic
+            - Analysis section
+            - Findings section with sources
+            - Formatted sources list
+        """
         if not self.last_research:
             return "No research conducted yet."
 
