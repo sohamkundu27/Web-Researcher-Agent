@@ -437,6 +437,16 @@ class TestUtilityFunctions:
         with pytest.raises(TypeError, match="html must be a string"):
             extract_text_from_html({})
 
+    def test_extract_text_from_html_invalid_max_length_float(self):
+        """Test extract_text_from_html with float max_length."""
+        with pytest.raises(ValueError, match="max_length must be a positive integer"):
+            extract_text_from_html("<p>Test</p>", max_length=100.5)
+
+    def test_extract_text_from_html_invalid_max_length_none(self):
+        """Test extract_text_from_html with None max_length."""
+        with pytest.raises(ValueError, match="max_length must be a positive integer"):
+            extract_text_from_html("<p>Test</p>", max_length=None)
+
     def test_merge_dicts_simple(self):
         """Test simple dictionary merge."""
         dict1 = {"a": 1, "b": 2}
@@ -661,6 +671,16 @@ class TestUtilityFunctions:
         """Test fetch_url_content with negative timeout."""
         with pytest.raises(ValueError, match="timeout must be a positive integer"):
             fetch_url_content("https://example.com", timeout=-5)
+
+    def test_fetch_url_content_invalid_timeout_float(self):
+        """Test fetch_url_content with float timeout."""
+        with pytest.raises(ValueError, match="timeout must be a positive integer"):
+            fetch_url_content("https://example.com", timeout=10.5)
+
+    def test_fetch_url_content_invalid_timeout_none(self):
+        """Test fetch_url_content with None timeout."""
+        with pytest.raises(ValueError, match="timeout must be a positive integer"):
+            fetch_url_content("https://example.com", timeout=None)
 
     @patch("src.utils.requests.get")
     def test_fetch_url_content_success(self, mock_get):
