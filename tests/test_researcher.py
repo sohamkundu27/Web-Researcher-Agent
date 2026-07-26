@@ -118,17 +118,12 @@ class TestContentCache:
         assert "exact_key" not in cache.cache, "Expired item should be removed from cache"
 
     def test_cache_with_none_value(self):
-        """Test that cache correctly stores and retrieves None as a cached value."""
+        """Test that cache rejects None values (reserved for cache-miss semantics)."""
         cache = ContentCache(ttl=60)
 
-        # Store None explicitly
-        cache.set("none_key", None)
-        result = cache.get("none_key")
-
-        # Verify None is retrieved correctly
-        assert result is None
-        # Verify the key is actually in the cache (not just a cache miss)
-        assert "none_key" in cache.cache
+        # Caching None should raise ValueError because None is the cache-miss sentinel
+        with pytest.raises(ValueError, match="Cannot cache None values"):
+            cache.set("none_key", None)
 
     def test_cache_get_nonexistent_key(self):
         """Test that get() returns None for keys that don't exist in cache."""

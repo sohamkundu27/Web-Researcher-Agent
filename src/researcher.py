@@ -111,11 +111,16 @@ class ContentCache:
 
         Args:
             key: The cache key to store the value under.
-            value: The value to cache (any type, including falsy values).
+            value: The value to cache (any type except None; falsy values like 0, False, "" are OK).
+
+        Raises:
+            ValueError: If value is None (None is reserved as cache-miss sentinel).
 
         Returns:
             None. The item is added to the cache and will expire after ttl seconds.
         """
+        if value is None:
+            raise ValueError("Cannot cache None values; None is reserved for cache-miss semantics")
         self.cache[key] = {
             "value": value,
             "expires": datetime.now() + timedelta(seconds=self.ttl),
