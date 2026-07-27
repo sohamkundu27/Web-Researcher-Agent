@@ -7,7 +7,23 @@ from typing import Any
 
 @dataclass
 class ResearchConfig:
-    """Configuration settings for the research agent."""
+    """Configuration settings for the research agent.
+
+    Attributes:
+        api_key: Anthropic API key for authenticating Claude API requests (required).
+        model: Claude model identifier to use for research tasks
+            (default: "claude-3-5-sonnet-20241022").
+        max_search_results: Maximum number of search results to fetch per query.
+            Must be greater than 0 (default: 10).
+        max_depth: Reserved for future use to control research recursion depth.
+            Must be greater than 0 (default: 3).
+        timeout: Request timeout in seconds for URL fetching. Must be greater than 0
+            (default: 30).
+        cache_enabled: Whether to enable caching of fetched URLs and summaries
+            (default: True).
+        cache_ttl: Cache time-to-live in seconds. Must be non-negative.
+            Set to 0 for no expiration (default: 3600, which is 1 hour).
+    """
 
     api_key: str
     model: str = "claude-3-5-sonnet-20241022"
