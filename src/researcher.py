@@ -1,7 +1,7 @@
 """Web research functionality for Web Researcher Agent."""
 
 import json
-from typing import List, Dict, Any, Optional, TypedDict, Union
+from typing import List, Dict, Any, Optional, TypedDict, Union, cast
 from datetime import datetime, timedelta
 
 from anthropic import Anthropic
@@ -188,7 +188,7 @@ Only return the JSON list, no other text."""
             content = response.content[0].text
             # Parse JSON from response
             results = json.loads(content)
-            return results if isinstance(results, list) else []
+            return cast(List[SearchResult], results) if isinstance(results, list) else []
         except (json.JSONDecodeError, IndexError, TypeError):
             return []
 
