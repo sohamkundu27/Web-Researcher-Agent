@@ -114,10 +114,19 @@ Main agent class for conducting research.
 **Methods:**
 
 - `research(topic: str, num_sources: int = 5) -> Dict` - Conduct research on a topic
+  - Returns: Dictionary with keys: `topic`, `status` ("success" or "error"), `findings` (list of summaries), `analysis`, `sources` (list of URLs), `timestamp`
+
 - `summarize(urls: List[str]) -> Dict` - Summarize content from multiple URLs
+  - Returns: Dictionary with keys: `status` ("success"), `summaries` (mapping of URL to summary result), `sources_count` (number of URLs)
+
 - `get_sources() -> List[str]` - Get list of sources used in the last research
+  - Returns: List of source URLs from the last research operation
+
 - `get_formatted_report() -> str` - Get formatted markdown research report
+  - Returns: Markdown-formatted research report. Returns "No research conducted yet." if no research has been done.
+
 - `clear_history() -> None` - Clear research history and cache
+  - Clears all research history, sources list, and cached results
 
 ## Development
 
