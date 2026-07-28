@@ -739,6 +739,63 @@ class TestUtilityFunctions:
 class TestResearchConfig:
     """Test ResearchConfig class."""
 
+    def test_config_direct_instantiation_valid(self):
+        """Test direct instantiation with valid values."""
+        config = ResearchConfig(api_key="test-key")
+        assert config.api_key == "test-key"
+        assert config.model == "claude-3-5-sonnet-20241022"
+        assert config.max_search_results == 10
+
+    def test_config_direct_instantiation_invalid_api_key_empty(self):
+        """Test direct instantiation with empty api_key raises ValueError."""
+        with pytest.raises(ValueError, match="api_key cannot be empty"):
+            ResearchConfig(api_key="")
+
+    def test_config_direct_instantiation_invalid_max_search_results(self):
+        """Test direct instantiation with invalid max_search_results raises ValueError."""
+        with pytest.raises(ValueError, match="max_search_results must be greater than 0"):
+            ResearchConfig(api_key="test-key", max_search_results=-1)
+
+    def test_config_direct_instantiation_invalid_max_depth(self):
+        """Test direct instantiation with invalid max_depth raises ValueError."""
+        with pytest.raises(ValueError, match="max_depth must be greater than 0"):
+            ResearchConfig(api_key="test-key", max_depth=0)
+
+    def test_config_direct_instantiation_invalid_timeout(self):
+        """Test direct instantiation with invalid timeout raises ValueError."""
+        with pytest.raises(ValueError, match="timeout must be greater than 0"):
+            ResearchConfig(api_key="test-key", timeout=-5)
+
+    def test_config_direct_instantiation_invalid_cache_ttl(self):
+        """Test direct instantiation with invalid cache_ttl raises ValueError."""
+        with pytest.raises(ValueError, match="cache_ttl must be non-negative"):
+            ResearchConfig(api_key="test-key", cache_ttl=-1)
+
+    def test_config_direct_instantiation_invalid_model_type(self):
+        """Test direct instantiation with invalid model type raises TypeError."""
+        with pytest.raises(TypeError, match="model must be a string"):
+            ResearchConfig(api_key="test-key", model=123)
+
+    def test_config_direct_instantiation_invalid_max_search_results_type(self):
+        """Test direct instantiation with invalid max_search_results type raises TypeError."""
+        with pytest.raises(TypeError, match="max_search_results must be an integer"):
+            ResearchConfig(api_key="test-key", max_search_results="10")
+
+    def test_config_direct_instantiation_invalid_timeout_type(self):
+        """Test direct instantiation with invalid timeout type raises TypeError."""
+        with pytest.raises(TypeError, match="timeout must be an integer"):
+            ResearchConfig(api_key="test-key", timeout=10.5)
+
+    def test_config_direct_instantiation_invalid_cache_ttl_type(self):
+        """Test direct instantiation with invalid cache_ttl type raises TypeError."""
+        with pytest.raises(TypeError, match="cache_ttl must be an integer"):
+            ResearchConfig(api_key="test-key", cache_ttl="3600")
+
+    def test_config_direct_instantiation_invalid_cache_enabled_type(self):
+        """Test direct instantiation with invalid cache_enabled type raises TypeError."""
+        with pytest.raises(TypeError, match="cache_enabled must be a boolean"):
+            ResearchConfig(api_key="test-key", cache_enabled="true")
+
     def test_config_with_api_key(self):
         """Test creating config with explicit API key."""
         config = ResearchConfig.with_api_key("test-key")

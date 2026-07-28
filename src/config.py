@@ -33,6 +33,45 @@ class ResearchConfig:
     cache_enabled: bool = True
     cache_ttl: int = 3600  # 1 hour
 
+    def __post_init__(self) -> None:
+        """Validate all fields after initialization."""
+        if not self.api_key:
+            raise ValueError("api_key cannot be empty")
+        if not isinstance(self.model, str):
+            raise TypeError(
+                f"model must be a string, got {type(self.model).__name__}"
+            )
+        if not self.model:
+            raise ValueError("model cannot be empty")
+        if not isinstance(self.max_search_results, int):
+            raise TypeError(
+                f"max_search_results must be an integer, got {type(self.max_search_results).__name__}"
+            )
+        if self.max_search_results <= 0:
+            raise ValueError("max_search_results must be greater than 0")
+        if not isinstance(self.max_depth, int):
+            raise TypeError(
+                f"max_depth must be an integer, got {type(self.max_depth).__name__}"
+            )
+        if self.max_depth <= 0:
+            raise ValueError("max_depth must be greater than 0")
+        if not isinstance(self.timeout, int):
+            raise TypeError(
+                f"timeout must be an integer, got {type(self.timeout).__name__}"
+            )
+        if self.timeout <= 0:
+            raise ValueError("timeout must be greater than 0")
+        if not isinstance(self.cache_enabled, bool):
+            raise TypeError(
+                f"cache_enabled must be a boolean, got {type(self.cache_enabled).__name__}"
+            )
+        if not isinstance(self.cache_ttl, int):
+            raise TypeError(
+                f"cache_ttl must be an integer, got {type(self.cache_ttl).__name__}"
+            )
+        if self.cache_ttl < 0:
+            raise ValueError("cache_ttl must be non-negative")
+
     @classmethod
     def from_env(cls) -> "ResearchConfig":
         """Load configuration from environment variables."""
