@@ -262,6 +262,23 @@ class TestUtilityFunctions:
         result = sanitize_text("Hello!?@#$world")
         assert result == "Hello!?world"
 
+    def test_sanitize_text_preserves_numbers(self):
+        """Test that numbers are preserved in sanitized text."""
+        result = sanitize_text("Version 3.14.159 released")
+        assert "3" in result
+        assert "14" in result
+        assert "159" in result
+        assert result == "Version 3.14.159 released"
+
+    def test_sanitize_text_preserves_hyphens(self):
+        """Test that hyphens (allowed punctuation) are preserved."""
+        result = sanitize_text("well-known state-of-the-art test-case")
+        assert "well-known" in result
+        assert "state-of-the-art" in result
+        assert "test-case" in result
+        # Verify hyphens are preserved
+        assert result.count("-") == 5
+
     def test_hash_content(self):
         """Test content hashing."""
         content = "test content"
@@ -447,6 +464,21 @@ class TestUtilityFunctions:
         with pytest.raises(ValueError, match="max_length must be a positive integer"):
             extract_text_from_html("<p>Test</p>", max_length=None)
 
+    def test_extract_text_from_html_max_length_one(self):
+        """Test extract_text_from_html with max_length=1 (boundary edge case)."""
+        html = "<p>Hello world</p>"
+        result = extract_text_from_html(html, max_length=1)
+        assert len(result) == 1
+        assert result == "H"
+
+    def test_extract_text_from_html_max_length_exact(self):
+        """Test extract_text_from_html when text is exactly max_length characters."""
+        content = "a" * 50
+        html = f"<p>{content}</p>"
+        result = extract_text_from_html(html, max_length=50)
+        assert len(result) == 50
+        assert result == content
+
     def test_merge_dicts_simple(self):
         """Test simple dictionary merge."""
         dict1 = {"a": 1, "b": 2}
@@ -631,6 +663,27 @@ class TestUtilityFunctions:
         # Verify empty string creates an empty link
         assert "[]" in result
         assert "()" in result
+
+    def test_format_sources_with_query_parameters(self):
+        """Test format_sources with URLs containing query parameters."""
+        sources = ["https://example.com/page?query=test&sort=date"]
+        result = format_sources(sources)
+        assert "## Sources" in result
+        assert "example.com" in result
+        # URL with query params should be preserved in link
+        assert "https://example.com/page?query=test&sort=date" in result
+        assert "[example.com]" in result
+
+    def test_format_sources_with_fragments(self):
+        """Test format_sources with URLs containing fragments."""
+        sources = ["https://example.com/page#section-1", "https://test.org#top"]
+        result = format_sources(sources)
+        assert "## Sources" in result
+        assert "example.com" in result
+        assert "test.org" in result
+        # URLs with fragments should be preserved
+        assert "https://example.com/page#section-1" in result
+        assert "https://test.org#top" in result
 
     def test_fetch_url_content_invalid_url_type_none(self):
         """Test fetch_url_content with None URL."""
