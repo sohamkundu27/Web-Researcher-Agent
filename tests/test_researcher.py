@@ -1188,6 +1188,34 @@ def test_agent_summarize_empty_urls():
     assert result["summaries"] == {}
 
 
+@patch("src.researcher.WebResearcher.fetch_and_summarize")
+def test_agent_summarize_all_errors(mock_fetch):
+    """Test summarizing URLs when all requests fail."""
+    from src.agent import ResearchAgent
+
+    mock_fetch.side_effect = [
+        {"error": "Connection timeout", "url": "https://timeout.com"},
+        {"error": "Invalid URL", "url": "https://invalid.com"},
+        {"error": "404 Not Found", "url": "https://notfound.com"},
+    ]
+
+    agent = ResearchAgent(api_key="test-key")
+    urls = ["https://timeout.com", "https://invalid.com", "https://notfound.com"]
+    result = agent.summarize(urls)
+
+    assert result["status"] == "success"
+    assert result["sources_count"] == 3
+    assert len(result["summaries"]) == 3
+    # Verify all error results are captured
+    assert result["summaries"]["https://timeout.com"]["error"] == "Connection timeout"
+    assert result["summaries"]["https://invalid.com"]["error"] == "Invalid URL"
+    assert result["summaries"]["https://notfound.com"]["error"] == "404 Not Found"
+    # Verify no success status in any result
+    for url, summary_result in result["summaries"].items():
+        assert "status" not in summary_result or summary_result.get("status") != "success"
+        assert "error" in summary_result
+
+
 def test_agent_get_formatted_report_no_research():
     """Test getting formatted report when no research conducted."""
     from src.agent import ResearchAgent
