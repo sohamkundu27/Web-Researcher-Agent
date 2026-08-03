@@ -515,6 +515,14 @@ class TestUtilityFunctions:
         # Non-dict value should overwrite dict value
         assert result == {"a": "string", "b": 20}
 
+    def test_merge_dicts_with_list_values(self):
+        """Test merge_dicts when values are lists (should replace, not merge)."""
+        dict1 = {"a": [1, 2, 3], "b": ["x", "y"]}
+        dict2 = {"a": [4, 5], "c": ["z"]}
+        result = merge_dicts(dict1, dict2)
+        # Lists should be replaced, not merged
+        assert result == {"a": [4, 5], "b": ["x", "y"], "c": ["z"]}
+
     def test_merge_dicts_empty_dicts(self):
         """Test merge with empty dictionaries."""
         # Merge empty dict with non-empty
