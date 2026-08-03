@@ -1203,6 +1203,78 @@ def test_agent_summarize_empty_urls():
     assert result["summaries"] == {}
 
 
+def test_agent_summarize_invalid_type_none():
+    """Test summarize with None instead of list."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(TypeError, match="urls must be a list"):
+        agent.summarize(None)
+
+
+def test_agent_summarize_invalid_type_string():
+    """Test summarize with string instead of list."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(TypeError, match="urls must be a list"):
+        agent.summarize("https://example.com")
+
+
+def test_agent_summarize_invalid_type_dict():
+    """Test summarize with dict instead of list."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(TypeError, match="urls must be a list"):
+        agent.summarize({"url": "https://example.com"})
+
+
+def test_agent_summarize_invalid_type_int():
+    """Test summarize with int instead of list."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(TypeError, match="urls must be a list"):
+        agent.summarize(123)
+
+
+def test_agent_summarize_invalid_item_type_int():
+    """Test summarize with integer item in URL list."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(TypeError, match="all urls must be strings.*index 0.*int"):
+        agent.summarize([123])
+
+
+def test_agent_summarize_invalid_item_type_none():
+    """Test summarize with None item in URL list."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(TypeError, match="all urls must be strings.*index 0.*NoneType"):
+        agent.summarize([None])
+
+
+def test_agent_summarize_invalid_item_type_mixed():
+    """Test summarize with mixed string and non-string items."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(TypeError, match="all urls must be strings.*index 1.*int"):
+        agent.summarize(["https://example.com", 456])
+
+
+def test_agent_summarize_invalid_item_type_dict_in_list():
+    """Test summarize with dict item in URL list."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(TypeError, match="all urls must be strings.*index 0.*dict"):
+        agent.summarize([{"url": "https://example.com"}])
+
+
 @patch("src.researcher.WebResearcher.fetch_and_summarize")
 def test_agent_summarize_all_errors(mock_fetch):
     """Test summarizing URLs when all requests fail."""

@@ -91,14 +91,26 @@ class ResearchAgent:
         """Summarize content from multiple URLs.
 
         Args:
-            urls: List of URLs to summarize
+            urls: List of URLs to summarize (all items must be strings).
 
         Returns:
             Dictionary containing:
             - status: "success"
             - summaries: Dict mapping each URL to its summary result
             - sources_count: Number of URLs provided
+
+        Raises:
+            TypeError: If urls is not a list, or any item in urls is not a string.
         """
+        if not isinstance(urls, list):
+            raise TypeError(f"urls must be a list, got {type(urls).__name__}")
+
+        for i, url in enumerate(urls):
+            if not isinstance(url, str):
+                raise TypeError(
+                    f"all urls must be strings, item at index {i} is {type(url).__name__}"
+                )
+
         summaries = {}
         for url in urls:
             result = self.researcher.fetch_and_summarize(url)
