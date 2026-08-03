@@ -91,31 +91,38 @@ class TestContentCache:
         assert cache.get("key5") == []
 
     def test_cache_ttl_boundary_exact(self):
-        """Test cache respects exact TTL boundary by directly setting expiration times."""
+        """Test cache respects exact TTL boundary with mocked datetime for precise control."""
         from datetime import datetime, timedelta
+        from unittest.mock import patch
 
         cache = ContentCache(ttl=10)
-        now = datetime.now()
+        frozen_time = datetime(2026, 1, 1, 12, 0, 0)
 
         # Test 1: Item that expires in the future should be accessible
-        future_expires = now + timedelta(seconds=10)
+        future_expires = frozen_time + timedelta(seconds=10)
         cache.cache["future_key"] = {"value": "future_value", "expires": future_expires}
-        assert cache.get("future_key") == "future_value"
+        with patch("src.researcher.datetime") as mock_datetime:
+            mock_datetime.now.return_value = frozen_time
+            assert cache.get("future_key") == "future_value"
 
-        # Test 2: Item that expired just now should not be accessible
-        past_expires = now - timedelta(seconds=0.001)
+        # Test 2: Item that expired in the past should not be accessible
+        past_expires = frozen_time - timedelta(seconds=1)
         cache.cache["past_key"] = {"value": "past_value", "expires": past_expires}
-        result = cache.get("past_key")
-        assert result is None, "Item should be expired when expiration time is in the past"
-        assert "past_key" not in cache.cache, "Expired item should be removed from cache dict"
+        with patch("src.researcher.datetime") as mock_datetime:
+            mock_datetime.now.return_value = frozen_time
+            result = cache.get("past_key")
+            assert result is None, "Item should be expired when expiration time is in the past"
+            assert "past_key" not in cache.cache, "Expired item should be removed from cache dict"
 
-        # Test 3: Item that expires exactly at now should not be accessible
+        # Test 3: Item that expires exactly at current time should be expired
         # (comparison uses < not <=, so at equality, item is expired)
-        exact_expires = now
+        exact_expires = frozen_time
         cache.cache["exact_key"] = {"value": "exact_value", "expires": exact_expires}
-        result = cache.get("exact_key")
-        assert result is None, "Item should be expired when expiration time equals now"
-        assert "exact_key" not in cache.cache, "Expired item should be removed from cache"
+        with patch("src.researcher.datetime") as mock_datetime:
+            mock_datetime.now.return_value = frozen_time
+            result = cache.get("exact_key")
+            assert result is None, "Item should be expired when expiration time equals now"
+            assert "exact_key" not in cache.cache, "Expired item should be removed from cache"
 
     def test_cache_with_none_value(self):
         """Test that cache rejects None values (reserved for cache-miss semantics)."""
