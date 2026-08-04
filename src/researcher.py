@@ -164,11 +164,19 @@ class WebResearcher:
         query: str,
         num_results: int = 5,
     ) -> List[SearchResult]:
-        """
-        Perform web search using Claude's knowledge.
+        """Perform web search using Claude's knowledge.
 
-        Note: This uses Claude to generate search results based on its training data.
-        For real-time web search, you would integrate with a search API.
+        Generates relevant search results by prompting Claude to produce realistic URLs
+        based on its training data. Note: This uses Claude's knowledge rather than
+        real-time web search; for live results, integrate with a search API.
+
+        Args:
+            query: The search query string to find results for.
+            num_results: Number of search results to generate (default: 5).
+
+        Returns:
+            A list of SearchResult dicts, each containing 'url' and 'title' keys.
+            Returns an empty list if JSON parsing fails or no results could be generated.
         """
         prompt = f"""Generate {num_results} relevant URLs for the following search query:
 
