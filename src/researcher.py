@@ -43,6 +43,7 @@ class FetchAndSummarizeError(TypedDict):
 
     url: str
     error: str
+    status: str
 
 
 FetchAndSummarizeResult = Union[FetchAndSummarizeSuccess, FetchAndSummarizeError]
@@ -211,13 +212,13 @@ Only return the JSON list, no other text."""
                 - status: "success"
                 - summary: Concise summary of the URL content
                 - content_preview: First 500 characters of extracted content
-            On error, returns a dict with:
+            On error (status == "error"), returns a dict with:
                 - url: The requested URL
+                - status: "error"
                 - error: Error message describing what went wrong
-                - status: Not included for invalid URLs
         """
         if not is_valid_url(url):
-            return {"error": f"Invalid URL: {url}", "url": url}
+            return {"error": f"Invalid URL: {url}", "url": url, "status": "error"}
 
         # Check cache
         if self.cache:
@@ -233,7 +234,7 @@ Only return the JSON list, no other text."""
 
         content = fetch_result.get("content", "")
         if not content:
-            return {"error": "No content extracted", "url": url}
+            return {"error": "No content extracted", "url": url, "status": "error"}
 
         # Summarize content
         summary = self._summarize_content(content)
