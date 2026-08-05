@@ -114,7 +114,9 @@ Main agent class for conducting research.
 **Methods:**
 
 - `research(topic: str, num_sources: int = 5) -> Dict` - Conduct research on a topic
-  - Returns: Dictionary with keys: `topic`, `status` ("success" or "error"), `findings` (list of summaries), `analysis`, `sources` (list of URLs), `timestamp`
+  - Returns: Dictionary with `topic` and `status` ("success" or "error"). 
+    - On success: also includes `findings` (list of summaries), `analysis`, `sources` (list of URLs), `timestamp`
+    - On error: also includes `error` (error message)
 
 - `summarize(urls: List[str]) -> Dict` - Summarize content from multiple URLs
   - Returns: Dictionary with keys: `status` ("success"), `summaries` (mapping of URL to summary result), `sources_count` (number of URLs)
