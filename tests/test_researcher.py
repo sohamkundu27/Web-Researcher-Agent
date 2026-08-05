@@ -1111,6 +1111,66 @@ class TestWebResearcher:
         researcher.search("test query", num_results=5)
         mock_search.assert_called_once_with("test query", num_results=5)
 
+    @patch("src.researcher.fetch_url_content")
+    @patch("src.researcher.WebResearcher._summarize_content")
+    def test_fetch_and_summarize_caches_success(self, mock_summarize, mock_fetch, researcher):
+        """Test that successful fetch results are cached."""
+        mock_fetch.return_value = {
+            "status": "success",
+            "content": "Test content",
+            "url": "https://example.com",
+        }
+        mock_summarize.return_value = "Test summary"
+
+        url = "https://example.com"
+        result1 = researcher.fetch_and_summarize(url)
+
+        # Verify success was cached
+        assert result1["status"] == "success"
+        assert len(researcher.cache.cache) == 1
+
+        # Second call should return cached result without calling fetch/summarize
+        result2 = researcher.fetch_and_summarize(url)
+        assert result2 == result1
+        # Verify fetch and summarize were only called once (not twice)
+        assert mock_fetch.call_count == 1
+        assert mock_summarize.call_count == 1
+
+    @patch("src.researcher.fetch_url_content")
+    def test_fetch_and_summarize_does_not_cache_fetch_errors(self, mock_fetch, researcher):
+        """Test that fetch errors are NOT cached, allowing retries."""
+        mock_fetch.return_value = {
+            "status": "error",
+            "error": "Connection timeout",
+            "url": "https://example.com",
+        }
+
+        url = "https://example.com"
+        result1 = researcher.fetch_and_summarize(url)
+
+        # Verify error was returned but NOT cached
+        assert result1["status"] == "error"
+        assert len(researcher.cache.cache) == 0, "Error results should not be cached"
+
+        # Second call should try to fetch again (not return from cache)
+        result2 = researcher.fetch_and_summarize(url)
+        assert result2 == result1
+        # Verify fetch was called twice (once for each call)
+        assert mock_fetch.call_count == 2, "Should retry on error, not return cached error"
+
+    def test_fetch_and_summarize_does_not_cache_invalid_url(self, researcher):
+        """Test that invalid URL errors are NOT cached."""
+        invalid_url = "not a valid url"
+        result1 = researcher.fetch_and_summarize(invalid_url)
+
+        # Verify error was returned but NOT cached
+        assert result1["status"] == "error"
+        assert len(researcher.cache.cache) == 0, "Invalid URL errors should not be cached"
+
+        # Second call should validate again (not return from cache)
+        result2 = researcher.fetch_and_summarize(invalid_url)
+        assert result2 == result1
+
 
 def test_agent_initialization():
     """Test ResearchAgent initialization."""

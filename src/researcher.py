@@ -208,7 +208,8 @@ Only return the JSON list, no other text."""
         """Fetch URL content and generate a summary using Claude.
 
         Validates the URL, fetches its content, extracts clean text, and
-        generates a concise summary. Results are cached if caching is enabled.
+        generates a concise summary. Only successful results are cached if
+        caching is enabled; errors are not cached to allow retries.
         The URL is added to the sources list on successful fetch.
 
         Args:
