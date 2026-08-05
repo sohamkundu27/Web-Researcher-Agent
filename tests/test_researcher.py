@@ -1275,6 +1275,33 @@ def test_agent_summarize_invalid_item_type_dict_in_list():
         agent.summarize([{"url": "https://example.com"}])
 
 
+def test_agent_summarize_invalid_url_format_no_protocol():
+    """Test summarize with URL missing protocol."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(ValueError, match="all urls must be valid HTTP\\(S\\) URLs.*index 0.*invalid"):
+        agent.summarize(["example.com"])
+
+
+def test_agent_summarize_invalid_url_format_ftp():
+    """Test summarize with FTP URL (not HTTP/HTTPS)."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(ValueError, match="all urls must be valid HTTP\\(S\\) URLs.*index 0.*invalid"):
+        agent.summarize(["ftp://example.com"])
+
+
+def test_agent_summarize_invalid_url_format_mixed():
+    """Test summarize with mixed valid and invalid URLs."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(ValueError, match="all urls must be valid HTTP\\(S\\) URLs.*index 1.*invalid"):
+        agent.summarize(["https://example.com", "not a url", "https://test.com"])
+
+
 @patch("src.researcher.WebResearcher.fetch_and_summarize")
 def test_agent_summarize_all_errors(mock_fetch):
     """Test summarizing URLs when all requests fail."""

@@ -4,7 +4,7 @@ from typing import Dict, Any, List, Optional, TypedDict
 
 from src.config import ResearchConfig
 from src.researcher import WebResearcher
-from src.utils import format_sources
+from src.utils import format_sources, is_valid_url
 
 
 class SummarizeResult(TypedDict):
@@ -91,7 +91,7 @@ class ResearchAgent:
         """Summarize content from multiple URLs.
 
         Args:
-            urls: List of URLs to summarize (all items must be strings).
+            urls: List of URLs to summarize (all items must be strings and valid HTTP(S) URLs).
 
         Returns:
             Dictionary containing:
@@ -101,6 +101,7 @@ class ResearchAgent:
 
         Raises:
             TypeError: If urls is not a list, or any item in urls is not a string.
+            ValueError: If any URL is not a valid HTTP(S) URL.
         """
         if not isinstance(urls, list):
             raise TypeError(f"urls must be a list, got {type(urls).__name__}")
@@ -109,6 +110,10 @@ class ResearchAgent:
             if not isinstance(url, str):
                 raise TypeError(
                     f"all urls must be strings, item at index {i} is {type(url).__name__}"
+                )
+            if not is_valid_url(url):
+                raise ValueError(
+                    f"all urls must be valid HTTP(S) URLs, item at index {i} is invalid: '{url}'"
                 )
 
         summaries = {}
