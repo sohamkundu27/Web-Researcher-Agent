@@ -286,6 +286,41 @@ class TestUtilityFunctions:
         # Verify hyphens are preserved
         assert result.count("-") == 5
 
+    def test_sanitize_text_unicode_characters(self):
+        """Test that Unicode letters are preserved in sanitized text."""
+        # Accented Latin characters
+        result = sanitize_text("Café naïve résumé")
+        assert result == "Café naïve résumé"
+        # Umlaut characters
+        result = sanitize_text("Über schön Großbritannien")
+        assert "Über" in result
+        assert "schön" in result
+
+    def test_sanitize_text_cjk_characters(self):
+        """Test that CJK (Chinese, Japanese, Korean) characters are preserved."""
+        result = sanitize_text("Hello 你好 world")
+        assert "你好" in result
+        assert "Hello" in result
+        assert "world" in result
+        assert result == "Hello 你好 world"
+
+    def test_sanitize_text_emoji_removal(self):
+        """Test that emoji characters are removed but text is preserved."""
+        result = sanitize_text("Hello 😀 world!")
+        assert "Hello" in result
+        assert "world" in result
+        assert "!" in result
+        # Emoji should be removed
+        assert "😀" not in result
+        assert result == "Hello world!"
+
+    def test_sanitize_text_arabic_characters(self):
+        """Test that Arabic/RTL characters are preserved."""
+        result = sanitize_text("Hello مرحبا world")
+        assert "مرحبا" in result
+        assert "Hello" in result
+        assert "world" in result
+
     def test_hash_content(self):
         """Test content hashing."""
         content = "test content"
