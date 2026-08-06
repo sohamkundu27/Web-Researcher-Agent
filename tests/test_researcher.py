@@ -1710,3 +1710,53 @@ def test_agent_get_formatted_report_missing_analysis():
     assert "## Findings" in report
     assert "https://test.com" in report
     assert "Test summary" in report
+
+
+@patch("src.researcher.WebResearcher.research_topic")
+def test_agent_research_success(mock_research_topic):
+    """Test that research() returns the result from research_topic and sets last_research."""
+    from src.agent import ResearchAgent
+
+    expected_result = {
+        "topic": "AI trends",
+        "status": "success",
+        "findings": [
+            {"status": "success", "url": "https://example.com", "summary": "Example"},
+        ],
+        "analysis": "AI is advancing rapidly.",
+        "sources": ["https://example.com"],
+        "timestamp": "2026-01-01T00:00:00",
+    }
+    mock_research_topic.return_value = expected_result
+
+    agent = ResearchAgent(api_key="test-key")
+    result = agent.research("AI trends", num_sources=5)
+
+    # Verify the result is returned correctly
+    assert result == expected_result
+    # Verify last_research is set to the result
+    assert agent.last_research == expected_result
+    # Verify research_topic was called with correct arguments
+    mock_research_topic.assert_called_once_with(topic="AI trends", num_sources=5)
+
+
+@patch("src.researcher.WebResearcher.research_topic")
+def test_agent_research_error(mock_research_topic):
+    """Test that research() handles error results correctly."""
+    from src.agent import ResearchAgent
+
+    expected_result = {
+        "topic": "Unknown topic",
+        "status": "error",
+        "error": "No search results found",
+    }
+    mock_research_topic.return_value = expected_result
+
+    agent = ResearchAgent(api_key="test-key")
+    result = agent.research("Unknown topic")
+
+    # Verify the error result is returned
+    assert result["status"] == "error"
+    assert result["error"] == "No search results found"
+    # Verify last_research is set even for error results
+    assert agent.last_research == expected_result
