@@ -1085,6 +1085,89 @@ class TestResearchConfig:
         with pytest.raises(ValueError, match="CACHE_TTL must be non-negative"):
             ResearchConfig.from_env()
 
+    @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "env-api-key"}, clear=True)
+    def test_config_from_env_success_defaults(self):
+        """Test successful from_env loading with all default values."""
+        config = ResearchConfig.from_env()
+        assert config.api_key == "env-api-key"
+        assert config.model == "claude-3-5-sonnet-20241022"
+        assert config.max_search_results == 10
+        assert config.max_depth == 3
+        assert config.timeout == 30
+        assert config.cache_enabled is True
+        assert config.cache_ttl == 3600
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "custom-key",
+        "RESEARCH_MODEL": "claude-opus-4",
+        "MAX_SEARCH_RESULTS": "20",
+        "MAX_DEPTH": "5",
+        "TIMEOUT": "60",
+        "CACHE_ENABLED": "false",
+        "CACHE_TTL": "7200",
+    })
+    def test_config_from_env_success_custom_values(self):
+        """Test successful from_env loading with custom values."""
+        config = ResearchConfig.from_env()
+        assert config.api_key == "custom-key"
+        assert config.model == "claude-opus-4"
+        assert config.max_search_results == 20
+        assert config.max_depth == 5
+        assert config.timeout == 60
+        assert config.cache_enabled is False
+        assert config.cache_ttl == 7200
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "CACHE_ENABLED": "true",
+    }, clear=True)
+    def test_config_from_env_cache_enabled_true(self):
+        """Test from_env with CACHE_ENABLED explicitly set to 'true'."""
+        config = ResearchConfig.from_env()
+        assert config.cache_enabled is True
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "CACHE_ENABLED": "True",
+    }, clear=True)
+    def test_config_from_env_cache_enabled_capitalized(self):
+        """Test from_env with CACHE_ENABLED capitalized (case-insensitive matching)."""
+        config = ResearchConfig.from_env()
+        assert config.cache_enabled is True  # Case-insensitive: "True".lower() == "true"
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "CACHE_ENABLED": "1",
+    }, clear=True)
+    def test_config_from_env_cache_enabled_non_true_value(self):
+        """Test from_env with CACHE_ENABLED set to non-'true' value."""
+        config = ResearchConfig.from_env()
+        assert config.cache_enabled is False
+
+    @patch.dict(os.environ, {"ANTHROPIC_API_KEY": ""}, clear=True)
+    def test_config_from_env_empty_api_key(self):
+        """Test that empty string ANTHROPIC_API_KEY raises ValueError."""
+        with pytest.raises(ValueError, match="ANTHROPIC_API_KEY environment variable not set"):
+            ResearchConfig.from_env()
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "MAX_SEARCH_RESULTS": "1",
+    }, clear=True)
+    def test_config_from_env_min_max_search_results(self):
+        """Test from_env with minimum valid max_search_results value."""
+        config = ResearchConfig.from_env()
+        assert config.max_search_results == 1
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "CACHE_TTL": "0",
+    }, clear=True)
+    def test_config_from_env_zero_cache_ttl(self):
+        """Test from_env with zero cache_ttl (no expiration)."""
+        config = ResearchConfig.from_env()
+        assert config.cache_ttl == 0
+
 
 class TestWebResearcher:
     """Test WebResearcher class."""
