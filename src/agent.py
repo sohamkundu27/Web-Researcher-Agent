@@ -116,7 +116,7 @@ class ResearchAgent:
                     f"all urls must be valid HTTP(S) URLs, item at index {i} is invalid: '{url}'"
                 )
 
-        summaries = {}
+        summaries: Dict[str, Dict[str, Any]] = {}
         for url in urls:
             result = self.researcher.fetch_and_summarize(url)
             summaries[url] = result

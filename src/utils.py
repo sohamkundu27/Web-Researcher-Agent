@@ -221,7 +221,7 @@ def chunk_text(text: str, chunk_size: int = 1000, overlap: int = 100) -> List[st
             f"overlap ({overlap}) must be less than chunk_size ({chunk_size})"
         )
 
-    chunks = []
+    chunks: List[str] = []
     for i in range(0, len(text), chunk_size - overlap):
         chunk = text[i : i + chunk_size]
         if chunk.strip():

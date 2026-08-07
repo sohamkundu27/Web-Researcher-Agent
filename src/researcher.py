@@ -276,7 +276,7 @@ Only return the JSON list, no other text."""
         # Chunk content if too long
         chunks = chunk_text(content, chunk_size=3000)
 
-        summaries = []
+        summaries: List[str] = []
         for chunk in chunks[:3]:  # Limit to first 3 chunks
             prompt = f"""Please provide a concise summary of the following content:
 
@@ -328,7 +328,7 @@ Summary should be 2-3 sentences max."""
             }
 
         # Fetch and summarize each result
-        findings = []
+        findings: List[Dict[str, Any]] = []
         for result in search_results:
             url = result.get("url")
             if url:
