@@ -113,7 +113,7 @@ def extract_text_from_html(html: str, max_length: int = 5000) -> str:
     """
     if not isinstance(html, str):
         raise TypeError(f"html must be a string, got {type(html).__name__}")
-    if not isinstance(max_length, int) or max_length <= 0:
+    if type(max_length) is not int or isinstance(max_length, bool) or max_length <= 0:
         raise ValueError(f"max_length must be a positive integer, got {max_length}")
     try:
         soup = BeautifulSoup(html, "html.parser")
@@ -168,7 +168,7 @@ def fetch_url_content(url: str, timeout: int = 10) -> FetchUrlResult:
         raise TypeError(f"url must be a string, got {type(url).__name__}")
     if not is_valid_url(url):
         raise ValueError(f"url must be a valid HTTP(S) URL, got '{url}'")
-    if not isinstance(timeout, int) or timeout <= 0:
+    if type(timeout) is not int or isinstance(timeout, bool) or timeout <= 0:
         raise ValueError(f"timeout must be a positive integer, got {timeout}")
 
     try:
@@ -212,9 +212,9 @@ def chunk_text(text: str, chunk_size: int = 1000, overlap: int = 100) -> List[st
     """
     if not isinstance(text, str):
         raise TypeError(f"text must be a string, got {type(text).__name__}")
-    if not isinstance(chunk_size, int) or chunk_size <= 0:
+    if type(chunk_size) is not int or isinstance(chunk_size, bool) or chunk_size <= 0:
         raise ValueError(f"chunk_size must be a positive integer, got {chunk_size}")
-    if not isinstance(overlap, int) or overlap < 0:
+    if type(overlap) is not int or isinstance(overlap, bool) or overlap < 0:
         raise ValueError(f"overlap must be a non-negative integer, got {overlap}")
     if overlap >= chunk_size:
         raise ValueError(

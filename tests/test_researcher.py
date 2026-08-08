@@ -526,6 +526,16 @@ class TestUtilityFunctions:
         with pytest.raises(ValueError, match="overlap must be a non-negative integer"):
             chunk_text("text", chunk_size=100, overlap="10")
 
+    def test_chunk_text_invalid_chunk_size_bool(self):
+        """Test chunk_text with bool as chunk_size (should reject)."""
+        with pytest.raises(ValueError, match="chunk_size must be a positive integer"):
+            chunk_text("text", chunk_size=True)
+
+    def test_chunk_text_invalid_overlap_bool(self):
+        """Test chunk_text with bool as overlap (should reject)."""
+        with pytest.raises(ValueError, match="overlap must be a non-negative integer"):
+            chunk_text("text", chunk_size=100, overlap=True)
+
     def test_extract_text_from_html_basic(self):
         """Test basic HTML text extraction."""
         html = "<html><body><h1>Title</h1><p>Content here</p></body></html>"
@@ -643,6 +653,16 @@ class TestUtilityFunctions:
         result = extract_text_from_html(html, max_length=50)
         assert len(result) == 50
         assert result == content
+
+    def test_extract_text_from_html_invalid_max_length_bool_true(self):
+        """Test extract_text_from_html with bool True as max_length (should reject)."""
+        with pytest.raises(ValueError, match="max_length must be a positive integer"):
+            extract_text_from_html("<p>Test</p>", max_length=True)
+
+    def test_extract_text_from_html_invalid_max_length_bool_false(self):
+        """Test extract_text_from_html with bool False as max_length (should reject)."""
+        with pytest.raises(ValueError, match="max_length must be a positive integer"):
+            extract_text_from_html("<p>Test</p>", max_length=False)
 
     def test_merge_dicts_simple(self):
         """Test simple dictionary merge."""
@@ -960,6 +980,16 @@ class TestUtilityFunctions:
 
         # Verify that requests.get was called with the correct timeout
         mock_get.assert_called_once_with("https://example.com", timeout=25)
+
+    def test_fetch_url_content_invalid_timeout_bool_true(self):
+        """Test fetch_url_content with bool True as timeout (should reject)."""
+        with pytest.raises(ValueError, match="timeout must be a positive integer"):
+            fetch_url_content("https://example.com", timeout=True)
+
+    def test_fetch_url_content_invalid_timeout_bool_false(self):
+        """Test fetch_url_content with bool False as timeout (should reject)."""
+        with pytest.raises(ValueError, match="timeout must be a positive integer"):
+            fetch_url_content("https://example.com", timeout=False)
 
 
 class TestResearchConfig:
