@@ -60,6 +60,7 @@ class ResearchAgent:
         Args:
             topic: The topic to research
             num_sources: Number of sources to fetch (default: 5). Must be a positive integer.
+                If greater than max_search_results, will be clamped to max_search_results.
 
         Returns:
             Dictionary containing research results with:
