@@ -127,6 +127,23 @@ class ContentCache:
             "expires": datetime.now() + timedelta(seconds=self.ttl),
         }
 
+    def cleanup(self) -> int:
+        """Remove all expired entries from the cache.
+
+        Proactively removes entries that have passed their expiration time,
+        preventing memory bloat in long-running applications.
+
+        Returns:
+            The number of expired entries that were removed.
+        """
+        expired_keys = [
+            key for key, item in self.cache.items()
+            if datetime.now() >= item["expires"]
+        ]
+        for key in expired_keys:
+            del self.cache[key]
+        return len(expired_keys)
+
     def clear(self) -> None:
         """Clear all cache entries.
 

@@ -176,6 +176,129 @@ class TestContentCache:
         assert expected_expires_min <= expires <= expected_expires_max, \
             f"Expiration time {expires} should be between {expected_expires_min} and {expected_expires_max}"
 
+    def test_cache_cleanup_removes_expired_entries(self):
+        """Test that cleanup() removes expired entries."""
+        from datetime import datetime, timedelta
+        from unittest.mock import patch
+
+        cache = ContentCache(ttl=10)
+        frozen_time = datetime(2026, 1, 1, 12, 0, 0)
+
+        # Add three entries with different expiration times
+        cache.cache["expired1"] = {"value": "val1", "expires": frozen_time - timedelta(seconds=10)}
+        cache.cache["expired2"] = {"value": "val2", "expires": frozen_time - timedelta(seconds=1)}
+        cache.cache["not_expired"] = {"value": "val3", "expires": frozen_time + timedelta(seconds=100)}
+
+        # Verify all three are initially in cache
+        assert len(cache.cache) == 3
+
+        # Run cleanup with mocked time
+        with patch("src.researcher.datetime") as mock_datetime:
+            mock_datetime.now.return_value = frozen_time
+            removed_count = cache.cleanup()
+
+        # Verify only expired entries were removed
+        assert removed_count == 2, "Should have removed 2 expired entries"
+        assert len(cache.cache) == 1
+        assert "not_expired" in cache.cache
+        assert cache.cache["not_expired"]["value"] == "val3"
+
+    def test_cache_cleanup_preserves_non_expired_entries(self):
+        """Test that cleanup() does not remove non-expired entries."""
+        cache = ContentCache(ttl=60)
+        cache.set("key1", "value1")
+        cache.set("key2", "value2")
+        cache.set("key3", "value3")
+
+        # All entries are just set, so they should not be expired yet
+        removed_count = cache.cleanup()
+
+        # No entries should be removed
+        assert removed_count == 0
+        assert len(cache.cache) == 3
+        assert cache.get("key1") == "value1"
+        assert cache.get("key2") == "value2"
+        assert cache.get("key3") == "value3"
+
+    def test_cache_cleanup_returns_count(self):
+        """Test that cleanup() returns the correct count of removed entries."""
+        from datetime import datetime, timedelta
+        from unittest.mock import patch
+
+        cache = ContentCache(ttl=10)
+        frozen_time = datetime(2026, 1, 1, 12, 0, 0)
+
+        # Add five entries with varying expiration times
+        for i in range(5):
+            cache.cache[f"expired{i}"] = {
+                "value": f"val{i}",
+                "expires": frozen_time - timedelta(seconds=5)
+            }
+
+        # Run cleanup with mocked time
+        with patch("src.researcher.datetime") as mock_datetime:
+            mock_datetime.now.return_value = frozen_time
+            removed_count = cache.cleanup()
+
+        # Verify correct count was returned
+        assert removed_count == 5
+        assert len(cache.cache) == 0
+
+    def test_cache_cleanup_mixed_entries(self):
+        """Test cleanup() with a mix of expired and non-expired entries."""
+        from datetime import datetime, timedelta
+        from unittest.mock import patch
+
+        cache = ContentCache(ttl=10)
+        frozen_time = datetime(2026, 1, 1, 12, 0, 0)
+
+        # Add entries with different states
+        cache.cache["expired1"] = {"value": "val1", "expires": frozen_time - timedelta(seconds=100)}
+        cache.cache["not_expired1"] = {"value": "val2", "expires": frozen_time + timedelta(seconds=50)}
+        cache.cache["expired2"] = {"value": "val3", "expires": frozen_time}  # Exactly at boundary
+        cache.cache["not_expired2"] = {"value": "val4", "expires": frozen_time + timedelta(seconds=1)}
+        cache.cache["expired3"] = {"value": "val5", "expires": frozen_time - timedelta(seconds=1)}
+
+        # Run cleanup with mocked time
+        with patch("src.researcher.datetime") as mock_datetime:
+            mock_datetime.now.return_value = frozen_time
+            removed_count = cache.cleanup()
+
+        # Should remove 3 expired entries (expired1, expired2 at boundary, expired3)
+        assert removed_count == 3
+        assert len(cache.cache) == 2
+        assert "not_expired1" in cache.cache
+        assert "not_expired2" in cache.cache
+
+    def test_cache_cleanup_empty_cache(self):
+        """Test that cleanup() on empty cache returns 0."""
+        cache = ContentCache(ttl=60)
+        removed_count = cache.cleanup()
+        assert removed_count == 0
+        assert len(cache.cache) == 0
+
+    def test_cache_cleanup_all_expired(self):
+        """Test cleanup() when all entries are expired."""
+        from datetime import datetime, timedelta
+        from unittest.mock import patch
+
+        cache = ContentCache(ttl=10)
+        frozen_time = datetime(2026, 1, 1, 12, 0, 0)
+
+        # Add only expired entries
+        cache.cache["expired1"] = {"value": "val1", "expires": frozen_time - timedelta(seconds=100)}
+        cache.cache["expired2"] = {"value": "val2", "expires": frozen_time - timedelta(seconds=50)}
+        cache.cache["expired3"] = {"value": "val3", "expires": frozen_time - timedelta(seconds=10)}
+
+        # Run cleanup with mocked time
+        with patch("src.researcher.datetime") as mock_datetime:
+            mock_datetime.now.return_value = frozen_time
+            removed_count = cache.cleanup()
+
+        # All entries should be removed
+        assert removed_count == 3
+        assert len(cache.cache) == 0
+
 
 class TestUtilityFunctions:
     """Test utility functions."""
