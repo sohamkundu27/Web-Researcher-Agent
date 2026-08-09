@@ -1476,6 +1476,31 @@ def test_agent_clear_history():
     assert agent.last_research is None
 
 
+def test_agent_clear_history_clears_cache():
+    """Test that clear_history also clears the cache."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    # Populate cache with some data
+    agent.researcher.cache.set("key1", "value1")
+    agent.researcher.cache.set("key2", "value2")
+    assert len(agent.researcher.cache.cache) == 2
+
+    # Add some sources and history
+    agent.researcher.sources = ["https://example.com"]
+    agent.researcher.research_history = [{"topic": "test"}]
+    agent.last_research = {"topic": "test", "status": "success"}
+
+    # Clear everything
+    agent.clear_history()
+
+    # Verify cache, sources, history, and last_research are all cleared
+    assert len(agent.researcher.cache.cache) == 0
+    assert agent.researcher.sources == []
+    assert agent.researcher.research_history == []
+    assert agent.last_research is None
+
+
 @patch("src.researcher.WebResearcher.fetch_and_summarize")
 def test_agent_summarize(mock_fetch):
     """Test summarizing multiple URLs."""
