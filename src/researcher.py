@@ -244,28 +244,28 @@ Only return the JSON list, no other text."""
                 - error: Error message describing what went wrong
         """
         if not is_valid_url(url):
-            return {"error": f"Invalid URL: {url}", "url": url, "status": "error"}
+            return cast(FetchAndSummarizeError, {"error": f"Invalid URL: {url}", "url": url, "status": "error"})
 
         # Check cache
         if self.cache:
             cached = self.cache.get(hash_content(url))
             if cached is not None:
-                return cached
+                return cast(FetchAndSummarizeResult, cached)
 
         # Fetch content
         fetch_result = fetch_url_content(url, timeout=self.config.timeout)
 
         if fetch_result["status"] == "error":
-            return fetch_result
+            return cast(FetchAndSummarizeError, fetch_result)
 
         content = fetch_result.get("content", "")
         if not content:
-            return {"error": "No content extracted", "url": url, "status": "error"}
+            return cast(FetchAndSummarizeError, {"error": "No content extracted", "url": url, "status": "error"})
 
         # Summarize content
         summary = self._summarize_content(content)
 
-        result = {
+        result: FetchAndSummarizeSuccess = {
             "url": url,
             "status": "success",
             "summary": summary,
