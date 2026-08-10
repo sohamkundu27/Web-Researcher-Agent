@@ -43,10 +43,13 @@ def extract_domain(url: str) -> str:
 
     Raises:
         TypeError: If url is not a string.
+        ValueError: If url does not contain a valid domain/host component.
     """
     if not isinstance(url, str):
         raise TypeError(f"url must be a string, got {type(url).__name__}")
     parsed = urlparse(url)
+    if not parsed.netloc:
+        raise ValueError(f"url does not contain a valid domain, got '{url}'")
     return parsed.netloc
 
 

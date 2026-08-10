@@ -323,6 +323,26 @@ class TestUtilityFunctions:
         with pytest.raises(TypeError, match="url must be a string"):
             extract_domain([])
 
+    def test_extract_domain_missing_netloc_no_protocol(self):
+        """Test domain extraction from URL without protocol (no netloc extracted)."""
+        with pytest.raises(ValueError, match="url does not contain a valid domain"):
+            extract_domain("not-a-url")
+
+    def test_extract_domain_missing_netloc_relative_path(self):
+        """Test domain extraction from relative path."""
+        with pytest.raises(ValueError, match="url does not contain a valid domain"):
+            extract_domain("noprotocol.com")
+
+    def test_extract_domain_missing_netloc_protocol_only(self):
+        """Test domain extraction from URL with only protocol."""
+        with pytest.raises(ValueError, match="url does not contain a valid domain"):
+            extract_domain("http://")
+
+    def test_extract_domain_missing_netloc_https_only(self):
+        """Test domain extraction from URL with only https protocol."""
+        with pytest.raises(ValueError, match="url does not contain a valid domain"):
+            extract_domain("https://")
+
     def test_is_valid_url(self):
         """Test URL validation."""
         assert is_valid_url("https://example.com") is True
@@ -849,13 +869,9 @@ class TestUtilityFunctions:
 
     def test_format_sources_with_empty_string_item(self):
         """Test format_sources with empty string in sources list."""
-        # Empty string is accepted but produces invalid markdown link []()
-        result = format_sources(["https://example.com", ""])
-        assert "## Sources" in result
-        assert "example.com" in result
-        # Verify empty string creates an empty link
-        assert "[]" in result
-        assert "()" in result
+        # Empty string should raise ValueError since it has no domain
+        with pytest.raises(ValueError, match="url does not contain a valid domain"):
+            format_sources(["https://example.com", ""])
 
     def test_format_sources_with_query_parameters(self):
         """Test format_sources with URLs containing query parameters."""
