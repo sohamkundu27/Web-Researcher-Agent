@@ -284,7 +284,7 @@ Only return the JSON list, no other text."""
     def _summarize_content(self, content: str) -> str:
         """Summarize content using Claude.
 
-        Splits content into chunks (size 3000 characters, no overlap) and
+        Splits content into chunks (size 3000 characters, 100 character overlap) and
         summarizes each of the first 3 chunks. Returns a space-joined
         concatenation of all chunk summaries.
 
