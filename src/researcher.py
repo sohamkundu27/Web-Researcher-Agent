@@ -333,7 +333,7 @@ Summary should be 2-3 sentences max."""
             Dictionary containing:
             - topic: The research topic
             - status: "success" or "error"
-            - findings: List of summaries from each source
+            - findings: List of results from each source (each has summary on success or error message on failure)
             - analysis: Comprehensive analysis of findings
             - sources: List of URLs used
             - timestamp: When research was conducted
