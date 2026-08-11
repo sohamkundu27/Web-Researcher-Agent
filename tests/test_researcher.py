@@ -2037,3 +2037,43 @@ def test_agent_research_error(mock_research_topic):
     assert result["error"] == "No search results found"
     # Verify last_research is set even for error results
     assert agent.last_research == expected_result
+
+
+@patch("src.researcher.fetch_url_content")
+@patch("src.researcher.WebResearcher._summarize_content")
+def test_agent_summarize_updates_sources(mock_summarize, mock_fetch):
+    """Test that summarize() adds successful URLs to the sources list via fetch_and_summarize."""
+    from src.agent import ResearchAgent
+
+    mock_fetch.side_effect = [
+        {
+            "status": "success",
+            "content": "Test content 1",
+            "url": "https://example.com",
+            "status_code": 200,
+            "headers": {},
+        },
+        {
+            "status": "success",
+            "content": "Test content 2",
+            "url": "https://test.com",
+            "status_code": 200,
+            "headers": {},
+        },
+    ]
+    mock_summarize.side_effect = ["Summary 1", "Summary 2"]
+
+    agent = ResearchAgent(api_key="test-key")
+    assert agent.get_sources() == []
+
+    urls = ["https://example.com", "https://test.com"]
+    result = agent.summarize(urls)
+
+    # Verify sources were added by fetch_and_summarize calls
+    sources = agent.get_sources()
+    assert len(sources) == 2
+    assert "https://example.com" in sources
+    assert "https://test.com" in sources
+    # Verify summarize result is correct
+    assert result["status"] == "success"
+    assert result["sources_count"] == 2
