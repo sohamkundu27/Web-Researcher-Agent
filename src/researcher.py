@@ -130,8 +130,9 @@ class ContentCache:
     def cleanup(self) -> int:
         """Remove all expired entries from the cache.
 
-        Proactively removes entries that have passed their expiration time,
-        preventing memory bloat in long-running applications.
+        Proactively removes entries where the current time is at or beyond the
+        expiration time (uses >= comparison with expiration boundary).
+        Prevents memory bloat in long-running applications.
 
         Returns:
             The number of expired entries that were removed.
