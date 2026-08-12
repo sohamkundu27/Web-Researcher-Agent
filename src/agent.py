@@ -129,7 +129,15 @@ class ResearchAgent:
         }
 
     def get_sources(self) -> List[str]:
-        """Get list of sources used in the last research."""
+        """Get list of all sources processed during research.
+
+        Returns all URLs that have been successfully fetched since the agent was
+        created or clear_history() was last called. Sources accumulate across
+        multiple research() and summarize() calls.
+
+        Returns:
+            List of URLs from all successful fetch operations.
+        """
         return self.researcher.get_sources()
 
     def clear_history(self) -> None:
