@@ -1,6 +1,7 @@
 """Unit tests for Web Researcher Agent."""
 
 import os
+import time
 import pytest
 import requests
 from unittest.mock import Mock, patch
@@ -33,8 +34,6 @@ class TestContentCache:
         """Test cache expiration."""
         cache = ContentCache(ttl=0)
         cache.set("key1", "value1")
-        import time
-
         time.sleep(0.1)
         assert cache.get("key1") is None
 
@@ -44,7 +43,6 @@ class TestContentCache:
         cache.set("key1", "value1")
         assert len(cache.cache) == 1
 
-        import time
         time.sleep(0.1)
 
         # Accessing expired item should return None and clean it up
