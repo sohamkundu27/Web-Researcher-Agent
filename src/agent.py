@@ -25,7 +25,7 @@ class ResearchAgent:
         max_search_results: int = 10,
         max_depth: int = 3,
         **kwargs,
-    ):
+    ) -> None:
         """Initialize research agent with configuration.
 
         Args:

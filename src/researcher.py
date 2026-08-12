@@ -74,7 +74,7 @@ ResearchTopicResult = Union[ResearchTopicSuccess, ResearchTopicError]
 class ContentCache:
     """Simple in-memory cache for web content."""
 
-    def __init__(self, ttl: int = 3600):
+    def __init__(self, ttl: int = 3600) -> None:
         """Initialize cache with time-to-live.
 
         Args:
@@ -157,7 +157,7 @@ class ContentCache:
 class WebResearcher:
     """Web researcher that conducts research using Claude AI."""
 
-    def __init__(self, config: ResearchConfig):
+    def __init__(self, config: ResearchConfig) -> None:
         """Initialize researcher with configuration.
 
         Args:
