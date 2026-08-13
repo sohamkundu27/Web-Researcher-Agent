@@ -97,7 +97,8 @@ class ContentCache:
         Returns:
             The cached value if the key exists and has not expired, None otherwise.
             Expired items are automatically deleted from the cache dict when accessed.
-            Items expire when current time >= expiration time (uses strict < comparison).
+            Items are valid only when current time < expiration time; they expire
+            when current time >= expiration time.
         """
         if key in self.cache:
             item = self.cache[key]
