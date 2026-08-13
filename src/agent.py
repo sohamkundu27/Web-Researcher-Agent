@@ -63,13 +63,9 @@ class ResearchAgent:
                 If greater than max_search_results, will be clamped to max_search_results.
 
         Returns:
-            Dictionary containing research results with:
-            - topic: The research topic
-            - status: "success" or "error"
-            - findings: List of results from each source (each has summary on success or error message on failure)
-            - analysis: Comprehensive analysis of findings
-            - sources: List of URLs used
-            - timestamp: When research was conducted
+            Dictionary with topic and status ("success" or "error").
+            On success, also includes: findings (list of results), analysis, sources (list of URLs),
+            timestamp. On error, includes error message instead of findings/analysis/sources/timestamp.
 
         Raises:
             ValueError: If num_sources is not a positive integer

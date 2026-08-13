@@ -121,8 +121,8 @@ Main agent class for conducting research.
 - `summarize(urls: List[str]) -> Dict` - Summarize content from multiple URLs
   - Returns: Dictionary with keys: `status` ("success"), `summaries` (mapping of URL to summary result), `sources_count` (number of URLs)
 
-- `get_sources() -> List[str]` - Get list of sources used in the last research
-  - Returns: List of source URLs from the last research operation
+- `get_sources() -> List[str]` - Get list of all sources processed during research
+  - Returns: List of all URLs successfully fetched since agent creation or last clear_history() call (sources accumulate across multiple research and summarize calls)
 
 - `get_formatted_report() -> str` - Get formatted markdown research report
   - Returns: Markdown-formatted research report. Returns "No research conducted yet." if no research has been done.
