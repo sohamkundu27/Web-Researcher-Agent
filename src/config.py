@@ -43,19 +43,19 @@ class ResearchConfig:
             )
         if not self.model:
             raise ValueError("model cannot be empty")
-        if not isinstance(self.max_search_results, int):
+        if type(self.max_search_results) is not int or isinstance(self.max_search_results, bool):
             raise TypeError(
                 f"max_search_results must be an integer, got {type(self.max_search_results).__name__}"
             )
         if self.max_search_results <= 0:
             raise ValueError("max_search_results must be greater than 0")
-        if not isinstance(self.max_depth, int):
+        if type(self.max_depth) is not int or isinstance(self.max_depth, bool):
             raise TypeError(
                 f"max_depth must be an integer, got {type(self.max_depth).__name__}"
             )
         if self.max_depth <= 0:
             raise ValueError("max_depth must be greater than 0")
-        if not isinstance(self.timeout, int):
+        if type(self.timeout) is not int or isinstance(self.timeout, bool):
             raise TypeError(
                 f"timeout must be an integer, got {type(self.timeout).__name__}"
             )
@@ -65,7 +65,7 @@ class ResearchConfig:
             raise TypeError(
                 f"cache_enabled must be a boolean, got {type(self.cache_enabled).__name__}"
             )
-        if not isinstance(self.cache_ttl, int):
+        if type(self.cache_ttl) is not int or isinstance(self.cache_ttl, bool):
             raise TypeError(
                 f"cache_ttl must be an integer, got {type(self.cache_ttl).__name__}"
             )
@@ -140,21 +140,21 @@ class ResearchConfig:
             if not kwargs["model"]:
                 raise ValueError("model cannot be empty")
         if "max_search_results" in kwargs:
-            if not isinstance(kwargs["max_search_results"], int):
+            if type(kwargs["max_search_results"]) is not int or isinstance(kwargs["max_search_results"], bool):
                 raise TypeError(
                     f"max_search_results must be an integer, got {type(kwargs['max_search_results']).__name__}"
                 )
             if kwargs["max_search_results"] <= 0:
                 raise ValueError("max_search_results must be greater than 0")
         if "max_depth" in kwargs:
-            if not isinstance(kwargs["max_depth"], int):
+            if type(kwargs["max_depth"]) is not int or isinstance(kwargs["max_depth"], bool):
                 raise TypeError(
                     f"max_depth must be an integer, got {type(kwargs['max_depth']).__name__}"
                 )
             if kwargs["max_depth"] <= 0:
                 raise ValueError("max_depth must be greater than 0")
         if "timeout" in kwargs:
-            if not isinstance(kwargs["timeout"], int):
+            if type(kwargs["timeout"]) is not int or isinstance(kwargs["timeout"], bool):
                 raise TypeError(
                     f"timeout must be an integer, got {type(kwargs['timeout']).__name__}"
                 )
@@ -166,7 +166,7 @@ class ResearchConfig:
                     f"cache_enabled must be a boolean, got {type(kwargs['cache_enabled']).__name__}"
                 )
         if "cache_ttl" in kwargs:
-            if not isinstance(kwargs["cache_ttl"], int):
+            if type(kwargs["cache_ttl"]) is not int or isinstance(kwargs["cache_ttl"], bool):
                 raise TypeError(
                     f"cache_ttl must be an integer, got {type(kwargs['cache_ttl']).__name__}"
                 )

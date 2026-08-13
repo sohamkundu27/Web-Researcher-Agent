@@ -1056,6 +1056,46 @@ class TestResearchConfig:
         with pytest.raises(TypeError, match="timeout must be an integer"):
             ResearchConfig(api_key="test-key", timeout=10.5)
 
+    def test_config_direct_instantiation_invalid_max_search_results_bool_true(self):
+        """Test direct instantiation with bool True as max_search_results raises TypeError."""
+        with pytest.raises(TypeError, match="max_search_results must be an integer, got bool"):
+            ResearchConfig(api_key="test-key", max_search_results=True)
+
+    def test_config_direct_instantiation_invalid_max_search_results_bool_false(self):
+        """Test direct instantiation with bool False as max_search_results raises TypeError."""
+        with pytest.raises(TypeError, match="max_search_results must be an integer, got bool"):
+            ResearchConfig(api_key="test-key", max_search_results=False)
+
+    def test_config_direct_instantiation_invalid_max_depth_bool_true(self):
+        """Test direct instantiation with bool True as max_depth raises TypeError."""
+        with pytest.raises(TypeError, match="max_depth must be an integer, got bool"):
+            ResearchConfig(api_key="test-key", max_depth=True)
+
+    def test_config_direct_instantiation_invalid_max_depth_bool_false(self):
+        """Test direct instantiation with bool False as max_depth raises TypeError."""
+        with pytest.raises(TypeError, match="max_depth must be an integer, got bool"):
+            ResearchConfig(api_key="test-key", max_depth=False)
+
+    def test_config_direct_instantiation_invalid_timeout_bool_true(self):
+        """Test direct instantiation with bool True as timeout raises TypeError."""
+        with pytest.raises(TypeError, match="timeout must be an integer, got bool"):
+            ResearchConfig(api_key="test-key", timeout=True)
+
+    def test_config_direct_instantiation_invalid_timeout_bool_false(self):
+        """Test direct instantiation with bool False as timeout raises TypeError."""
+        with pytest.raises(TypeError, match="timeout must be an integer, got bool"):
+            ResearchConfig(api_key="test-key", timeout=False)
+
+    def test_config_direct_instantiation_invalid_cache_ttl_bool_true(self):
+        """Test direct instantiation with bool True as cache_ttl raises TypeError."""
+        with pytest.raises(TypeError, match="cache_ttl must be an integer, got bool"):
+            ResearchConfig(api_key="test-key", cache_ttl=True)
+
+    def test_config_direct_instantiation_invalid_cache_ttl_bool_false(self):
+        """Test direct instantiation with bool False as cache_ttl raises TypeError."""
+        with pytest.raises(TypeError, match="cache_ttl must be an integer, got bool"):
+            ResearchConfig(api_key="test-key", cache_ttl=False)
+
     def test_config_direct_instantiation_invalid_cache_ttl_type(self):
         """Test direct instantiation with invalid cache_ttl type raises TypeError."""
         with pytest.raises(TypeError, match="cache_ttl must be an integer"):
@@ -1184,6 +1224,46 @@ class TestResearchConfig:
 
         with pytest.raises(TypeError, match="cache_enabled must be a boolean"):
             ResearchConfig.with_api_key("test-key", cache_enabled=None)
+
+    def test_config_with_api_key_invalid_max_search_results_bool_true(self):
+        """Test that bool True as max_search_results raises TypeError."""
+        with pytest.raises(TypeError, match="max_search_results must be an integer, got bool"):
+            ResearchConfig.with_api_key("test-key", max_search_results=True)
+
+    def test_config_with_api_key_invalid_max_search_results_bool_false(self):
+        """Test that bool False as max_search_results raises TypeError."""
+        with pytest.raises(TypeError, match="max_search_results must be an integer, got bool"):
+            ResearchConfig.with_api_key("test-key", max_search_results=False)
+
+    def test_config_with_api_key_invalid_max_depth_bool_true(self):
+        """Test that bool True as max_depth raises TypeError."""
+        with pytest.raises(TypeError, match="max_depth must be an integer, got bool"):
+            ResearchConfig.with_api_key("test-key", max_depth=True)
+
+    def test_config_with_api_key_invalid_max_depth_bool_false(self):
+        """Test that bool False as max_depth raises TypeError."""
+        with pytest.raises(TypeError, match="max_depth must be an integer, got bool"):
+            ResearchConfig.with_api_key("test-key", max_depth=False)
+
+    def test_config_with_api_key_invalid_timeout_bool_true(self):
+        """Test that bool True as timeout raises TypeError."""
+        with pytest.raises(TypeError, match="timeout must be an integer, got bool"):
+            ResearchConfig.with_api_key("test-key", timeout=True)
+
+    def test_config_with_api_key_invalid_timeout_bool_false(self):
+        """Test that bool False as timeout raises TypeError."""
+        with pytest.raises(TypeError, match="timeout must be an integer, got bool"):
+            ResearchConfig.with_api_key("test-key", timeout=False)
+
+    def test_config_with_api_key_invalid_cache_ttl_bool_true(self):
+        """Test that bool True as cache_ttl raises TypeError."""
+        with pytest.raises(TypeError, match="cache_ttl must be an integer, got bool"):
+            ResearchConfig.with_api_key("test-key", cache_ttl=True)
+
+    def test_config_with_api_key_invalid_cache_ttl_bool_false(self):
+        """Test that bool False as cache_ttl raises TypeError."""
+        with pytest.raises(TypeError, match="cache_ttl must be an integer, got bool"):
+            ResearchConfig.with_api_key("test-key", cache_ttl=False)
 
     def test_config_with_api_key_valid_model(self):
         """Test that valid model is accepted."""
