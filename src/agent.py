@@ -160,7 +160,8 @@ class ResearchAgent:
         if not self.last_research:
             return "No research conducted yet."
 
-        report = f"# Research Report: {self.last_research['topic']}\n\n"
+        topic = self.last_research.get("topic", "Unknown Topic")
+        report = f"# Research Report: {topic}\n\n"
 
         report += "## Analysis\n\n"
         report += self.last_research.get("analysis", "No analysis available") + "\n\n"

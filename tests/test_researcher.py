@@ -2078,6 +2078,36 @@ def test_agent_get_formatted_report_missing_analysis():
     assert "Test summary" in report
 
 
+def test_agent_get_formatted_report_missing_topic():
+    """Test that missing 'topic' key defaults to 'Unknown Topic'."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    agent.last_research = {
+        # Missing "topic" key - should default to "Unknown Topic"
+        "analysis": "Test analysis",
+        "findings": [
+            {
+                "status": "success",
+                "url": "https://test.com",
+                "summary": "Test summary",
+            },
+        ],
+    }
+    agent.researcher.sources = ["https://test.com"]
+
+    report = agent.get_formatted_report()
+
+    # Verify that the default message appears when topic is missing
+    assert "# Research Report: Unknown Topic" in report
+    # Verify other parts are still present
+    assert "## Analysis" in report
+    assert "Test analysis" in report
+    assert "## Findings" in report
+    assert "https://test.com" in report
+    assert "Test summary" in report
+
+
 @patch("src.researcher.WebResearcher.research_topic")
 def test_agent_research_success(mock_research_topic):
     """Test that research() returns the result from research_topic and sets last_research."""
