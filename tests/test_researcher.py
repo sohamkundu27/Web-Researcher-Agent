@@ -462,6 +462,11 @@ class TestUtilityFunctions:
         assert "Hello" in result
         assert "world" in result
 
+    def test_sanitize_text_only_special_characters(self):
+        """Test that text containing only special characters becomes empty."""
+        result = sanitize_text("@#$%^&*()")
+        assert result == ""
+
     def test_hash_content(self):
         """Test content hashing."""
         content = "test content"
@@ -681,6 +686,12 @@ class TestUtilityFunctions:
         """Test extract_text_from_html with bool False as max_length (should reject)."""
         with pytest.raises(ValueError, match="max_length must be a positive integer"):
             extract_text_from_html("<p>Test</p>", max_length=False)
+
+    def test_extract_text_from_html_only_script_and_style_tags(self):
+        """Test extraction from HTML containing only script and style tags (should return empty)."""
+        html = "<script>var x = 1; console.log('test');</script><style>body { color: red; }</style>"
+        result = extract_text_from_html(html)
+        assert result == ""
 
     def test_merge_dicts_simple(self):
         """Test simple dictionary merge."""
