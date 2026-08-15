@@ -415,7 +415,15 @@ Please provide:
         return response.content[0].text if response.content else ""
 
     def get_sources(self) -> List[str]:
-        """Get list of sources used in research."""
+        """Get list of all sources successfully fetched.
+
+        Returns all URLs that have been successfully fetched since the researcher
+        was created or clear_history() was last called. Sources accumulate across
+        multiple fetch_and_summarize() and research_topic() calls.
+
+        Returns:
+            List of URLs from all successful fetch operations.
+        """
         return self.sources
 
     def clear_history(self) -> None:
