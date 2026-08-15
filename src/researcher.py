@@ -190,13 +190,23 @@ class WebResearcher:
         real-time web search; for live results, integrate with a search API.
 
         Args:
-            query: The search query string to find results for.
-            num_results: Number of search results to generate (default: 5).
+            query: The search query string to find results for (must be non-empty string).
+            num_results: Number of search results to generate (default: 5, must be positive).
 
         Returns:
             A list of SearchResult dicts, each containing 'url' and 'title' keys.
             Returns an empty list if JSON parsing fails or no results could be generated.
+
+        Raises:
+            TypeError: If query is not a string or num_results is not an integer.
+            ValueError: If query is empty or num_results is not positive.
         """
+        if not isinstance(query, str):
+            raise TypeError(f"query must be a string, got {type(query).__name__}")
+        if not query.strip():
+            raise ValueError("query cannot be empty")
+        if type(num_results) is not int or isinstance(num_results, bool) or num_results <= 0:
+            raise ValueError(f"num_results must be a positive integer, got {num_results}")
         prompt = f"""Generate {num_results} relevant URLs for the following search query:
 
 Query: {query}
@@ -328,8 +338,8 @@ Summary should be 2-3 sentences max."""
         """Conduct comprehensive research on a topic.
 
         Args:
-            topic: The research topic to investigate
-            num_sources: Number of sources to fetch (default: 5)
+            topic: The research topic to investigate (must be non-empty string).
+            num_sources: Number of sources to fetch (default: 5, must be positive).
 
         Returns:
             Dictionary containing:
@@ -339,7 +349,18 @@ Summary should be 2-3 sentences max."""
             - analysis: Comprehensive analysis of findings
             - sources: List of URLs used
             - timestamp: When research was conducted
+
+        Raises:
+            TypeError: If topic is not a string or num_sources is not an integer.
+            ValueError: If topic is empty or num_sources is not positive.
         """
+        if not isinstance(topic, str):
+            raise TypeError(f"topic must be a string, got {type(topic).__name__}")
+        if not topic.strip():
+            raise ValueError("topic cannot be empty")
+        if type(num_sources) is not int or isinstance(num_sources, bool) or num_sources <= 0:
+            raise ValueError(f"num_sources must be a positive integer, got {num_sources}")
+
         print(f"Starting research on: {topic}")
 
         # Generate search queries

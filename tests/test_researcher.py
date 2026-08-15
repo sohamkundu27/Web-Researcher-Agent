@@ -2196,3 +2196,113 @@ def test_agent_summarize_updates_sources(mock_summarize, mock_fetch):
     # Verify summarize result is correct
     assert result["status"] == "success"
     assert result["sources_count"] == 2
+
+
+class TestWebResearcherSearch:
+    """Test search() method input validation."""
+
+    @pytest.fixture
+    def researcher(self):
+        """Create test researcher."""
+        config = ResearchConfig.with_api_key("test-key")
+        return WebResearcher(config)
+
+    def test_search_invalid_query_type_none(self, researcher):
+        """Test search() with None query."""
+        with pytest.raises(TypeError, match="query must be a string"):
+            researcher.search(None)
+
+    def test_search_invalid_query_type_int(self, researcher):
+        """Test search() with integer query."""
+        with pytest.raises(TypeError, match="query must be a string"):
+            researcher.search(123)
+
+    def test_search_invalid_query_type_list(self, researcher):
+        """Test search() with list query."""
+        with pytest.raises(TypeError, match="query must be a string"):
+            researcher.search([])
+
+    def test_search_empty_query(self, researcher):
+        """Test search() with empty query."""
+        with pytest.raises(ValueError, match="query cannot be empty"):
+            researcher.search("")
+
+    def test_search_whitespace_only_query(self, researcher):
+        """Test search() with whitespace-only query."""
+        with pytest.raises(ValueError, match="query cannot be empty"):
+            researcher.search("   \t\n   ")
+
+    def test_search_invalid_num_results_zero(self, researcher):
+        """Test search() with zero num_results."""
+        with pytest.raises(ValueError, match="num_results must be a positive integer"):
+            researcher.search("test", num_results=0)
+
+    def test_search_invalid_num_results_negative(self, researcher):
+        """Test search() with negative num_results."""
+        with pytest.raises(ValueError, match="num_results must be a positive integer"):
+            researcher.search("test", num_results=-5)
+
+    def test_search_invalid_num_results_float(self, researcher):
+        """Test search() with float num_results."""
+        with pytest.raises(ValueError, match="num_results must be a positive integer"):
+            researcher.search("test", num_results=5.5)
+
+    def test_search_invalid_num_results_bool(self, researcher):
+        """Test search() with bool num_results (should reject)."""
+        with pytest.raises(ValueError, match="num_results must be a positive integer"):
+            researcher.search("test", num_results=True)
+
+
+class TestWebResearcherResearchTopic:
+    """Test research_topic() method input validation."""
+
+    @pytest.fixture
+    def researcher(self):
+        """Create test researcher."""
+        config = ResearchConfig.with_api_key("test-key")
+        return WebResearcher(config)
+
+    def test_research_topic_invalid_topic_type_none(self, researcher):
+        """Test research_topic() with None topic."""
+        with pytest.raises(TypeError, match="topic must be a string"):
+            researcher.research_topic(None)
+
+    def test_research_topic_invalid_topic_type_int(self, researcher):
+        """Test research_topic() with integer topic."""
+        with pytest.raises(TypeError, match="topic must be a string"):
+            researcher.research_topic(123)
+
+    def test_research_topic_invalid_topic_type_list(self, researcher):
+        """Test research_topic() with list topic."""
+        with pytest.raises(TypeError, match="topic must be a string"):
+            researcher.research_topic([])
+
+    def test_research_topic_empty_topic(self, researcher):
+        """Test research_topic() with empty topic."""
+        with pytest.raises(ValueError, match="topic cannot be empty"):
+            researcher.research_topic("")
+
+    def test_research_topic_whitespace_only_topic(self, researcher):
+        """Test research_topic() with whitespace-only topic."""
+        with pytest.raises(ValueError, match="topic cannot be empty"):
+            researcher.research_topic("   \t\n   ")
+
+    def test_research_topic_invalid_num_sources_zero(self, researcher):
+        """Test research_topic() with zero num_sources."""
+        with pytest.raises(ValueError, match="num_sources must be a positive integer"):
+            researcher.research_topic("test", num_sources=0)
+
+    def test_research_topic_invalid_num_sources_negative(self, researcher):
+        """Test research_topic() with negative num_sources."""
+        with pytest.raises(ValueError, match="num_sources must be a positive integer"):
+            researcher.research_topic("test", num_sources=-5)
+
+    def test_research_topic_invalid_num_sources_float(self, researcher):
+        """Test research_topic() with float num_sources."""
+        with pytest.raises(ValueError, match="num_sources must be a positive integer"):
+            researcher.research_topic("test", num_sources=3.5)
+
+    def test_research_topic_invalid_num_sources_bool(self, researcher):
+        """Test research_topic() with bool num_sources (should reject)."""
+        with pytest.raises(ValueError, match="num_sources must be a positive integer"):
+            researcher.research_topic("test", num_sources=True)
