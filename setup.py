@@ -14,6 +14,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/sohamkundu27/Web-Researcher-Agent",
     packages=find_packages(),
+    package_data={"src": ["py.typed"]},
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
