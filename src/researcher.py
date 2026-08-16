@@ -112,7 +112,8 @@ class ContentCache:
         """Store item in cache with expiration.
 
         Args:
-            key: The cache key to store the value under.
+            key: The cache key to store the value under. If the key already exists,
+                 its value and expiration time are updated (TTL is reset to now + ttl).
             value: The value to cache (any type except None; falsy values like 0, False, "" are OK).
 
         Raises:
