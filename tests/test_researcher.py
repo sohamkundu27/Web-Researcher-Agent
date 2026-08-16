@@ -427,6 +427,16 @@ class TestUtilityFunctions:
         # Verify hyphens are preserved
         assert result.count("-") == 5
 
+    def test_sanitize_text_preserves_underscores(self):
+        """Test that underscores (part of \\w word characters) are preserved."""
+        result = sanitize_text("foo_bar test_case variable_name")
+        assert "foo_bar" in result
+        assert "test_case" in result
+        assert "variable_name" in result
+        # Verify underscores are preserved
+        assert result.count("_") == 3
+        assert result == "foo_bar test_case variable_name"
+
     def test_sanitize_text_unicode_characters(self):
         """Test that Unicode letters are preserved in sanitized text."""
         # Accented Latin characters
