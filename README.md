@@ -117,9 +117,14 @@ Main agent class for conducting research.
   - Returns: Dictionary with `topic` and `status` ("success" or "error"). 
     - On success: also includes `findings` (list of results: each item contains a summary on success or error message on failure), `analysis`, `sources` (list of URLs), `timestamp`
     - On error: also includes `error` (error message)
+  - Raises:
+    - `ValueError`: If `num_sources` is not a positive integer
 
 - `summarize(urls: List[str]) -> Dict` - Summarize content from multiple URLs
   - Returns: Dictionary with keys: `status` ("success"), `summaries` (mapping of URL to summary result), `sources_count` (number of URLs)
+  - Raises:
+    - `TypeError`: If `urls` is not a list, or any item in `urls` is not a string
+    - `ValueError`: If any URL is not a valid HTTP(S) URL
 
 - `get_sources() -> List[str]` - Get list of all sources processed during research
   - Returns: List of all URLs successfully fetched since agent creation or last clear_history() call (sources accumulate across multiple research and summarize calls)
