@@ -2118,6 +2118,31 @@ def test_agent_get_formatted_report_missing_topic():
     assert "Test summary" in report
 
 
+def test_agent_get_formatted_report_empty_findings():
+    """Test getting formatted report when findings list is empty."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    agent.last_research = {
+        "topic": "Empty Results",
+        "analysis": "No results found for this query.",
+        "findings": [],
+    }
+    agent.researcher.sources = []
+
+    report = agent.get_formatted_report()
+
+    # Verify report structure is still valid
+    assert "# Research Report: Empty Results" in report
+    assert "## Analysis" in report
+    assert "No results found for this query." in report
+    assert "## Findings" in report
+    # With empty findings and no sources, no source entries should appear
+    assert "### Source" not in report
+    # With no sources, sources section should not appear
+    assert "## Sources" not in report
+
+
 @patch("src.researcher.WebResearcher.research_topic")
 def test_agent_research_success(mock_research_topic):
     """Test that research() returns the result from research_topic and sets last_research."""
