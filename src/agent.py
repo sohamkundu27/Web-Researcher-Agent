@@ -3,7 +3,7 @@
 from typing import Dict, Any, List, Optional, TypedDict
 
 from src.config import ResearchConfig
-from src.researcher import WebResearcher
+from src.researcher import WebResearcher, ResearchTopicResult
 from src.utils import format_sources, is_valid_url
 
 
@@ -48,13 +48,13 @@ class ResearchAgent:
 
         self.config: ResearchConfig = config
         self.researcher: WebResearcher = WebResearcher(config)
-        self.last_research: Optional[Dict[str, Any]] = None
+        self.last_research: Optional[ResearchTopicResult] = None
 
     def research(
         self,
         topic: str,
         num_sources: int = 5,
-    ) -> Dict[str, Any]:
+    ) -> ResearchTopicResult:
         """Conduct research on a topic.
 
         Args:
