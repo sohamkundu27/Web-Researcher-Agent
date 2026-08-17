@@ -70,7 +70,7 @@ class ResearchAgent:
         Raises:
             ValueError: If num_sources is not a positive integer
         """
-        if not isinstance(num_sources, int) or num_sources <= 0:
+        if type(num_sources) is not int or isinstance(num_sources, bool) or num_sources <= 0:
             raise ValueError("num_sources must be a positive integer")
 
         if num_sources > self.config.max_search_results:
