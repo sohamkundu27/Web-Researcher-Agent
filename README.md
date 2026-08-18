@@ -118,6 +118,8 @@ Main agent class for conducting research.
     - On success: also includes `findings` (list of results: each item contains a summary on success or error message on failure), `analysis`, `sources` (list of URLs), `timestamp`
     - On error: also includes `error` (error message)
   - Raises:
+    - `TypeError`: If `topic` is not a string
+    - `ValueError`: If `topic` is an empty string
     - `ValueError`: If `num_sources` is not a positive integer
 
 - `summarize(urls: List[str]) -> Dict` - Summarize content from multiple URLs
