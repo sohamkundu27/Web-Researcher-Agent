@@ -74,7 +74,28 @@ class ResearchConfig:
 
     @classmethod
     def from_env(cls) -> "ResearchConfig":
-        """Load configuration from environment variables."""
+        """Load configuration from environment variables.
+
+        Reads configuration settings from the environment, using defaults for
+        unset variables. Validates all loaded values before returning config.
+
+        Environment variables:
+            ANTHROPIC_API_KEY: Required. API key for Anthropic API requests.
+            RESEARCH_MODEL: Claude model to use (default: claude-3-5-sonnet-20241022).
+            MAX_SEARCH_RESULTS: Maximum search results per query (default: 10).
+            MAX_DEPTH: Reserved for future use, depth control (default: 3).
+            TIMEOUT: Request timeout in seconds (default: 30).
+            CACHE_ENABLED: Enable caching as "true" or "false" (default: true).
+            CACHE_TTL: Cache time-to-live in seconds (default: 3600).
+
+        Returns:
+            A validated ResearchConfig instance with settings from environment.
+
+        Raises:
+            ValueError: If ANTHROPIC_API_KEY is not set, or if any environment
+                       variable cannot be parsed as the expected type or violates
+                       validation constraints (e.g., negative timeout).
+        """
         api_key = os.getenv("ANTHROPIC_API_KEY")
         if not api_key:
             raise ValueError("ANTHROPIC_API_KEY environment variable not set")
