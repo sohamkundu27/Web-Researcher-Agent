@@ -135,8 +135,7 @@ def extract_text_from_html(html: str, max_length: int = 5000) -> str:
         return text[:max_length]
     except ValueError:
         raise
-    except Exception as e:
-        print(f"Error extracting text from HTML: {e}")
+    except Exception:
         return ""
 
 
