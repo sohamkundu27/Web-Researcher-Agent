@@ -477,6 +477,18 @@ class TestUtilityFunctions:
         result = sanitize_text("@#$%^&*()")
         assert result == ""
 
+    def test_sanitize_text_only_allowed_punctuation(self):
+        """Test that text containing only allowed punctuation is preserved."""
+        # Allowed punctuation: . , ! ? -
+        result = sanitize_text("...!!!")
+        assert result == "...!!!"
+
+        result = sanitize_text("---...!!!???")
+        assert result == "---...!!!???"
+
+        result = sanitize_text(".,!?-")
+        assert result == ".,!?-"
+
     def test_hash_content(self):
         """Test content hashing."""
         content = "test content"
