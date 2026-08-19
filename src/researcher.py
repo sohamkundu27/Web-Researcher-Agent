@@ -72,7 +72,15 @@ ResearchTopicResult = Union[ResearchTopicSuccess, ResearchTopicError]
 
 
 class ContentCache:
-    """Simple in-memory cache for web content."""
+    """Simple in-memory cache for web content with TTL-based expiration.
+
+    Stores key-value pairs with automatic expiration after a specified time-to-live (TTL).
+    Items expire when the current time reaches or exceeds their expiration time.
+    Expired items are lazily deleted when accessed, or can be proactively removed with cleanup().
+
+    Note: None is reserved as the cache-miss sentinel value and cannot be cached.
+    Use cleanup() periodically in long-running applications to prevent memory bloat.
+    """
 
     def __init__(self, ttl: int = 3600) -> None:
         """Initialize cache with time-to-live.
