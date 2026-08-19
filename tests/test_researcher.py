@@ -1971,6 +1971,24 @@ def test_agent_num_sources_minimum():
         mock_research.assert_called_once_with(topic="test query", num_sources=1)
 
 
+def test_agent_num_sources_bool_true():
+    """Test that bool True as num_sources raises ValueError."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(ValueError, match="num_sources must be a positive integer"):
+        agent.research("test query", num_sources=True)
+
+
+def test_agent_num_sources_bool_false():
+    """Test that bool False as num_sources raises ValueError."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(ValueError, match="num_sources must be a positive integer"):
+        agent.research("test query", num_sources=False)
+
+
 def test_agent_get_formatted_report_numbered_sources_correctly():
     """Test that successful sources are numbered sequentially (1, 2, 3) when there are mixed success/error findings."""
     from src.agent import ResearchAgent
