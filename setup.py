@@ -27,14 +27,8 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "anthropic>=0.31.0",
-        "python-dotenv>=1.0.0",
         "requests>=2.31.0",
         "beautifulsoup4>=4.12.2",
-        "selenium>=4.15.2",
-        "pandas>=2.1.3",
-        "numpy>=1.24.3",
-        "urllib3>=2.1.0",
-        "lxml>=4.9.3",
     ],
     extras_require={
         "dev": [
