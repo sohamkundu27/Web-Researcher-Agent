@@ -34,7 +34,16 @@ class ResearchConfig:
     cache_ttl: int = 3600  # 1 hour
 
     def __post_init__(self) -> None:
-        """Validate all fields after initialization."""
+        """Validate all configuration fields after initialization.
+
+        Raises:
+            ValueError: If api_key or model are empty, or if max_search_results,
+                       max_depth, or timeout are not positive integers, or if
+                       cache_ttl is negative.
+            TypeError: If any field has an incorrect type (model must be string,
+                      max_search_results/max_depth/timeout/cache_ttl must be integers,
+                      cache_enabled must be boolean).
+        """
         if not self.api_key:
             raise ValueError("api_key cannot be empty")
         if not isinstance(self.model, str):
