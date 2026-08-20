@@ -265,7 +265,8 @@ Only return the JSON list, no other text."""
                 - error: Error message describing what went wrong
         """
         if not is_valid_url(url):
-            return cast(FetchAndSummarizeError, {"error": f"Invalid URL: {url}", "url": url, "status": "error"})
+            error_result: FetchAndSummarizeError = {"error": f"Invalid URL: {url}", "url": url, "status": "error"}
+            return error_result
 
         # Check cache
         if self.cache:
@@ -281,7 +282,8 @@ Only return the JSON list, no other text."""
 
         content = fetch_result.get("content", "")
         if not content:
-            return cast(FetchAndSummarizeError, {"error": "No content extracted", "url": url, "status": "error"})
+            no_content_error: FetchAndSummarizeError = {"error": "No content extracted", "url": url, "status": "error"}
+            return no_content_error
 
         # Summarize content
         summary = self._summarize_content(content)
