@@ -116,7 +116,9 @@ def extract_text_from_html(html: str, max_length: int = 5000) -> str:
     """
     if not isinstance(html, str):
         raise TypeError(f"html must be a string, got {type(html).__name__}")
-    if type(max_length) is not int or isinstance(max_length, bool) or max_length <= 0:
+    if type(max_length) is not int or isinstance(max_length, bool):
+        raise TypeError(f"max_length must be an integer, got {type(max_length).__name__}")
+    if max_length <= 0:
         raise ValueError(f"max_length must be a positive integer, got {max_length}")
     try:
         soup = BeautifulSoup(html, "html.parser")
@@ -170,7 +172,9 @@ def fetch_url_content(url: str, timeout: int = 10) -> FetchUrlResult:
         raise TypeError(f"url must be a string, got {type(url).__name__}")
     if not is_valid_url(url):
         raise ValueError(f"url must be a valid HTTP(S) URL, got '{url}'")
-    if type(timeout) is not int or isinstance(timeout, bool) or timeout <= 0:
+    if type(timeout) is not int or isinstance(timeout, bool):
+        raise TypeError(f"timeout must be an integer, got {type(timeout).__name__}")
+    if timeout <= 0:
         raise ValueError(f"timeout must be a positive integer, got {timeout}")
 
     try:

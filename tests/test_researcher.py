@@ -624,7 +624,7 @@ class TestUtilityFunctions:
 
     def test_extract_text_from_html_invalid_max_length_type(self):
         """Test extract_text_from_html with non-integer max_length."""
-        with pytest.raises(ValueError, match="max_length must be a positive integer"):
+        with pytest.raises(TypeError, match="max_length must be an integer"):
             extract_text_from_html("<p>Test</p>", max_length="100")
 
     def test_extract_text_from_html_with_html_entities(self):
@@ -676,12 +676,12 @@ class TestUtilityFunctions:
 
     def test_extract_text_from_html_invalid_max_length_float(self):
         """Test extract_text_from_html with float max_length."""
-        with pytest.raises(ValueError, match="max_length must be a positive integer"):
+        with pytest.raises(TypeError, match="max_length must be an integer"):
             extract_text_from_html("<p>Test</p>", max_length=100.5)
 
     def test_extract_text_from_html_invalid_max_length_none(self):
         """Test extract_text_from_html with None max_length."""
-        with pytest.raises(ValueError, match="max_length must be a positive integer"):
+        with pytest.raises(TypeError, match="max_length must be an integer"):
             extract_text_from_html("<p>Test</p>", max_length=None)
 
     def test_extract_text_from_html_max_length_one(self):
@@ -701,12 +701,12 @@ class TestUtilityFunctions:
 
     def test_extract_text_from_html_invalid_max_length_bool_true(self):
         """Test extract_text_from_html with bool True as max_length (should reject)."""
-        with pytest.raises(ValueError, match="max_length must be a positive integer"):
+        with pytest.raises(TypeError, match="max_length must be an integer"):
             extract_text_from_html("<p>Test</p>", max_length=True)
 
     def test_extract_text_from_html_invalid_max_length_bool_false(self):
         """Test extract_text_from_html with bool False as max_length (should reject)."""
-        with pytest.raises(ValueError, match="max_length must be a positive integer"):
+        with pytest.raises(TypeError, match="max_length must be an integer"):
             extract_text_from_html("<p>Test</p>", max_length=False)
 
     def test_extract_text_from_html_only_script_and_style_tags(self):
@@ -952,7 +952,7 @@ class TestUtilityFunctions:
 
     def test_fetch_url_content_invalid_timeout_type(self):
         """Test fetch_url_content with non-integer timeout."""
-        with pytest.raises(ValueError, match="timeout must be a positive integer"):
+        with pytest.raises(TypeError, match="timeout must be an integer"):
             fetch_url_content("https://example.com", timeout="10")
 
     def test_fetch_url_content_invalid_timeout_zero(self):
@@ -967,12 +967,12 @@ class TestUtilityFunctions:
 
     def test_fetch_url_content_invalid_timeout_float(self):
         """Test fetch_url_content with float timeout."""
-        with pytest.raises(ValueError, match="timeout must be a positive integer"):
+        with pytest.raises(TypeError, match="timeout must be an integer"):
             fetch_url_content("https://example.com", timeout=10.5)
 
     def test_fetch_url_content_invalid_timeout_none(self):
         """Test fetch_url_content with None timeout."""
-        with pytest.raises(ValueError, match="timeout must be a positive integer"):
+        with pytest.raises(TypeError, match="timeout must be an integer"):
             fetch_url_content("https://example.com", timeout=None)
 
     @patch("src.utils.requests.get")
@@ -1030,12 +1030,12 @@ class TestUtilityFunctions:
 
     def test_fetch_url_content_invalid_timeout_bool_true(self):
         """Test fetch_url_content with bool True as timeout (should reject)."""
-        with pytest.raises(ValueError, match="timeout must be a positive integer"):
+        with pytest.raises(TypeError, match="timeout must be an integer"):
             fetch_url_content("https://example.com", timeout=True)
 
     def test_fetch_url_content_invalid_timeout_bool_false(self):
         """Test fetch_url_content with bool False as timeout (should reject)."""
-        with pytest.raises(ValueError, match="timeout must be a positive integer"):
+        with pytest.raises(TypeError, match="timeout must be an integer"):
             fetch_url_content("https://example.com", timeout=False)
 
 
