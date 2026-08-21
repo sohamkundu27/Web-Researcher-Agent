@@ -58,7 +58,7 @@ class ResearchAgent:
         """Conduct research on a topic.
 
         Args:
-            topic: The topic to research
+            topic: The topic to research (must be a non-empty string)
             num_sources: Number of sources to fetch (default: 5). Must be a positive integer.
                 If greater than max_search_results, will be clamped to max_search_results.
 
@@ -68,6 +68,8 @@ class ResearchAgent:
             timestamp. On error, includes error message instead of findings/analysis/sources/timestamp.
 
         Raises:
+            TypeError: If topic is not a string
+            ValueError: If topic is an empty string
             ValueError: If num_sources is not a positive integer
         """
         if type(num_sources) is not int or isinstance(num_sources, bool) or num_sources <= 0:
