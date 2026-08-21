@@ -64,6 +64,41 @@ class TestContentCache:
         with pytest.raises(ValueError, match="ttl must be non-negative"):
             ContentCache(ttl=-1)
 
+    def test_cache_invalid_ttl_type_string(self):
+        """Test that string TTL raises TypeError."""
+        with pytest.raises(TypeError, match="ttl must be an integer, got str"):
+            ContentCache(ttl="3600")
+
+    def test_cache_invalid_ttl_type_float(self):
+        """Test that float TTL raises TypeError."""
+        with pytest.raises(TypeError, match="ttl must be an integer, got float"):
+            ContentCache(ttl=3600.5)
+
+    def test_cache_invalid_ttl_type_none(self):
+        """Test that None TTL raises TypeError."""
+        with pytest.raises(TypeError, match="ttl must be an integer, got NoneType"):
+            ContentCache(ttl=None)
+
+    def test_cache_invalid_ttl_type_bool_true(self):
+        """Test that bool True as TTL raises TypeError."""
+        with pytest.raises(TypeError, match="ttl must be an integer, got bool"):
+            ContentCache(ttl=True)
+
+    def test_cache_invalid_ttl_type_bool_false(self):
+        """Test that bool False as TTL raises TypeError."""
+        with pytest.raises(TypeError, match="ttl must be an integer, got bool"):
+            ContentCache(ttl=False)
+
+    def test_cache_invalid_ttl_type_list(self):
+        """Test that list TTL raises TypeError."""
+        with pytest.raises(TypeError, match="ttl must be an integer, got list"):
+            ContentCache(ttl=[3600])
+
+    def test_cache_invalid_ttl_type_dict(self):
+        """Test that dict TTL raises TypeError."""
+        with pytest.raises(TypeError, match="ttl must be an integer, got dict"):
+            ContentCache(ttl={"seconds": 3600})
+
     def test_cache_with_falsy_values(self):
         """Test that cache correctly stores and retrieves falsy values."""
         cache = ContentCache(ttl=60)

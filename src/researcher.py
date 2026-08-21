@@ -89,8 +89,11 @@ class ContentCache:
             ttl: Time-to-live in seconds (must be non-negative)
 
         Raises:
+            TypeError: If ttl is not an integer (bool is rejected as bool is a subclass of int)
             ValueError: If ttl is negative
         """
+        if type(ttl) is not int or isinstance(ttl, bool):
+            raise TypeError(f"ttl must be an integer, got {type(ttl).__name__}")
         if ttl < 0:
             raise ValueError("ttl must be non-negative")
         self.ttl = ttl
