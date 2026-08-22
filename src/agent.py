@@ -72,6 +72,10 @@ class ResearchAgent:
             ValueError: If topic is an empty string
             ValueError: If num_sources is not a positive integer
         """
+        if not isinstance(topic, str):
+            raise TypeError(f"topic must be a string, got {type(topic).__name__}")
+        if not topic.strip():
+            raise ValueError("topic cannot be empty")
         if type(num_sources) is not int or isinstance(num_sources, bool) or num_sources <= 0:
             raise ValueError("num_sources must be a positive integer")
 

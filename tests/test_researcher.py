@@ -2313,6 +2313,60 @@ def test_agent_summarize_updates_sources(mock_summarize, mock_fetch):
     assert result["sources_count"] == 2
 
 
+def test_agent_research_invalid_topic_type_none():
+    """Test research() with None topic."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(TypeError, match="topic must be a string"):
+        agent.research(None)
+
+
+def test_agent_research_invalid_topic_type_int():
+    """Test research() with integer topic."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(TypeError, match="topic must be a string"):
+        agent.research(123)
+
+
+def test_agent_research_invalid_topic_type_list():
+    """Test research() with list topic."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(TypeError, match="topic must be a string"):
+        agent.research([])
+
+
+def test_agent_research_invalid_topic_type_dict():
+    """Test research() with dict topic."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(TypeError, match="topic must be a string"):
+        agent.research({"topic": "test"})
+
+
+def test_agent_research_empty_topic():
+    """Test research() with empty string topic."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(ValueError, match="topic cannot be empty"):
+        agent.research("")
+
+
+def test_agent_research_whitespace_only_topic():
+    """Test research() with whitespace-only topic."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(ValueError, match="topic cannot be empty"):
+        agent.research("   \t\n   ")
+
+
 class TestWebResearcherSearch:
     """Test search() method input validation."""
 
