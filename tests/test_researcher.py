@@ -750,6 +750,21 @@ class TestUtilityFunctions:
         result = extract_text_from_html(html)
         assert result == ""
 
+    def test_extract_text_from_html_with_comments(self):
+        """Test that HTML comments are removed and not included in extracted text."""
+        html = "<!-- This is a hidden comment --><p>Visible text</p>"
+        result = extract_text_from_html(html)
+        assert "hidden comment" not in result
+        assert "Visible text" in result
+
+    def test_extract_text_from_html_multiple_comments(self):
+        """Test extraction with multiple HTML comments interspersed with content."""
+        html = "<!-- Comment 1 --><p>First paragraph</p><!-- Comment 2 --><p>Second paragraph</p><!-- Comment 3 -->"
+        result = extract_text_from_html(html)
+        assert "Comment" not in result
+        assert "First paragraph" in result
+        assert "Second paragraph" in result
+
     def test_merge_dicts_simple(self):
         """Test simple dictionary merge."""
         dict1 = {"a": 1, "b": 2}
