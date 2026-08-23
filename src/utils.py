@@ -135,8 +135,6 @@ def extract_text_from_html(html: str, max_length: int = 5000) -> str:
 
         # Limit length
         return text[:max_length]
-    except ValueError:
-        raise
     except Exception:
         return ""
 
