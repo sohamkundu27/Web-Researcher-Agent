@@ -281,7 +281,12 @@ Only return the JSON list, no other text."""
         fetch_result = fetch_url_content(url, timeout=self.config.timeout)
 
         if fetch_result["status"] == "error":
-            return cast(FetchAndSummarizeError, fetch_result)
+            error_result: FetchAndSummarizeError = {
+                "url": fetch_result["url"],
+                "error": fetch_result["error"],
+                "status": "error",
+            }
+            return error_result
 
         content = fetch_result.get("content", "")
         if not content:
