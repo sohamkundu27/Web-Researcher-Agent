@@ -158,7 +158,28 @@ class ResearchConfig:
 
     @classmethod
     def with_api_key(cls, api_key: str, **kwargs: Any) -> "ResearchConfig":
-        """Create configuration with explicit API key."""
+        """Create configuration with explicit API key and optional parameters.
+
+        Args:
+            api_key: Anthropic API key for authenticating Claude API requests (must be non-empty).
+            **kwargs: Optional keyword arguments to override defaults:
+                - model: Claude model identifier (must be a non-empty string)
+                - max_search_results: Maximum search results per query (must be positive integer)
+                - max_depth: Reserved for future use (must be positive integer)
+                - timeout: Request timeout in seconds (must be positive integer)
+                - cache_enabled: Enable caching as boolean
+                - cache_ttl: Cache time-to-live in seconds (must be non-negative integer)
+
+        Returns:
+            A validated ResearchConfig instance with the provided api_key and any
+            keyword argument overrides applied.
+
+        Raises:
+            ValueError: If api_key is empty, or if any kwarg violates validation constraints
+                       (e.g., negative timeout, empty model, non-positive max_search_results).
+            TypeError: If any kwarg has an incorrect type (model must be string,
+                      numeric fields must be integers, cache_enabled must be boolean).
+        """
         if not api_key:
             raise ValueError("api_key cannot be empty")
 
