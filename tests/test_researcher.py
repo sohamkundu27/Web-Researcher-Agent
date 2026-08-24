@@ -1088,6 +1088,38 @@ class TestUtilityFunctions:
         with pytest.raises(TypeError, match="timeout must be an integer"):
             fetch_url_content("https://example.com", timeout=False)
 
+    @patch("src.utils.requests.get")
+    def test_fetch_url_content_empty_html_response(self, mock_get):
+        """Test fetch_url_content with empty HTML response (success with no content)."""
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.text = ""
+        mock_response.headers = {"Content-Type": "text/html"}
+        mock_get.return_value = mock_response
+
+        result = fetch_url_content("https://example.com")
+        assert result["status"] == "success"
+        assert result["url"] == "https://example.com"
+        assert result["status_code"] == 200
+        assert result["content"] == ""
+        assert "Content-Type" in result["headers"]
+
+    @patch("src.utils.requests.get")
+    def test_fetch_url_content_whitespace_only_html_response(self, mock_get):
+        """Test fetch_url_content with whitespace-only HTML response (success with no content)."""
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.text = "   \n\t  \r\n   "
+        mock_response.headers = {"Content-Type": "text/html"}
+        mock_get.return_value = mock_response
+
+        result = fetch_url_content("https://example.com")
+        assert result["status"] == "success"
+        assert result["url"] == "https://example.com"
+        assert result["status_code"] == 200
+        assert result["content"] == ""
+        assert "Content-Type" in result["headers"]
+
 
 class TestResearchConfig:
     """Test ResearchConfig class."""
