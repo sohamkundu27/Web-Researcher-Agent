@@ -70,7 +70,7 @@ export ANTHROPIC_API_KEY="your-api-key-here"
 from src.agent import ResearchAgent
 
 agent = ResearchAgent()
-result = agent.research("Latest developments in quantum computing")
+result = agent.research(topic="Latest developments in quantum computing")
 print(result)
 ```
 
