@@ -2345,6 +2345,33 @@ def test_agent_summarize_updates_sources(mock_summarize, mock_fetch):
     assert result["sources_count"] == 2
 
 
+@patch("src.researcher.WebResearcher.fetch_and_summarize")
+def test_agent_summarize_with_duplicate_urls(mock_fetch):
+    """Test that summarize handles duplicate URLs in the list."""
+    from src.agent import ResearchAgent
+
+    mock_fetch.return_value = {
+        "status": "success",
+        "summary": "Test summary",
+        "url": "https://example.com",
+    }
+
+    agent = ResearchAgent(api_key="test-key")
+    # Pass the same URL twice in the list
+    urls = ["https://example.com", "https://example.com"]
+    result = agent.summarize(urls)
+
+    # Verify sources_count includes both (even though duplicate)
+    assert result["sources_count"] == 2
+    # Verify summaries dict has only one entry (dict keys are unique)
+    assert len(result["summaries"]) == 1
+    assert "https://example.com" in result["summaries"]
+    # Verify status is success
+    assert result["status"] == "success"
+    # fetch_and_summarize should be called twice (once per URL in the list)
+    assert mock_fetch.call_count == 2
+
+
 def test_agent_research_invalid_topic_type_none():
     """Test research() with None topic."""
     from src.agent import ResearchAgent
