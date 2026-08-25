@@ -24,7 +24,7 @@ class ResearchAgent:
         model: str = "claude-3-5-sonnet-20241022",
         max_search_results: int = 10,
         max_depth: int = 3,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initialize research agent with configuration.
 
