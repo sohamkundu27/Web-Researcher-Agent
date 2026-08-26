@@ -34,6 +34,11 @@ class ResearchAgent:
             max_search_results: Maximum number of search results to fetch per query (default: 10).
             max_depth: Reserved for future use (default: 3).
             **kwargs: Additional arguments passed to ResearchConfig (e.g., timeout, cache_ttl).
+
+        Attributes:
+            config: ResearchConfig instance with API key, model, and operational parameters.
+            researcher: WebResearcher instance for conducting web research and URL fetching.
+            last_research: The most recent research result, or None if no research has been conducted.
         """
         if api_key:
             config = ResearchConfig.with_api_key(
