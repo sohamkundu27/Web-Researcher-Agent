@@ -143,7 +143,8 @@ def fetch_url_content(url: str, timeout: int = 10) -> FetchUrlResult:
     """Fetch and parse content from URL.
 
     Retrieves the content of a URL using HTTP GET request and extracts
-    clean text from the HTML response. Handles timeouts and HTTP errors gracefully.
+    clean text from the HTML response. Handles timeouts, HTTP errors, and
+    any unexpected exceptions gracefully, always returning a FetchUrlResult.
 
     Args:
         url: The URL to fetch content from (must start with http:// or https://)
@@ -186,7 +187,7 @@ def fetch_url_content(url: str, timeout: int = 10) -> FetchUrlResult:
             "status_code": response.status_code,
             "headers": dict(response.headers),
         }
-    except requests.RequestException as e:
+    except Exception as e:
         return {
             "status": "error",
             "url": url,

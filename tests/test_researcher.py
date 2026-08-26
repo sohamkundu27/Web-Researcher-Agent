@@ -1120,6 +1120,22 @@ class TestUtilityFunctions:
         assert result["content"] == ""
         assert "Content-Type" in result["headers"]
 
+    def test_fetch_url_content_exception_during_content_extraction(self):
+        """Test fetch_url_content gracefully handles exceptions during content extraction."""
+        with patch("src.utils.requests.get") as mock_get, \
+             patch("src.utils.extract_text_from_html", side_effect=RuntimeError("Extraction failed")):
+            mock_response = Mock()
+            mock_response.status_code = 200
+            mock_response.text = "<p>Test</p>"
+            mock_response.headers = {"Content-Type": "text/html"}
+            mock_get.return_value = mock_response
+
+            result = fetch_url_content("https://example.com")
+            # Should return an error response instead of raising an exception
+            assert result["status"] == "error"
+            assert result["url"] == "https://example.com"
+            assert "Extraction failed" in result["error"]
+
 
 class TestResearchConfig:
     """Test ResearchConfig class."""
