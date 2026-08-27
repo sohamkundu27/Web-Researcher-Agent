@@ -9,7 +9,6 @@ from anthropic import Anthropic
 from src.utils import (
     fetch_url_content,
     is_valid_url,
-    hash_content,
     chunk_text,
 )
 from src.config import ResearchConfig
@@ -273,7 +272,7 @@ Only return the JSON list, no other text."""
 
         # Check cache
         if self.cache:
-            cached = self.cache.get(hash_content(url))
+            cached = self.cache.get(url)
             if cached is not None:
                 return cast(FetchAndSummarizeResult, cached)
 
@@ -305,7 +304,7 @@ Only return the JSON list, no other text."""
 
         # Cache result
         if self.cache:
-            self.cache.set(hash_content(url), result)
+            self.cache.set(url, result)
 
         if url not in self.sources:
             self.sources.append(url)
