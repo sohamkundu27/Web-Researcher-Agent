@@ -524,6 +524,34 @@ class TestUtilityFunctions:
         result = sanitize_text(".,!?-")
         assert result == ".,!?-"
 
+    def test_sanitize_text_starts_with_special_chars(self):
+        """Test that text starting with special characters has them removed."""
+        # Text starting with non-allowed special chars should remove them
+        result = sanitize_text("@#$Hello world")
+        assert result == "Hello world"
+
+        # Text starting with multiple special chars
+        result = sanitize_text("@@@Hello")
+        assert result == "Hello"
+
+    def test_sanitize_text_ends_with_special_chars(self):
+        """Test that text ending with special characters has them removed."""
+        # Text ending with non-allowed special chars should remove them
+        result = sanitize_text("Hello world@#$")
+        assert result == "Hello world"
+
+        # Text ending with multiple special chars
+        result = sanitize_text("Hello@@@")
+        assert result == "Hello"
+
+    def test_sanitize_text_both_ends_with_special_chars(self):
+        """Test that text with special chars at both start and end has them removed."""
+        result = sanitize_text("@#$Hello world@#$")
+        assert result == "Hello world"
+
+        result = sanitize_text("@#$Test case@#$")
+        assert result == "Test case"
+
     def test_hash_content(self):
         """Test content hashing."""
         content = "test content"
