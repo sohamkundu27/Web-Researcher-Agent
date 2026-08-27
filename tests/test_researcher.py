@@ -1626,6 +1626,25 @@ class TestWebResearcher:
         assert researcher.sources == []
         assert researcher.research_history == []
 
+    def test_clear_history_with_cache_disabled(self):
+        """Test that clear_history works correctly when cache is disabled."""
+        config = ResearchConfig.with_api_key("test-key", cache_enabled=False)
+        researcher = WebResearcher(config)
+
+        # Verify cache is None when disabled
+        assert researcher.cache is None
+
+        # Add some sources and history
+        researcher.sources = ["https://example.com"]
+        researcher.research_history = [{"topic": "test"}]
+
+        # Clear everything - should not raise an error even though cache is None
+        researcher.clear_history()
+
+        # Verify sources and history are cleared
+        assert researcher.sources == []
+        assert researcher.research_history == []
+
     @patch("src.researcher.WebResearcher.search")
     def test_search_called(self, mock_search, researcher):
         """Test that search is called properly."""
