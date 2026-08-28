@@ -148,7 +148,17 @@ class ResearchAgent:
         return self.researcher.get_sources()
 
     def clear_history(self) -> None:
-        """Clear research history and cache."""
+        """Clear research history and cache.
+
+        Resets all accumulated state from prior research() and summarize() calls.
+        Specifically:
+        - Clears the internal researcher's research history and sources list
+        - Clears the internal researcher's cache if caching is enabled
+        - Resets last_research to None, so get_formatted_report() will show "No research conducted yet."
+
+        Side effects: After calling, get_sources() returns an empty list and get_formatted_report()
+        reflects the cleared state.
+        """
         self.researcher.clear_history()
         self.last_research = None
 

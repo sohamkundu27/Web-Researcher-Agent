@@ -467,7 +467,17 @@ Please provide:
         return self.sources
 
     def clear_history(self) -> None:
-        """Clear research history and cache."""
+        """Clear research history and cache.
+
+        Resets all accumulated state from prior research_topic() and fetch_and_summarize() calls.
+        Specifically:
+        - Clears research_history list, removing all completed research results
+        - Clears sources list, removing all fetched URLs
+        - Clears the cache if caching is enabled (no effect if cache_enabled is False)
+
+        Side effects: After calling, get_sources() returns an empty list. Research results
+        obtained before the call are no longer retained in the researcher.
+        """
         self.research_history.clear()
         self.sources.clear()
         if self.cache:
