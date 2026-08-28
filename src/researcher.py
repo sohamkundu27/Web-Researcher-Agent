@@ -385,11 +385,12 @@ Summary should be 2-3 sentences max."""
         search_results = self.search(topic, num_results=num_sources)
 
         if not search_results:
-            return {
+            error_result: ResearchTopicError = {
                 "topic": topic,
                 "status": "error",
                 "error": "No search results found",
             }
+            return error_result
 
         # Fetch and summarize each result
         findings: List[Dict[str, Any]] = []
@@ -403,7 +404,7 @@ Summary should be 2-3 sentences max."""
         # Generate comprehensive analysis
         analysis = self._generate_analysis(topic, findings)
 
-        research_result = {
+        research_result: ResearchTopicSuccess = {
             "topic": topic,
             "status": "success",
             "findings": findings,
