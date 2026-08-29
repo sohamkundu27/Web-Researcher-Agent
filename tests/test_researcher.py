@@ -332,6 +332,48 @@ class TestContentCache:
         assert removed_count == 3
         assert len(cache.cache) == 0
 
+    def test_cache_update_resets_ttl_from_update_time(self):
+        """Test that updating a key resets TTL from update time, not extends original TTL.
+
+        This is critical for correctness: if a key is updated before expiration,
+        it should get a fresh TTL from the update time, not extend the old TTL.
+        """
+        from datetime import datetime, timedelta
+        from unittest.mock import patch
+
+        cache = ContentCache(ttl=100)
+        frozen_time_initial = datetime(2026, 1, 1, 12, 0, 0)
+        frozen_time_update = datetime(2026, 1, 1, 12, 0, 40)  # 40 seconds later
+
+        # Set initial value at time T=0
+        with patch("src.researcher.datetime") as mock_datetime:
+            mock_datetime.now.return_value = frozen_time_initial
+            cache.set("key", "value1")
+
+        # Get the initial expiration time: should be T=0 + 100 = T=100
+        initial_expires = cache.cache["key"]["expires"]
+        expected_initial_expires = frozen_time_initial + timedelta(seconds=100)
+        assert initial_expires == expected_initial_expires
+
+        # Update the key at T=40 (before the original T=100 expiration)
+        with patch("src.researcher.datetime") as mock_datetime:
+            mock_datetime.now.return_value = frozen_time_update
+            cache.set("key", "value2")
+
+        # Get the new expiration time: should be T=40 + 100 = T=140, NOT T=100 + 100 = T=200
+        updated_expires = cache.cache["key"]["expires"]
+        expected_updated_expires = frozen_time_update + timedelta(seconds=100)
+
+        # Verify the update reset the TTL from the update time
+        assert updated_expires == expected_updated_expires, \
+            f"TTL should be reset from update time: expected {expected_updated_expires}, got {updated_expires}"
+        assert updated_expires > initial_expires, \
+            "Updated expiration should be later than initial (since we added 40 more seconds)"
+
+        # Verify the exact timing: new_expires should be 40 seconds later than old_expires
+        assert updated_expires - initial_expires == timedelta(seconds=40), \
+            "Updated expiration should be exactly 40 seconds later than initial"
+
 
 class TestUtilityFunctions:
     """Test utility functions."""
