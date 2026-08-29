@@ -42,8 +42,12 @@ class ResearchConfig:
                        cache_ttl is negative.
             TypeError: If any field has an incorrect type (model must be string,
                       max_search_results/max_depth/timeout/cache_ttl must be integers,
-                      cache_enabled must be boolean).
+                      cache_enabled must be boolean, api_key must be string).
         """
+        if not isinstance(self.api_key, str):
+            raise TypeError(
+                f"api_key must be a string, got {type(self.api_key).__name__}"
+            )
         if not self.api_key:
             raise ValueError("api_key cannot be empty")
         if not isinstance(self.model, str):
@@ -177,9 +181,14 @@ class ResearchConfig:
         Raises:
             ValueError: If api_key is empty, or if any kwarg violates validation constraints
                        (e.g., negative timeout, empty model, non-positive max_search_results).
-            TypeError: If any kwarg has an incorrect type (model must be string,
-                      numeric fields must be integers, cache_enabled must be boolean).
+            TypeError: If api_key is not a string, or if any kwarg has an incorrect type
+                      (model must be string, numeric fields must be integers, cache_enabled
+                      must be boolean).
         """
+        if not isinstance(api_key, str):
+            raise TypeError(
+                f"api_key must be a string, got {type(api_key).__name__}"
+            )
         if not api_key:
             raise ValueError("api_key cannot be empty")
 

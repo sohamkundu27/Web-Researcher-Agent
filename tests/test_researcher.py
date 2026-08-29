@@ -1180,6 +1180,26 @@ class TestResearchConfig:
         with pytest.raises(ValueError, match="api_key cannot be empty"):
             ResearchConfig(api_key="")
 
+    def test_config_direct_instantiation_invalid_api_key_type_int(self):
+        """Test direct instantiation with non-string api_key raises TypeError."""
+        with pytest.raises(TypeError, match="api_key must be a string, got int"):
+            ResearchConfig(api_key=123)
+
+    def test_config_direct_instantiation_invalid_api_key_type_none(self):
+        """Test direct instantiation with None api_key raises TypeError."""
+        with pytest.raises(TypeError, match="api_key must be a string, got NoneType"):
+            ResearchConfig(api_key=None)
+
+    def test_config_direct_instantiation_invalid_api_key_type_list(self):
+        """Test direct instantiation with list api_key raises TypeError."""
+        with pytest.raises(TypeError, match="api_key must be a string, got list"):
+            ResearchConfig(api_key=["key"])
+
+    def test_config_direct_instantiation_invalid_api_key_type_dict(self):
+        """Test direct instantiation with dict api_key raises TypeError."""
+        with pytest.raises(TypeError, match="api_key must be a string, got dict"):
+            ResearchConfig(api_key={"key": "value"})
+
     def test_config_direct_instantiation_invalid_max_search_results(self):
         """Test direct instantiation with invalid max_search_results raises ValueError."""
         with pytest.raises(ValueError, match="max_search_results must be greater than 0"):
@@ -1283,6 +1303,26 @@ class TestResearchConfig:
         """Test that empty api_key raises ValueError."""
         with pytest.raises(ValueError, match="api_key cannot be empty"):
             ResearchConfig.with_api_key("")
+
+    def test_config_with_api_key_invalid_api_key_type_int(self):
+        """Test that non-string api_key raises TypeError."""
+        with pytest.raises(TypeError, match="api_key must be a string, got int"):
+            ResearchConfig.with_api_key(123)
+
+    def test_config_with_api_key_invalid_api_key_type_none(self):
+        """Test that None api_key raises TypeError."""
+        with pytest.raises(TypeError, match="api_key must be a string, got NoneType"):
+            ResearchConfig.with_api_key(None)
+
+    def test_config_with_api_key_invalid_api_key_type_list(self):
+        """Test that list api_key raises TypeError."""
+        with pytest.raises(TypeError, match="api_key must be a string, got list"):
+            ResearchConfig.with_api_key(["key"])
+
+    def test_config_with_api_key_invalid_api_key_type_dict(self):
+        """Test that dict api_key raises TypeError."""
+        with pytest.raises(TypeError, match="api_key must be a string, got dict"):
+            ResearchConfig.with_api_key({"key": "value"})
 
     def test_config_with_api_key_invalid_max_search_results(self):
         """Test that non-positive max_search_results raises ValueError."""
