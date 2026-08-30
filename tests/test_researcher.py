@@ -956,6 +956,29 @@ class TestUtilityFunctions:
         with pytest.raises(TypeError, match="dict2 must be a dictionary"):
             merge_dicts({"a": 1}, 42)
 
+    def test_merge_dicts_with_numeric_keys(self):
+        """Test merge_dicts with numeric (non-string) keys."""
+        dict1 = {1: "a", 2: {"nested": "value1"}, 3: "c"}
+        dict2 = {1: "A", 2: {"nested": "value2", "extra": "key"}, 4: "d"}
+        result = merge_dicts(dict1, dict2)
+        # Numeric keys should be handled just like string keys
+        assert result == {1: "A", 2: {"nested": "value2", "extra": "key"}, 3: "c", 4: "d"}
+        # Verify input dicts are not mutated
+        assert dict1 == {1: "a", 2: {"nested": "value1"}, 3: "c"}
+        assert dict2 == {1: "A", 2: {"nested": "value2", "extra": "key"}, 4: "d"}
+
+    def test_merge_dicts_with_tuple_keys(self):
+        """Test merge_dicts with tuple keys (any hashable key)."""
+        key1 = ("a", "b")
+        key2 = (1, 2, 3)
+        dict1 = {key1: "value1", key2: "value2"}
+        dict2 = {key1: "updated", ("c", "d"): "value3"}
+        result = merge_dicts(dict1, dict2)
+        expected = {key1: "updated", key2: "value2", ("c", "d"): "value3"}
+        assert result == expected
+        # Verify input dicts are not mutated
+        assert dict1 == {key1: "value1", key2: "value2"}
+
     def test_format_sources_empty(self):
         """Test formatting empty sources list."""
         result = format_sources([])
