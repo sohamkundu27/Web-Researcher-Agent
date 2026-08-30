@@ -1878,6 +1878,38 @@ def test_agent_clear_history_clears_cache():
     assert agent.last_research is None
 
 
+def test_agent_clear_history_resets_formatted_report():
+    """Test that clear_history() makes get_formatted_report() return 'No research conducted yet.'"""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    # Set up a research result
+    agent.last_research = {
+        "topic": "Python",
+        "analysis": "Python is a programming language.",
+        "findings": [
+            {
+                "status": "success",
+                "url": "https://python.org",
+                "summary": "Official Python website",
+            }
+        ],
+    }
+    agent.researcher.sources = ["https://python.org"]
+
+    # Verify report shows research results before clearing
+    report_before = agent.get_formatted_report()
+    assert "# Research Report: Python" in report_before
+    assert "Official Python website" in report_before
+
+    # Clear history
+    agent.clear_history()
+
+    # Verify report returns default message after clearing
+    report_after = agent.get_formatted_report()
+    assert report_after == "No research conducted yet."
+
+
 @patch("src.researcher.WebResearcher.fetch_and_summarize")
 def test_agent_summarize(mock_fetch):
     """Test summarizing multiple URLs."""
