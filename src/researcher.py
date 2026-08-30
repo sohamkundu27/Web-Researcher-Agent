@@ -379,8 +379,6 @@ Summary should be 2-3 sentences max."""
         if type(num_sources) is not int or isinstance(num_sources, bool) or num_sources <= 0:
             raise ValueError(f"num_sources must be a positive integer, got {num_sources}")
 
-        print(f"Starting research on: {topic}")
-
         # Generate search queries
         search_results = self.search(topic, num_results=num_sources)
 
@@ -399,7 +397,6 @@ Summary should be 2-3 sentences max."""
             if url:
                 summary = self.fetch_and_summarize(url)
                 findings.append(summary)
-                print(f"  ✓ Processed: {url}")
 
         # Generate comprehensive analysis
         analysis = self._generate_analysis(topic, findings)
