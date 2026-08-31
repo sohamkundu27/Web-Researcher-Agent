@@ -187,7 +187,7 @@ class WebResearcher:
         self.client: Anthropic = Anthropic()
         self.cache: Optional[ContentCache] = ContentCache(ttl=config.cache_ttl) if config.cache_enabled else None
         self.sources: List[str] = []
-        self.research_history: List[Dict[str, Any]] = []
+        self.research_history: List[ResearchTopicResult] = []
 
     def search(
         self,
