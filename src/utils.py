@@ -286,21 +286,23 @@ def format_sources(sources: List[str]) -> str:
     return formatted
 
 
-def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
+def merge_dicts(dict1: Dict[Any, Any], dict2: Dict[Any, Any]) -> Dict[Any, Any]:
     """Deep merge two dictionaries.
 
     Recursively merges dict2 into dict1, combining nested dictionaries while
     preserving all values. Non-dict values in dict2 overwrite values in dict1.
-    Input dictionaries are not modified.
+    Input dictionaries are not modified. Supports any hashable key type (strings,
+    integers, tuples, etc.) in addition to nested dict values.
 
     Args:
-        dict1: The base dictionary to merge into
-        dict2: The dictionary whose values are merged into dict1
+        dict1: The base dictionary to merge into (may use any hashable keys).
+        dict2: The dictionary whose values are merged into dict1 (may use any
+               hashable keys).
 
     Returns:
         A new dictionary with merged values, where dict2 values take precedence
         in case of conflicts at the same key level. Nested dictionaries are
-        recursively merged rather than replaced.
+        recursively merged rather than replaced. Key types are preserved.
 
     Raises:
         TypeError: If dict1 or dict2 is not a dictionary
