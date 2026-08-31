@@ -8,7 +8,15 @@ from src.utils import format_sources, is_valid_url
 
 
 class SummarizeResult(TypedDict):
-    """Type definition for summarize method result."""
+    """Type definition for summarize method result.
+
+    Attributes:
+        status: Always "success" for the summarize method's return type.
+        summaries: Dictionary mapping each input URL to its summarization result.
+                  Each value is a FetchAndSummarizeResult (contains 'url', 'status',
+                  and either 'summary' and 'content_preview' on success or 'error' on failure).
+        sources_count: Number of URLs that were summarized (len of input urls list).
+    """
 
     status: str
     summaries: Dict[str, Dict[str, Any]]
