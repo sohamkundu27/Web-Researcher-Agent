@@ -3,7 +3,7 @@
 from typing import Dict, Any, List, Optional, TypedDict
 
 from src.config import ResearchConfig
-from src.researcher import WebResearcher, ResearchTopicResult
+from src.researcher import WebResearcher, ResearchTopicResult, FetchAndSummarizeResult
 from src.utils import format_sources, is_valid_url
 
 
@@ -19,7 +19,7 @@ class SummarizeResult(TypedDict):
     """
 
     status: str
-    summaries: Dict[str, Dict[str, Any]]
+    summaries: Dict[str, FetchAndSummarizeResult]
     sources_count: int
 
 
@@ -132,7 +132,7 @@ class ResearchAgent:
                     f"all urls must be valid HTTP(S) URLs, item at index {i} is invalid: '{url}'"
                 )
 
-        summaries: Dict[str, Dict[str, Any]] = {}
+        summaries: Dict[str, FetchAndSummarizeResult] = {}
         for url in urls:
             result = self.researcher.fetch_and_summarize(url)
             summaries[url] = result
