@@ -1829,6 +1829,14 @@ def test_agent_initialization():
     assert agent.last_research is None
 
 
+def test_agent_get_sources_empty():
+    """Test that get_sources returns empty list for fresh agent."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    assert agent.get_sources() == []
+
+
 def test_agent_get_sources():
     """Test getting sources from agent."""
     from src.agent import ResearchAgent
