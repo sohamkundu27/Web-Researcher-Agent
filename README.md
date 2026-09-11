@@ -113,7 +113,7 @@ Main agent class for conducting research.
 
 **Methods:**
 
-- `research(topic: str, num_sources: int = 5) -> Dict` - Conduct research on a topic
+- `research(topic: str, num_sources: int = 5) -> ResearchTopicResult` - Conduct research on a topic
   - Returns: Dictionary with `topic` and `status` ("success" or "error"). 
     - On success: also includes `findings` (list of results: each item contains a summary on success or error message on failure), `analysis`, `sources` (list of URLs), `timestamp`
     - On error: also includes `error` (error message)
@@ -122,7 +122,7 @@ Main agent class for conducting research.
     - `ValueError`: If `topic` is an empty string
     - `ValueError`: If `num_sources` is not a positive integer
 
-- `summarize(urls: List[str]) -> Dict` - Summarize content from multiple URLs
+- `summarize(urls: List[str]) -> SummarizeResult` - Summarize content from multiple URLs
   - Returns: Dictionary with keys: `status` ("success"), `summaries` (mapping of URL to summary result), `sources_count` (number of URLs)
   - Raises:
     - `TypeError`: If `urls` is not a list, or any item in `urls` is not a string
