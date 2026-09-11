@@ -211,15 +211,18 @@ def chunk_text(text: str, chunk_size: int = 1000, overlap: int = 100) -> List[st
         A list of text chunks, each at most chunk_size characters. Empty chunks are excluded.
 
     Raises:
-        TypeError: If text is not a string
-        ValueError: If chunk_size is not a positive integer, overlap is not a non-negative integer,
-                   or overlap is >= chunk_size
+        TypeError: If text, chunk_size, or overlap is not the correct type
+        ValueError: If chunk_size is not positive, overlap is negative, or overlap >= chunk_size
     """
     if not isinstance(text, str):
         raise TypeError(f"text must be a string, got {type(text).__name__}")
-    if type(chunk_size) is not int or isinstance(chunk_size, bool) or chunk_size <= 0:
+    if type(chunk_size) is not int or isinstance(chunk_size, bool):
+        raise TypeError(f"chunk_size must be an integer, got {type(chunk_size).__name__}")
+    if chunk_size <= 0:
         raise ValueError(f"chunk_size must be a positive integer, got {chunk_size}")
-    if type(overlap) is not int or isinstance(overlap, bool) or overlap < 0:
+    if type(overlap) is not int or isinstance(overlap, bool):
+        raise TypeError(f"overlap must be an integer, got {type(overlap).__name__}")
+    if overlap < 0:
         raise ValueError(f"overlap must be a non-negative integer, got {overlap}")
     if overlap >= chunk_size:
         raise ValueError(

@@ -668,22 +668,22 @@ class TestUtilityFunctions:
 
     def test_chunk_text_invalid_chunk_size_type(self):
         """Test chunk_text with non-integer chunk_size."""
-        with pytest.raises(ValueError, match="chunk_size must be a positive integer"):
+        with pytest.raises(TypeError, match="chunk_size must be an integer"):
             chunk_text("text", chunk_size="100")
 
     def test_chunk_text_invalid_overlap_type(self):
         """Test chunk_text with non-integer overlap."""
-        with pytest.raises(ValueError, match="overlap must be a non-negative integer"):
+        with pytest.raises(TypeError, match="overlap must be an integer"):
             chunk_text("text", chunk_size=100, overlap="10")
 
     def test_chunk_text_invalid_chunk_size_bool(self):
         """Test chunk_text with bool as chunk_size (should reject)."""
-        with pytest.raises(ValueError, match="chunk_size must be a positive integer"):
+        with pytest.raises(TypeError, match="chunk_size must be an integer, got bool"):
             chunk_text("text", chunk_size=True)
 
     def test_chunk_text_invalid_overlap_bool(self):
         """Test chunk_text with bool as overlap (should reject)."""
-        with pytest.raises(ValueError, match="overlap must be a non-negative integer"):
+        with pytest.raises(TypeError, match="overlap must be an integer, got bool"):
             chunk_text("text", chunk_size=100, overlap=True)
 
     def test_extract_text_from_html_basic(self):
