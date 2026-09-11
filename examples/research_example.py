@@ -4,7 +4,16 @@ from src.agent import ResearchAgent
 
 
 def main() -> None:
-    """Run research example."""
+    """Demonstrate three core use cases of the ResearchAgent.
+
+    This example shows:
+    1. Basic research: Conducting topic-based research with multiple sources
+    2. Formatted report: Generating a markdown-formatted report from research results
+    3. URL summarization: Directly summarizing content from specific URLs
+
+    Requires ANTHROPIC_API_KEY environment variable to be set.
+    Prints results for each example to stdout.
+    """
     # Initialize agent with API key from environment
     try:
         agent = ResearchAgent()
