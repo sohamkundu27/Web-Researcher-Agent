@@ -2174,9 +2174,9 @@ def test_agent_summarize_all_errors(mock_fetch):
     from src.agent import ResearchAgent
 
     mock_fetch.side_effect = [
-        {"error": "Connection timeout", "url": "https://timeout.com"},
-        {"error": "Invalid URL", "url": "https://invalid.com"},
-        {"error": "404 Not Found", "url": "https://notfound.com"},
+        {"status": "error", "error": "Connection timeout", "url": "https://timeout.com"},
+        {"status": "error", "error": "Invalid URL", "url": "https://invalid.com"},
+        {"status": "error", "error": "404 Not Found", "url": "https://notfound.com"},
     ]
 
     agent = ResearchAgent(api_key="test-key")
@@ -2190,9 +2190,9 @@ def test_agent_summarize_all_errors(mock_fetch):
     assert result["summaries"]["https://timeout.com"]["error"] == "Connection timeout"
     assert result["summaries"]["https://invalid.com"]["error"] == "Invalid URL"
     assert result["summaries"]["https://notfound.com"]["error"] == "404 Not Found"
-    # Verify no success status in any result
+    # Verify all results have error status
     for url, summary_result in result["summaries"].items():
-        assert "status" not in summary_result or summary_result.get("status") != "success"
+        assert summary_result.get("status") == "error"
         assert "error" in summary_result
 
 
