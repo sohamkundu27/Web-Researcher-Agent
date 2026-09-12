@@ -374,6 +374,47 @@ class TestContentCache:
         assert updated_expires - initial_expires == timedelta(seconds=40), \
             "Updated expiration should be exactly 40 seconds later than initial"
 
+    def test_cache_cleanup_uses_consistent_time(self):
+        """Test that cleanup() uses a single consistent time for all expiration checks.
+
+        Each entry should be evaluated against the same "current time" snapshot,
+        not against time as it advances during the cleanup() execution.
+        """
+        from datetime import datetime, timedelta
+        from unittest.mock import patch
+
+        cache = ContentCache(ttl=10)
+        frozen_time = datetime(2026, 1, 1, 12, 0, 0)
+
+        # Add entries with staggered expiration times (all expire at frozen_time + 5 seconds)
+        cache.cache["key1"] = {"value": "val1", "expires": frozen_time + timedelta(seconds=5)}
+        cache.cache["key2"] = {"value": "val2", "expires": frozen_time + timedelta(seconds=5)}
+        cache.cache["key3"] = {"value": "val3", "expires": frozen_time + timedelta(seconds=5)}
+
+        # Mock datetime.now to track how many times it's called during cleanup()
+        with patch("src.researcher.datetime") as mock_datetime:
+            # All calls to now() should return the same time (frozen_time)
+            mock_datetime.now.return_value = frozen_time
+
+            # Call cleanup when all entries are exactly at expiration (frozen_time >= frozen_time + 5 is False)
+            removed = cache.cleanup()
+
+            # Since frozen_time (2026-01-01 12:00:00) is NOT >= frozen_time + 5s,
+            # no entries should be removed
+            assert removed == 0, "At frozen_time, no entries should be expired"
+            assert len(cache.cache) == 3, "All entries should still be in cache"
+
+        # Now test when entries ARE expired
+        with patch("src.researcher.datetime") as mock_datetime:
+            # All calls to now() return frozen_time + 6 seconds (after all entries expire)
+            mock_datetime.now.return_value = frozen_time + timedelta(seconds=6)
+
+            removed = cache.cleanup()
+
+            # All three entries should be removed (frozen_time+6 >= frozen_time+5)
+            assert removed == 3, "All entries should be removed when time >= expiration"
+            assert len(cache.cache) == 0, "Cache should be empty after cleanup"
+
 
 class TestUtilityFunctions:
     """Test utility functions."""

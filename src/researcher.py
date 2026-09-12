@@ -149,9 +149,10 @@ class ContentCache:
         Returns:
             The number of expired entries that were removed.
         """
+        now = datetime.now()
         expired_keys = [
             key for key, item in self.cache.items()
-            if datetime.now() >= item["expires"]
+            if now >= item["expires"]
         ]
         for key in expired_keys:
             del self.cache[key]
