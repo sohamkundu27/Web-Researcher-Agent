@@ -635,6 +635,58 @@ class TestUtilityFunctions:
         result = sanitize_text("@#$Test case@#$")
         assert result == "Test case"
 
+    def test_sanitize_text_punctuation_with_multiple_spaces(self):
+        """Test that allowed punctuation surrounded by multiple spaces is normalized."""
+        # Period surrounded by multiple spaces
+        result = sanitize_text("hello   .   world")
+        assert result == "hello . world"
+
+        # Comma with multiple spaces
+        result = sanitize_text("test   ,   case")
+        assert result == "test , case"
+
+        # Question mark with multiple spaces
+        result = sanitize_text("what   ?   why")
+        assert result == "what ? why"
+
+        # Hyphen with multiple spaces
+        result = sanitize_text("well   -   known")
+        assert result == "well - known"
+
+        # Exclamation with multiple spaces
+        result = sanitize_text("hello   !   world")
+        assert result == "hello ! world"
+
+    def test_sanitize_text_punctuation_with_tabs(self):
+        """Test that allowed punctuation separated by tabs is normalized."""
+        result = sanitize_text("hello\t.\tworld")
+        assert result == "hello . world"
+
+        result = sanitize_text("test\t,\tcase")
+        assert result == "test , case"
+
+        result = sanitize_text("hello\t!\tworld")
+        assert result == "hello ! world"
+
+    def test_sanitize_text_punctuation_with_newlines(self):
+        """Test that allowed punctuation separated by newlines is normalized."""
+        result = sanitize_text("hello\n.\nworld")
+        assert result == "hello . world"
+
+        result = sanitize_text("test\n,\ncase")
+        assert result == "test , case"
+
+        result = sanitize_text("hello\n?\nworld")
+        assert result == "hello ? world"
+
+    def test_sanitize_text_mixed_whitespace_around_punctuation(self):
+        """Test punctuation surrounded by mixed whitespace (spaces, tabs, newlines)."""
+        result = sanitize_text("hello \t\n . \n\t world")
+        assert result == "hello . world"
+
+        result = sanitize_text("test\n \t,\t \ncase")
+        assert result == "test , case"
+
     def test_hash_content(self):
         """Test content hashing."""
         content = "test content"
