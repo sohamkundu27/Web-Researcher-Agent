@@ -24,20 +24,20 @@ from src.utils import (
 class TestContentCache:
     """Test ContentCache class."""
 
-    def test_cache_set_and_get(self):
+    def test_cache_set_and_get(self) -> None:
         """Test setting and getting cache values."""
         cache = ContentCache(ttl=60)
         cache.set("key1", "value1")
         assert cache.get("key1") == "value1"
 
-    def test_cache_expiration(self):
+    def test_cache_expiration(self) -> None:
         """Test cache expiration."""
         cache = ContentCache(ttl=0)
         cache.set("key1", "value1")
         time.sleep(0.1)
         assert cache.get("key1") is None
 
-    def test_cache_cleanup_on_expiration(self):
+    def test_cache_cleanup_on_expiration(self) -> None:
         """Test that expired items are removed from cache dict."""
         cache = ContentCache(ttl=0)
         cache.set("key1", "value1")
@@ -50,7 +50,7 @@ class TestContentCache:
         assert result is None
         assert len(cache.cache) == 0, "Expired item should be removed from cache dict"
 
-    def test_cache_clear(self):
+    def test_cache_clear(self) -> None:
         """Test clearing cache."""
         cache = ContentCache()
         cache.set("key1", "value1")
@@ -59,47 +59,47 @@ class TestContentCache:
         assert cache.get("key1") is None
         assert cache.get("key2") is None
 
-    def test_cache_negative_ttl(self):
+    def test_cache_negative_ttl(self) -> None:
         """Test that negative TTL raises ValueError."""
         with pytest.raises(ValueError, match="ttl must be non-negative"):
             ContentCache(ttl=-1)
 
-    def test_cache_invalid_ttl_type_string(self):
+    def test_cache_invalid_ttl_type_string(self) -> None:
         """Test that string TTL raises TypeError."""
         with pytest.raises(TypeError, match="ttl must be an integer, got str"):
             ContentCache(ttl="3600")
 
-    def test_cache_invalid_ttl_type_float(self):
+    def test_cache_invalid_ttl_type_float(self) -> None:
         """Test that float TTL raises TypeError."""
         with pytest.raises(TypeError, match="ttl must be an integer, got float"):
             ContentCache(ttl=3600.5)
 
-    def test_cache_invalid_ttl_type_none(self):
+    def test_cache_invalid_ttl_type_none(self) -> None:
         """Test that None TTL raises TypeError."""
         with pytest.raises(TypeError, match="ttl must be an integer, got NoneType"):
             ContentCache(ttl=None)
 
-    def test_cache_invalid_ttl_type_bool_true(self):
+    def test_cache_invalid_ttl_type_bool_true(self) -> None:
         """Test that bool True as TTL raises TypeError."""
         with pytest.raises(TypeError, match="ttl must be an integer, got bool"):
             ContentCache(ttl=True)
 
-    def test_cache_invalid_ttl_type_bool_false(self):
+    def test_cache_invalid_ttl_type_bool_false(self) -> None:
         """Test that bool False as TTL raises TypeError."""
         with pytest.raises(TypeError, match="ttl must be an integer, got bool"):
             ContentCache(ttl=False)
 
-    def test_cache_invalid_ttl_type_list(self):
+    def test_cache_invalid_ttl_type_list(self) -> None:
         """Test that list TTL raises TypeError."""
         with pytest.raises(TypeError, match="ttl must be an integer, got list"):
             ContentCache(ttl=[3600])
 
-    def test_cache_invalid_ttl_type_dict(self):
+    def test_cache_invalid_ttl_type_dict(self) -> None:
         """Test that dict TTL raises TypeError."""
         with pytest.raises(TypeError, match="ttl must be an integer, got dict"):
             ContentCache(ttl={"seconds": 3600})
 
-    def test_cache_with_falsy_values(self):
+    def test_cache_with_falsy_values(self) -> None:
         """Test that cache correctly stores and retrieves falsy values."""
         cache = ContentCache(ttl=60)
 
@@ -123,7 +123,7 @@ class TestContentCache:
         cache.set("key5", [])
         assert cache.get("key5") == []
 
-    def test_cache_ttl_boundary_exact(self):
+    def test_cache_ttl_boundary_exact(self) -> None:
         """Test cache respects exact TTL boundary with mocked datetime for precise control."""
         from datetime import datetime, timedelta
         from unittest.mock import patch
@@ -157,7 +157,7 @@ class TestContentCache:
             assert result is None, "Item should be expired when expiration time equals now"
             assert "exact_key" not in cache.cache, "Expired item should be removed from cache"
 
-    def test_cache_with_none_value(self):
+    def test_cache_with_none_value(self) -> None:
         """Test that cache rejects None values (reserved for cache-miss semantics)."""
         cache = ContentCache(ttl=60)
 
@@ -165,14 +165,14 @@ class TestContentCache:
         with pytest.raises(ValueError, match="Cannot cache None values"):
             cache.set("none_key", None)
 
-    def test_cache_get_nonexistent_key(self):
+    def test_cache_get_nonexistent_key(self) -> None:
         """Test that get() returns None for keys that don't exist in cache."""
         cache = ContentCache(ttl=60)
         result = cache.get("nonexistent_key")
         assert result is None
         assert "nonexistent_key" not in cache.cache
 
-    def test_cache_update_key(self):
+    def test_cache_update_key(self) -> None:
         """Test that setting a key multiple times updates the value and expiration."""
         cache = ContentCache(ttl=60)
 
@@ -187,7 +187,7 @@ class TestContentCache:
         # Verify only one entry exists
         assert len(cache.cache) == 1
 
-    def test_cache_set_ttl_calculation(self):
+    def test_cache_set_ttl_calculation(self) -> None:
         """Test that set() correctly calculates expiration time based on TTL."""
         from datetime import datetime, timedelta
 
@@ -209,7 +209,7 @@ class TestContentCache:
         assert expected_expires_min <= expires <= expected_expires_max, \
             f"Expiration time {expires} should be between {expected_expires_min} and {expected_expires_max}"
 
-    def test_cache_cleanup_removes_expired_entries(self):
+    def test_cache_cleanup_removes_expired_entries(self) -> None:
         """Test that cleanup() removes expired entries."""
         from datetime import datetime, timedelta
         from unittest.mock import patch
@@ -236,7 +236,7 @@ class TestContentCache:
         assert "not_expired" in cache.cache
         assert cache.cache["not_expired"]["value"] == "val3"
 
-    def test_cache_cleanup_preserves_non_expired_entries(self):
+    def test_cache_cleanup_preserves_non_expired_entries(self) -> None:
         """Test that cleanup() does not remove non-expired entries."""
         cache = ContentCache(ttl=60)
         cache.set("key1", "value1")
@@ -253,7 +253,7 @@ class TestContentCache:
         assert cache.get("key2") == "value2"
         assert cache.get("key3") == "value3"
 
-    def test_cache_cleanup_returns_count(self):
+    def test_cache_cleanup_returns_count(self) -> None:
         """Test that cleanup() returns the correct count of removed entries."""
         from datetime import datetime, timedelta
         from unittest.mock import patch
@@ -277,7 +277,7 @@ class TestContentCache:
         assert removed_count == 5
         assert len(cache.cache) == 0
 
-    def test_cache_cleanup_mixed_entries(self):
+    def test_cache_cleanup_mixed_entries(self) -> None:
         """Test cleanup() with a mix of expired and non-expired entries."""
         from datetime import datetime, timedelta
         from unittest.mock import patch
@@ -303,14 +303,14 @@ class TestContentCache:
         assert "not_expired1" in cache.cache
         assert "not_expired2" in cache.cache
 
-    def test_cache_cleanup_empty_cache(self):
+    def test_cache_cleanup_empty_cache(self) -> None:
         """Test that cleanup() on empty cache returns 0."""
         cache = ContentCache(ttl=60)
         removed_count = cache.cleanup()
         assert removed_count == 0
         assert len(cache.cache) == 0
 
-    def test_cache_cleanup_all_expired(self):
+    def test_cache_cleanup_all_expired(self) -> None:
         """Test cleanup() when all entries are expired."""
         from datetime import datetime, timedelta
         from unittest.mock import patch
@@ -332,7 +332,7 @@ class TestContentCache:
         assert removed_count == 3
         assert len(cache.cache) == 0
 
-    def test_cache_update_resets_ttl_from_update_time(self):
+    def test_cache_update_resets_ttl_from_update_time(self) -> None:
         """Test that updating a key resets TTL from update time, not extends original TTL.
 
         This is critical for correctness: if a key is updated before expiration,
@@ -374,7 +374,7 @@ class TestContentCache:
         assert updated_expires - initial_expires == timedelta(seconds=40), \
             "Updated expiration should be exactly 40 seconds later than initial"
 
-    def test_cache_cleanup_uses_consistent_time(self):
+    def test_cache_cleanup_uses_consistent_time(self) -> None:
         """Test that cleanup() uses a single consistent time for all expiration checks.
 
         Each entry should be evaluated against the same "current time" snapshot,
@@ -419,93 +419,93 @@ class TestContentCache:
 class TestUtilityFunctions:
     """Test utility functions."""
 
-    def test_extract_domain(self):
+    def test_extract_domain(self) -> None:
         """Test domain extraction from URL."""
         url = "https://www.example.com/path/to/page"
         assert extract_domain(url) == "www.example.com"
 
-    def test_extract_domain_invalid_type_none(self):
+    def test_extract_domain_invalid_type_none(self) -> None:
         """Test domain extraction with None."""
         with pytest.raises(TypeError, match="url must be a string"):
             extract_domain(None)
 
-    def test_extract_domain_invalid_type_int(self):
+    def test_extract_domain_invalid_type_int(self) -> None:
         """Test domain extraction with non-string type."""
         with pytest.raises(TypeError, match="url must be a string"):
             extract_domain(123)
 
-    def test_extract_domain_invalid_type_list(self):
+    def test_extract_domain_invalid_type_list(self) -> None:
         """Test domain extraction with list type."""
         with pytest.raises(TypeError, match="url must be a string"):
             extract_domain([])
 
-    def test_extract_domain_missing_netloc_no_protocol(self):
+    def test_extract_domain_missing_netloc_no_protocol(self) -> None:
         """Test domain extraction from URL without protocol (no netloc extracted)."""
         with pytest.raises(ValueError, match="url does not contain a valid domain"):
             extract_domain("not-a-url")
 
-    def test_extract_domain_missing_netloc_relative_path(self):
+    def test_extract_domain_missing_netloc_relative_path(self) -> None:
         """Test domain extraction from relative path."""
         with pytest.raises(ValueError, match="url does not contain a valid domain"):
             extract_domain("noprotocol.com")
 
-    def test_extract_domain_missing_netloc_protocol_only(self):
+    def test_extract_domain_missing_netloc_protocol_only(self) -> None:
         """Test domain extraction from URL with only protocol."""
         with pytest.raises(ValueError, match="url does not contain a valid domain"):
             extract_domain("http://")
 
-    def test_extract_domain_missing_netloc_https_only(self):
+    def test_extract_domain_missing_netloc_https_only(self) -> None:
         """Test domain extraction from URL with only https protocol."""
         with pytest.raises(ValueError, match="url does not contain a valid domain"):
             extract_domain("https://")
 
-    def test_is_valid_url(self):
+    def test_is_valid_url(self) -> None:
         """Test URL validation."""
         assert is_valid_url("https://example.com") is True
         assert is_valid_url("http://example.com") is True
         assert is_valid_url("not a url") is False
         assert is_valid_url("ftp://example.com") is False
 
-    def test_is_valid_url_none(self):
+    def test_is_valid_url_none(self) -> None:
         """Test URL validation with None."""
         assert is_valid_url(None) is False
 
-    def test_is_valid_url_invalid_type(self):
+    def test_is_valid_url_invalid_type(self) -> None:
         """Test URL validation with non-string types."""
         assert is_valid_url(123) is False
         assert is_valid_url([]) is False
         assert is_valid_url({}) is False
 
-    def test_sanitize_text(self):
+    def test_sanitize_text(self) -> None:
         """Test text sanitization."""
         text = "Hello    world!  @#$  Test."
         result = sanitize_text(text)
         assert "Hello world!" in result
         assert "@#$" not in result
 
-    def test_sanitize_text_edge_cases(self):
+    def test_sanitize_text_edge_cases(self) -> None:
         """Test text sanitization edge cases."""
         assert sanitize_text("") == ""
         assert sanitize_text("   \t\n   ") == ""
         assert sanitize_text("Hello world") == "Hello world"
         assert sanitize_text("Hello     world") == "Hello world"
 
-    def test_sanitize_text_invalid_type_none(self):
+    def test_sanitize_text_invalid_type_none(self) -> None:
         """Test text sanitization with None."""
         with pytest.raises(TypeError, match="text must be a string"):
             sanitize_text(None)
 
-    def test_sanitize_text_invalid_type_int(self):
+    def test_sanitize_text_invalid_type_int(self) -> None:
         """Test text sanitization with non-string type."""
         with pytest.raises(TypeError, match="text must be a string"):
             sanitize_text(123)
 
-    def test_sanitize_text_invalid_type_list(self):
+    def test_sanitize_text_invalid_type_list(self) -> None:
         """Test text sanitization with list type."""
         with pytest.raises(TypeError, match="text must be a string"):
             sanitize_text([])
 
-    def test_sanitize_text_apostrophe_removal(self):
+    def test_sanitize_text_apostrophe_removal(self) -> None:
         """Test that apostrophes are removed (contractions become invalid)."""
         # This documents the current behavior: apostrophes are stripped
         text = "don't can't won't"
@@ -516,7 +516,7 @@ class TestUtilityFunctions:
         # The regex [^\w\s.,!?-] removes apostrophes
         assert "'" not in result
 
-    def test_sanitize_text_special_chars_with_spaces(self):
+    def test_sanitize_text_special_chars_with_spaces(self) -> None:
         """Test that whitespace is normalized after removing special characters."""
         # Special chars surrounded by spaces should not leave double spaces
         result = sanitize_text("Hello @#$ world")
@@ -528,7 +528,7 @@ class TestUtilityFunctions:
         result = sanitize_text("Hello!?@#$world")
         assert result == "Hello!?world"
 
-    def test_sanitize_text_preserves_numbers(self):
+    def test_sanitize_text_preserves_numbers(self) -> None:
         """Test that numbers are preserved in sanitized text."""
         result = sanitize_text("Version 3.14.159 released")
         assert "3" in result
@@ -536,7 +536,7 @@ class TestUtilityFunctions:
         assert "159" in result
         assert result == "Version 3.14.159 released"
 
-    def test_sanitize_text_preserves_hyphens(self):
+    def test_sanitize_text_preserves_hyphens(self) -> None:
         """Test that hyphens (allowed punctuation) are preserved."""
         result = sanitize_text("well-known state-of-the-art test-case")
         assert "well-known" in result
@@ -545,7 +545,7 @@ class TestUtilityFunctions:
         # Verify hyphens are preserved
         assert result.count("-") == 5
 
-    def test_sanitize_text_preserves_underscores(self):
+    def test_sanitize_text_preserves_underscores(self) -> None:
         """Test that underscores (part of \\w word characters) are preserved."""
         result = sanitize_text("foo_bar test_case variable_name")
         assert "foo_bar" in result
@@ -555,7 +555,7 @@ class TestUtilityFunctions:
         assert result.count("_") == 3
         assert result == "foo_bar test_case variable_name"
 
-    def test_sanitize_text_unicode_characters(self):
+    def test_sanitize_text_unicode_characters(self) -> None:
         """Test that Unicode letters are preserved in sanitized text."""
         # Accented Latin characters
         result = sanitize_text("Café naïve résumé")
@@ -565,7 +565,7 @@ class TestUtilityFunctions:
         assert "Über" in result
         assert "schön" in result
 
-    def test_sanitize_text_cjk_characters(self):
+    def test_sanitize_text_cjk_characters(self) -> None:
         """Test that CJK (Chinese, Japanese, Korean) characters are preserved."""
         result = sanitize_text("Hello 你好 world")
         assert "你好" in result
@@ -573,7 +573,7 @@ class TestUtilityFunctions:
         assert "world" in result
         assert result == "Hello 你好 world"
 
-    def test_sanitize_text_emoji_removal(self):
+    def test_sanitize_text_emoji_removal(self) -> None:
         """Test that emoji characters are removed but text is preserved."""
         result = sanitize_text("Hello 😀 world!")
         assert "Hello" in result
@@ -583,19 +583,19 @@ class TestUtilityFunctions:
         assert "😀" not in result
         assert result == "Hello world!"
 
-    def test_sanitize_text_arabic_characters(self):
+    def test_sanitize_text_arabic_characters(self) -> None:
         """Test that Arabic/RTL characters are preserved."""
         result = sanitize_text("Hello مرحبا world")
         assert "مرحبا" in result
         assert "Hello" in result
         assert "world" in result
 
-    def test_sanitize_text_only_special_characters(self):
+    def test_sanitize_text_only_special_characters(self) -> None:
         """Test that text containing only special characters becomes empty."""
         result = sanitize_text("@#$%^&*()")
         assert result == ""
 
-    def test_sanitize_text_only_allowed_punctuation(self):
+    def test_sanitize_text_only_allowed_punctuation(self) -> None:
         """Test that text containing only allowed punctuation is preserved."""
         # Allowed punctuation: . , ! ? -
         result = sanitize_text("...!!!")
@@ -607,7 +607,7 @@ class TestUtilityFunctions:
         result = sanitize_text(".,!?-")
         assert result == ".,!?-"
 
-    def test_sanitize_text_starts_with_special_chars(self):
+    def test_sanitize_text_starts_with_special_chars(self) -> None:
         """Test that text starting with special characters has them removed."""
         # Text starting with non-allowed special chars should remove them
         result = sanitize_text("@#$Hello world")
@@ -617,7 +617,7 @@ class TestUtilityFunctions:
         result = sanitize_text("@@@Hello")
         assert result == "Hello"
 
-    def test_sanitize_text_ends_with_special_chars(self):
+    def test_sanitize_text_ends_with_special_chars(self) -> None:
         """Test that text ending with special characters has them removed."""
         # Text ending with non-allowed special chars should remove them
         result = sanitize_text("Hello world@#$")
@@ -627,7 +627,7 @@ class TestUtilityFunctions:
         result = sanitize_text("Hello@@@")
         assert result == "Hello"
 
-    def test_sanitize_text_both_ends_with_special_chars(self):
+    def test_sanitize_text_both_ends_with_special_chars(self) -> None:
         """Test that text with special chars at both start and end has them removed."""
         result = sanitize_text("@#$Hello world@#$")
         assert result == "Hello world"
@@ -635,7 +635,7 @@ class TestUtilityFunctions:
         result = sanitize_text("@#$Test case@#$")
         assert result == "Test case"
 
-    def test_sanitize_text_punctuation_with_multiple_spaces(self):
+    def test_sanitize_text_punctuation_with_multiple_spaces(self) -> None:
         """Test that allowed punctuation surrounded by multiple spaces is normalized."""
         # Period surrounded by multiple spaces
         result = sanitize_text("hello   .   world")
@@ -657,7 +657,7 @@ class TestUtilityFunctions:
         result = sanitize_text("hello   !   world")
         assert result == "hello ! world"
 
-    def test_sanitize_text_punctuation_with_tabs(self):
+    def test_sanitize_text_punctuation_with_tabs(self) -> None:
         """Test that allowed punctuation separated by tabs is normalized."""
         result = sanitize_text("hello\t.\tworld")
         assert result == "hello . world"
@@ -668,7 +668,7 @@ class TestUtilityFunctions:
         result = sanitize_text("hello\t!\tworld")
         assert result == "hello ! world"
 
-    def test_sanitize_text_punctuation_with_newlines(self):
+    def test_sanitize_text_punctuation_with_newlines(self) -> None:
         """Test that allowed punctuation separated by newlines is normalized."""
         result = sanitize_text("hello\n.\nworld")
         assert result == "hello . world"
@@ -679,7 +679,7 @@ class TestUtilityFunctions:
         result = sanitize_text("hello\n?\nworld")
         assert result == "hello ? world"
 
-    def test_sanitize_text_mixed_whitespace_around_punctuation(self):
+    def test_sanitize_text_mixed_whitespace_around_punctuation(self) -> None:
         """Test punctuation surrounded by mixed whitespace (spaces, tabs, newlines)."""
         result = sanitize_text("hello \t\n . \n\t world")
         assert result == "hello . world"
@@ -687,7 +687,7 @@ class TestUtilityFunctions:
         result = sanitize_text("test\n \t,\t \ncase")
         assert result == "test , case"
 
-    def test_hash_content(self):
+    def test_hash_content(self) -> None:
         """Test content hashing."""
         content = "test content"
         hash1 = hash_content(content)
@@ -695,33 +695,33 @@ class TestUtilityFunctions:
         assert hash1 == hash2
         assert len(hash1) == 64  # SHA256 hash length
 
-    def test_hash_content_invalid_type_none(self):
+    def test_hash_content_invalid_type_none(self) -> None:
         """Test hash_content with None."""
         with pytest.raises(TypeError, match="content must be a string"):
             hash_content(None)
 
-    def test_hash_content_invalid_type_int(self):
+    def test_hash_content_invalid_type_int(self) -> None:
         """Test hash_content with integer."""
         with pytest.raises(TypeError, match="content must be a string"):
             hash_content(123)
 
-    def test_hash_content_invalid_type_list(self):
+    def test_hash_content_invalid_type_list(self) -> None:
         """Test hash_content with list."""
         with pytest.raises(TypeError, match="content must be a string"):
             hash_content([])
 
-    def test_hash_content_invalid_type_dict(self):
+    def test_hash_content_invalid_type_dict(self) -> None:
         """Test hash_content with dict."""
         with pytest.raises(TypeError, match="content must be a string"):
             hash_content({})
 
-    def test_hash_content_empty_string(self):
+    def test_hash_content_empty_string(self) -> None:
         """Test hash_content with empty string."""
         result = hash_content("")
         assert isinstance(result, str)
         assert len(result) == 64  # SHA256 hash length
 
-    def test_chunk_text(self):
+    def test_chunk_text(self) -> None:
         """Test text chunking."""
         text = "a" * 2500
         chunks = chunk_text(text, chunk_size=1000, overlap=100)
@@ -729,64 +729,64 @@ class TestUtilityFunctions:
         for chunk in chunks:
             assert len(chunk) <= 1000
 
-    def test_chunk_text_invalid_chunk_size_zero(self):
+    def test_chunk_text_invalid_chunk_size_zero(self) -> None:
         """Test chunk_text with zero chunk_size."""
         with pytest.raises(ValueError, match="chunk_size must be a positive integer"):
             chunk_text("text", chunk_size=0)
 
-    def test_chunk_text_invalid_chunk_size_negative(self):
+    def test_chunk_text_invalid_chunk_size_negative(self) -> None:
         """Test chunk_text with negative chunk_size."""
         with pytest.raises(ValueError, match="chunk_size must be a positive integer"):
             chunk_text("text", chunk_size=-100)
 
-    def test_chunk_text_invalid_overlap_negative(self):
+    def test_chunk_text_invalid_overlap_negative(self) -> None:
         """Test chunk_text with negative overlap."""
         with pytest.raises(ValueError, match="overlap must be a non-negative integer"):
             chunk_text("text", chunk_size=100, overlap=-1)
 
-    def test_chunk_text_overlap_equals_chunk_size(self):
+    def test_chunk_text_overlap_equals_chunk_size(self) -> None:
         """Test chunk_text when overlap equals chunk_size."""
         with pytest.raises(ValueError, match="overlap .* must be less than chunk_size"):
             chunk_text("text", chunk_size=100, overlap=100)
 
-    def test_chunk_text_overlap_greater_than_chunk_size(self):
+    def test_chunk_text_overlap_greater_than_chunk_size(self) -> None:
         """Test chunk_text when overlap is greater than chunk_size."""
         with pytest.raises(ValueError, match="overlap .* must be less than chunk_size"):
             chunk_text("text", chunk_size=100, overlap=150)
 
-    def test_chunk_text_invalid_text_type(self):
+    def test_chunk_text_invalid_text_type(self) -> None:
         """Test chunk_text with non-string text."""
         with pytest.raises(TypeError, match="text must be a string"):
             chunk_text(123, chunk_size=100)
 
-    def test_chunk_text_invalid_chunk_size_type(self):
+    def test_chunk_text_invalid_chunk_size_type(self) -> None:
         """Test chunk_text with non-integer chunk_size."""
         with pytest.raises(TypeError, match="chunk_size must be an integer"):
             chunk_text("text", chunk_size="100")
 
-    def test_chunk_text_invalid_overlap_type(self):
+    def test_chunk_text_invalid_overlap_type(self) -> None:
         """Test chunk_text with non-integer overlap."""
         with pytest.raises(TypeError, match="overlap must be an integer"):
             chunk_text("text", chunk_size=100, overlap="10")
 
-    def test_chunk_text_invalid_chunk_size_bool(self):
+    def test_chunk_text_invalid_chunk_size_bool(self) -> None:
         """Test chunk_text with bool as chunk_size (should reject)."""
         with pytest.raises(TypeError, match="chunk_size must be an integer, got bool"):
             chunk_text("text", chunk_size=True)
 
-    def test_chunk_text_invalid_overlap_bool(self):
+    def test_chunk_text_invalid_overlap_bool(self) -> None:
         """Test chunk_text with bool as overlap (should reject)."""
         with pytest.raises(TypeError, match="overlap must be an integer, got bool"):
             chunk_text("text", chunk_size=100, overlap=True)
 
-    def test_extract_text_from_html_basic(self):
+    def test_extract_text_from_html_basic(self) -> None:
         """Test basic HTML text extraction."""
         html = "<html><body><h1>Title</h1><p>Content here</p></body></html>"
         result = extract_text_from_html(html)
         assert "Title" in result
         assert "Content here" in result
 
-    def test_extract_text_from_html_removes_script_style(self):
+    def test_extract_text_from_html_removes_script_style(self) -> None:
         """Test that script and style tags are removed."""
         html = "<html><body><script>var x = 1;</script><style>body {color: red;}</style><p>Text</p></body></html>"
         result = extract_text_from_html(html)
@@ -794,38 +794,38 @@ class TestUtilityFunctions:
         assert "color: red" not in result
         assert "Text" in result
 
-    def test_extract_text_from_html_max_length(self):
+    def test_extract_text_from_html_max_length(self) -> None:
         """Test max_length parameter."""
         html = "<p>" + "a" * 1000 + "</p>"
         result = extract_text_from_html(html, max_length=100)
         assert len(result) <= 100
 
-    def test_extract_text_from_html_invalid(self):
+    def test_extract_text_from_html_invalid(self) -> None:
         """Test handling of invalid HTML."""
         result = extract_text_from_html("<invalid>not closed")
         assert isinstance(result, str)
 
-    def test_extract_text_from_html_empty(self):
+    def test_extract_text_from_html_empty(self) -> None:
         """Test empty HTML."""
         result = extract_text_from_html("")
         assert result == ""
 
-    def test_extract_text_from_html_zero_max_length(self):
+    def test_extract_text_from_html_zero_max_length(self) -> None:
         """Test extract_text_from_html with zero max_length."""
         with pytest.raises(ValueError, match="max_length must be a positive integer"):
             extract_text_from_html("<p>Test</p>", max_length=0)
 
-    def test_extract_text_from_html_negative_max_length(self):
+    def test_extract_text_from_html_negative_max_length(self) -> None:
         """Test extract_text_from_html with negative max_length."""
         with pytest.raises(ValueError, match="max_length must be a positive integer"):
             extract_text_from_html("<p>Test</p>", max_length=-1)
 
-    def test_extract_text_from_html_invalid_max_length_type(self):
+    def test_extract_text_from_html_invalid_max_length_type(self) -> None:
         """Test extract_text_from_html with non-integer max_length."""
         with pytest.raises(TypeError, match="max_length must be an integer"):
             extract_text_from_html("<p>Test</p>", max_length="100")
 
-    def test_extract_text_from_html_with_html_entities(self):
+    def test_extract_text_from_html_with_html_entities(self) -> None:
         """Test that HTML entities are properly decoded."""
         html = "<p>Hello &nbsp; world &lt; test &gt;</p>"
         result = extract_text_from_html(html)
@@ -834,7 +834,7 @@ class TestUtilityFunctions:
         # HTML entities should be decoded by BeautifulSoup
         assert result.strip() != ""
 
-    def test_extract_text_from_html_with_nested_tags(self):
+    def test_extract_text_from_html_with_nested_tags(self) -> None:
         """Test extraction with deeply nested HTML tags."""
         html = "<div><section><article><p>Nested <strong>bold <em>italic</em></strong> text</p></article></section></div>"
         result = extract_text_from_html(html)
@@ -843,7 +843,7 @@ class TestUtilityFunctions:
         assert "italic" in result
         assert "text" in result
 
-    def test_extract_text_from_html_preserves_punctuation(self):
+    def test_extract_text_from_html_preserves_punctuation(self) -> None:
         """Test that periods, commas, and question marks are preserved."""
         html = "<p>Hello. World, how are you? I'm fine!</p>"
         result = extract_text_from_html(html)
@@ -852,44 +852,44 @@ class TestUtilityFunctions:
         assert "?" in result
         assert "!" in result
 
-    def test_extract_text_from_html_invalid_html_type_none(self):
+    def test_extract_text_from_html_invalid_html_type_none(self) -> None:
         """Test extract_text_from_html with None."""
         with pytest.raises(TypeError, match="html must be a string"):
             extract_text_from_html(None)
 
-    def test_extract_text_from_html_invalid_html_type_int(self):
+    def test_extract_text_from_html_invalid_html_type_int(self) -> None:
         """Test extract_text_from_html with integer."""
         with pytest.raises(TypeError, match="html must be a string"):
             extract_text_from_html(123)
 
-    def test_extract_text_from_html_invalid_html_type_list(self):
+    def test_extract_text_from_html_invalid_html_type_list(self) -> None:
         """Test extract_text_from_html with list."""
         with pytest.raises(TypeError, match="html must be a string"):
             extract_text_from_html([])
 
-    def test_extract_text_from_html_invalid_html_type_dict(self):
+    def test_extract_text_from_html_invalid_html_type_dict(self) -> None:
         """Test extract_text_from_html with dict."""
         with pytest.raises(TypeError, match="html must be a string"):
             extract_text_from_html({})
 
-    def test_extract_text_from_html_invalid_max_length_float(self):
+    def test_extract_text_from_html_invalid_max_length_float(self) -> None:
         """Test extract_text_from_html with float max_length."""
         with pytest.raises(TypeError, match="max_length must be an integer"):
             extract_text_from_html("<p>Test</p>", max_length=100.5)
 
-    def test_extract_text_from_html_invalid_max_length_none(self):
+    def test_extract_text_from_html_invalid_max_length_none(self) -> None:
         """Test extract_text_from_html with None max_length."""
         with pytest.raises(TypeError, match="max_length must be an integer"):
             extract_text_from_html("<p>Test</p>", max_length=None)
 
-    def test_extract_text_from_html_max_length_one(self):
+    def test_extract_text_from_html_max_length_one(self) -> None:
         """Test extract_text_from_html with max_length=1 (boundary edge case)."""
         html = "<p>Hello world</p>"
         result = extract_text_from_html(html, max_length=1)
         assert len(result) == 1
         assert result == "H"
 
-    def test_extract_text_from_html_max_length_exact(self):
+    def test_extract_text_from_html_max_length_exact(self) -> None:
         """Test extract_text_from_html when text is exactly max_length characters."""
         content = "a" * 50
         html = f"<p>{content}</p>"
@@ -897,30 +897,30 @@ class TestUtilityFunctions:
         assert len(result) == 50
         assert result == content
 
-    def test_extract_text_from_html_invalid_max_length_bool_true(self):
+    def test_extract_text_from_html_invalid_max_length_bool_true(self) -> None:
         """Test extract_text_from_html with bool True as max_length (should reject)."""
         with pytest.raises(TypeError, match="max_length must be an integer"):
             extract_text_from_html("<p>Test</p>", max_length=True)
 
-    def test_extract_text_from_html_invalid_max_length_bool_false(self):
+    def test_extract_text_from_html_invalid_max_length_bool_false(self) -> None:
         """Test extract_text_from_html with bool False as max_length (should reject)."""
         with pytest.raises(TypeError, match="max_length must be an integer"):
             extract_text_from_html("<p>Test</p>", max_length=False)
 
-    def test_extract_text_from_html_only_script_and_style_tags(self):
+    def test_extract_text_from_html_only_script_and_style_tags(self) -> None:
         """Test extraction from HTML containing only script and style tags (should return empty)."""
         html = "<script>var x = 1; console.log('test');</script><style>body { color: red; }</style>"
         result = extract_text_from_html(html)
         assert result == ""
 
-    def test_extract_text_from_html_with_comments(self):
+    def test_extract_text_from_html_with_comments(self) -> None:
         """Test that HTML comments are removed and not included in extracted text."""
         html = "<!-- This is a hidden comment --><p>Visible text</p>"
         result = extract_text_from_html(html)
         assert "hidden comment" not in result
         assert "Visible text" in result
 
-    def test_extract_text_from_html_multiple_comments(self):
+    def test_extract_text_from_html_multiple_comments(self) -> None:
         """Test extraction with multiple HTML comments interspersed with content."""
         html = "<!-- Comment 1 --><p>First paragraph</p><!-- Comment 2 --><p>Second paragraph</p><!-- Comment 3 -->"
         result = extract_text_from_html(html)
@@ -928,28 +928,28 @@ class TestUtilityFunctions:
         assert "First paragraph" in result
         assert "Second paragraph" in result
 
-    def test_merge_dicts_simple(self):
+    def test_merge_dicts_simple(self) -> None:
         """Test simple dictionary merge."""
         dict1 = {"a": 1, "b": 2}
         dict2 = {"c": 3}
         result = merge_dicts(dict1, dict2)
         assert result == {"a": 1, "b": 2, "c": 3}
 
-    def test_merge_dicts_overwrite(self):
+    def test_merge_dicts_overwrite(self) -> None:
         """Test dictionary merge with value overwriting."""
         dict1 = {"a": 1, "b": 2}
         dict2 = {"b": 20, "c": 3}
         result = merge_dicts(dict1, dict2)
         assert result == {"a": 1, "b": 20, "c": 3}
 
-    def test_merge_dicts_nested(self):
+    def test_merge_dicts_nested(self) -> None:
         """Test deep nested dictionary merge."""
         dict1 = {"a": {"x": 1, "y": 2}, "b": 3}
         dict2 = {"a": {"y": 20, "z": 30}, "c": 4}
         result = merge_dicts(dict1, dict2)
         assert result == {"a": {"x": 1, "y": 20, "z": 30}, "b": 3, "c": 4}
 
-    def test_merge_dicts_mixed_types(self):
+    def test_merge_dicts_mixed_types(self) -> None:
         """Test merge with mixed dict and non-dict values."""
         dict1 = {"a": {"x": 1}, "b": 2}
         dict2 = {"a": "string", "b": 20}
@@ -957,7 +957,7 @@ class TestUtilityFunctions:
         # Non-dict value should overwrite dict value
         assert result == {"a": "string", "b": 20}
 
-    def test_merge_dicts_with_list_values(self):
+    def test_merge_dicts_with_list_values(self) -> None:
         """Test merge_dicts when values are lists (should replace, not merge)."""
         dict1 = {"a": [1, 2, 3], "b": ["x", "y"]}
         dict2 = {"a": [4, 5], "c": ["z"]}
@@ -965,7 +965,7 @@ class TestUtilityFunctions:
         # Lists should be replaced, not merged
         assert result == {"a": [4, 5], "b": ["x", "y"], "c": ["z"]}
 
-    def test_merge_dicts_empty_dicts(self):
+    def test_merge_dicts_empty_dicts(self) -> None:
         """Test merge with empty dictionaries."""
         # Merge empty dict with non-empty
         result = merge_dicts({}, {"a": 1, "b": 2})
@@ -979,7 +979,7 @@ class TestUtilityFunctions:
         result = merge_dicts({}, {})
         assert result == {}
 
-    def test_merge_dicts_deeply_nested(self):
+    def test_merge_dicts_deeply_nested(self) -> None:
         """Test merge with deeply nested (3+ levels) dictionaries."""
         dict1 = {"a": {"b": {"c": {"d": 1, "e": 2}}}}
         dict2 = {"a": {"b": {"c": {"e": 20, "f": 30}, "x": 100}}}
@@ -987,14 +987,14 @@ class TestUtilityFunctions:
         expected = {"a": {"b": {"c": {"d": 1, "e": 20, "f": 30}, "x": 100}}}
         assert result == expected
 
-    def test_merge_dicts_with_none_values(self):
+    def test_merge_dicts_with_none_values(self) -> None:
         """Test merge with None values in dictionaries."""
         dict1 = {"a": None, "b": 2}
         dict2 = {"a": 1, "c": None}
         result = merge_dicts(dict1, dict2)
         assert result == {"a": 1, "b": 2, "c": None}
 
-    def test_merge_dicts_does_not_mutate_inputs(self):
+    def test_merge_dicts_does_not_mutate_inputs(self) -> None:
         """Test that merge_dicts does not mutate input dictionaries."""
         dict1 = {"a": {"x": 1, "y": 2}, "b": 3}
         dict2 = {"a": {"y": 20, "z": 30}, "c": 4}
@@ -1009,47 +1009,47 @@ class TestUtilityFunctions:
         # Verify result is correct
         assert result == {"a": {"x": 1, "y": 20, "z": 30}, "b": 3, "c": 4}
 
-    def test_merge_dicts_invalid_dict1_type_none(self):
+    def test_merge_dicts_invalid_dict1_type_none(self) -> None:
         """Test merge_dicts with None as dict1."""
         with pytest.raises(TypeError, match="dict1 must be a dictionary"):
             merge_dicts(None, {"b": 2})
 
-    def test_merge_dicts_invalid_dict1_type_string(self):
+    def test_merge_dicts_invalid_dict1_type_string(self) -> None:
         """Test merge_dicts with string as dict1."""
         with pytest.raises(TypeError, match="dict1 must be a dictionary"):
             merge_dicts("not a dict", {"b": 2})
 
-    def test_merge_dicts_invalid_dict1_type_list(self):
+    def test_merge_dicts_invalid_dict1_type_list(self) -> None:
         """Test merge_dicts with list as dict1."""
         with pytest.raises(TypeError, match="dict1 must be a dictionary"):
             merge_dicts([1, 2, 3], {"b": 2})
 
-    def test_merge_dicts_invalid_dict1_type_int(self):
+    def test_merge_dicts_invalid_dict1_type_int(self) -> None:
         """Test merge_dicts with int as dict1."""
         with pytest.raises(TypeError, match="dict1 must be a dictionary"):
             merge_dicts(42, {"b": 2})
 
-    def test_merge_dicts_invalid_dict2_type_none(self):
+    def test_merge_dicts_invalid_dict2_type_none(self) -> None:
         """Test merge_dicts with None as dict2."""
         with pytest.raises(TypeError, match="dict2 must be a dictionary"):
             merge_dicts({"a": 1}, None)
 
-    def test_merge_dicts_invalid_dict2_type_string(self):
+    def test_merge_dicts_invalid_dict2_type_string(self) -> None:
         """Test merge_dicts with string as dict2."""
         with pytest.raises(TypeError, match="dict2 must be a dictionary"):
             merge_dicts({"a": 1}, "not a dict")
 
-    def test_merge_dicts_invalid_dict2_type_list(self):
+    def test_merge_dicts_invalid_dict2_type_list(self) -> None:
         """Test merge_dicts with list as dict2."""
         with pytest.raises(TypeError, match="dict2 must be a dictionary"):
             merge_dicts({"a": 1}, [1, 2, 3])
 
-    def test_merge_dicts_invalid_dict2_type_int(self):
+    def test_merge_dicts_invalid_dict2_type_int(self) -> None:
         """Test merge_dicts with int as dict2."""
         with pytest.raises(TypeError, match="dict2 must be a dictionary"):
             merge_dicts({"a": 1}, 42)
 
-    def test_merge_dicts_with_numeric_keys(self):
+    def test_merge_dicts_with_numeric_keys(self) -> None:
         """Test merge_dicts with numeric (non-string) keys."""
         dict1 = {1: "a", 2: {"nested": "value1"}, 3: "c"}
         dict2 = {1: "A", 2: {"nested": "value2", "extra": "key"}, 4: "d"}
@@ -1060,7 +1060,7 @@ class TestUtilityFunctions:
         assert dict1 == {1: "a", 2: {"nested": "value1"}, 3: "c"}
         assert dict2 == {1: "A", 2: {"nested": "value2", "extra": "key"}, 4: "d"}
 
-    def test_merge_dicts_with_tuple_keys(self):
+    def test_merge_dicts_with_tuple_keys(self) -> None:
         """Test merge_dicts with tuple keys (any hashable key)."""
         key1 = ("a", "b")
         key2 = (1, 2, 3)
@@ -1072,19 +1072,19 @@ class TestUtilityFunctions:
         # Verify input dicts are not mutated
         assert dict1 == {key1: "value1", key2: "value2"}
 
-    def test_format_sources_empty(self):
+    def test_format_sources_empty(self) -> None:
         """Test formatting empty sources list."""
         result = format_sources([])
         assert result == ""
 
-    def test_format_sources_single(self):
+    def test_format_sources_single(self) -> None:
         """Test formatting single source."""
         result = format_sources(["https://www.example.com/page"])
         assert "## Sources" in result
         assert "example.com" in result
         assert "https://www.example.com/page" in result
 
-    def test_format_sources_multiple(self):
+    def test_format_sources_multiple(self) -> None:
         """Test formatting multiple sources."""
         sources = ["https://www.example.com", "https://test.org/path"]
         result = format_sources(sources)
@@ -1094,53 +1094,53 @@ class TestUtilityFunctions:
         assert "example.com" in result
         assert "test.org" in result
 
-    def test_format_sources_invalid_type_none(self):
+    def test_format_sources_invalid_type_none(self) -> None:
         """Test format_sources with None."""
         with pytest.raises(TypeError, match="sources must be a list"):
             format_sources(None)
 
-    def test_format_sources_invalid_type_string(self):
+    def test_format_sources_invalid_type_string(self) -> None:
         """Test format_sources with string instead of list."""
         with pytest.raises(TypeError, match="sources must be a list"):
             format_sources("https://example.com")
 
-    def test_format_sources_invalid_type_dict(self):
+    def test_format_sources_invalid_type_dict(self) -> None:
         """Test format_sources with dict instead of list."""
         with pytest.raises(TypeError, match="sources must be a list"):
             format_sources({"url": "https://example.com"})
 
-    def test_format_sources_invalid_item_type_int(self):
+    def test_format_sources_invalid_item_type_int(self) -> None:
         """Test format_sources with integer item in list."""
         with pytest.raises(TypeError, match="all sources must be strings.*index 0.*int"):
             format_sources([123])
 
-    def test_format_sources_invalid_item_type_none(self):
+    def test_format_sources_invalid_item_type_none(self) -> None:
         """Test format_sources with None item in list."""
         with pytest.raises(TypeError, match="all sources must be strings.*index 0.*NoneType"):
             format_sources([None])
 
-    def test_format_sources_invalid_item_type_mixed(self):
+    def test_format_sources_invalid_item_type_mixed(self) -> None:
         """Test format_sources with mixed string and non-string items."""
         with pytest.raises(TypeError, match="all sources must be strings.*index 1.*int"):
             format_sources(["https://example.com", 456])
 
-    def test_format_sources_invalid_item_type_list(self):
+    def test_format_sources_invalid_item_type_list(self) -> None:
         """Test format_sources with list item in sources list."""
         with pytest.raises(TypeError, match="all sources must be strings.*index 0.*list"):
             format_sources([["https://example.com"]])
 
-    def test_format_sources_invalid_item_type_dict_in_list(self):
+    def test_format_sources_invalid_item_type_dict_in_list(self) -> None:
         """Test format_sources with dict item in sources list."""
         with pytest.raises(TypeError, match="all sources must be strings.*index 1.*dict"):
             format_sources(["https://example.com", {"url": "https://test.com"}])
 
-    def test_format_sources_with_empty_string_item(self):
+    def test_format_sources_with_empty_string_item(self) -> None:
         """Test format_sources with empty string in sources list."""
         # Empty string should raise ValueError since it has no domain
         with pytest.raises(ValueError, match="url does not contain a valid domain"):
             format_sources(["https://example.com", ""])
 
-    def test_format_sources_with_query_parameters(self):
+    def test_format_sources_with_query_parameters(self) -> None:
         """Test format_sources with URLs containing query parameters."""
         sources = ["https://example.com/page?query=test&sort=date"]
         result = format_sources(sources)
@@ -1150,7 +1150,7 @@ class TestUtilityFunctions:
         assert "https://example.com/page?query=test&sort=date" in result
         assert "[example.com]" in result
 
-    def test_format_sources_with_fragments(self):
+    def test_format_sources_with_fragments(self) -> None:
         """Test format_sources with URLs containing fragments."""
         sources = ["https://example.com/page#section-1", "https://test.org#top"]
         result = format_sources(sources)
@@ -1161,58 +1161,58 @@ class TestUtilityFunctions:
         assert "https://example.com/page#section-1" in result
         assert "https://test.org#top" in result
 
-    def test_fetch_url_content_invalid_url_type_none(self):
+    def test_fetch_url_content_invalid_url_type_none(self) -> None:
         """Test fetch_url_content with None URL."""
         with pytest.raises(TypeError, match="url must be a string"):
             fetch_url_content(None)
 
-    def test_fetch_url_content_invalid_url_type_int(self):
+    def test_fetch_url_content_invalid_url_type_int(self) -> None:
         """Test fetch_url_content with integer URL."""
         with pytest.raises(TypeError, match="url must be a string"):
             fetch_url_content(123)
 
-    def test_fetch_url_content_invalid_url_type_list(self):
+    def test_fetch_url_content_invalid_url_type_list(self) -> None:
         """Test fetch_url_content with list URL."""
         with pytest.raises(TypeError, match="url must be a string"):
             fetch_url_content([])
 
-    def test_fetch_url_content_invalid_url_format_no_protocol(self):
+    def test_fetch_url_content_invalid_url_format_no_protocol(self) -> None:
         """Test fetch_url_content with URL missing protocol."""
         with pytest.raises(ValueError, match="url must be a valid HTTP\\(S\\) URL"):
             fetch_url_content("example.com")
 
-    def test_fetch_url_content_invalid_url_format_ftp(self):
+    def test_fetch_url_content_invalid_url_format_ftp(self) -> None:
         """Test fetch_url_content with FTP URL."""
         with pytest.raises(ValueError, match="url must be a valid HTTP\\(S\\) URL"):
             fetch_url_content("ftp://example.com")
 
-    def test_fetch_url_content_invalid_timeout_type(self):
+    def test_fetch_url_content_invalid_timeout_type(self) -> None:
         """Test fetch_url_content with non-integer timeout."""
         with pytest.raises(TypeError, match="timeout must be an integer"):
             fetch_url_content("https://example.com", timeout="10")
 
-    def test_fetch_url_content_invalid_timeout_zero(self):
+    def test_fetch_url_content_invalid_timeout_zero(self) -> None:
         """Test fetch_url_content with zero timeout."""
         with pytest.raises(ValueError, match="timeout must be a positive integer"):
             fetch_url_content("https://example.com", timeout=0)
 
-    def test_fetch_url_content_invalid_timeout_negative(self):
+    def test_fetch_url_content_invalid_timeout_negative(self) -> None:
         """Test fetch_url_content with negative timeout."""
         with pytest.raises(ValueError, match="timeout must be a positive integer"):
             fetch_url_content("https://example.com", timeout=-5)
 
-    def test_fetch_url_content_invalid_timeout_float(self):
+    def test_fetch_url_content_invalid_timeout_float(self) -> None:
         """Test fetch_url_content with float timeout."""
         with pytest.raises(TypeError, match="timeout must be an integer"):
             fetch_url_content("https://example.com", timeout=10.5)
 
-    def test_fetch_url_content_invalid_timeout_none(self):
+    def test_fetch_url_content_invalid_timeout_none(self) -> None:
         """Test fetch_url_content with None timeout."""
         with pytest.raises(TypeError, match="timeout must be an integer"):
             fetch_url_content("https://example.com", timeout=None)
 
     @patch("src.utils.requests.get")
-    def test_fetch_url_content_success(self, mock_get):
+    def test_fetch_url_content_success(self, mock_get) -> None:
         """Test successful URL fetch."""
         mock_response = Mock()
         mock_response.status_code = 200
@@ -1228,7 +1228,7 @@ class TestUtilityFunctions:
         assert "Content-Type" in result["headers"]
 
     @patch("src.utils.requests.get")
-    def test_fetch_url_content_error(self, mock_get):
+    def test_fetch_url_content_error(self, mock_get) -> None:
         """Test URL fetch with network error."""
         mock_get.side_effect = requests.RequestException("Connection failed")
 
@@ -1238,7 +1238,7 @@ class TestUtilityFunctions:
         assert "Connection failed" in result["error"]
 
     @patch("src.utils.requests.get")
-    def test_fetch_url_content_http_error(self, mock_get):
+    def test_fetch_url_content_http_error(self, mock_get) -> None:
         """Test URL fetch with HTTP error (404, 500, etc)."""
         mock_response = Mock()
         mock_response.status_code = 404
@@ -1251,7 +1251,7 @@ class TestUtilityFunctions:
         assert "404 Not Found" in result["error"]
 
     @patch("src.utils.requests.get")
-    def test_fetch_url_content_timeout_parameter_passed(self, mock_get):
+    def test_fetch_url_content_timeout_parameter_passed(self, mock_get) -> None:
         """Test that timeout parameter is correctly passed to requests.get."""
         mock_response = Mock()
         mock_response.status_code = 200
@@ -1264,18 +1264,18 @@ class TestUtilityFunctions:
         # Verify that requests.get was called with the correct timeout
         mock_get.assert_called_once_with("https://example.com", timeout=25)
 
-    def test_fetch_url_content_invalid_timeout_bool_true(self):
+    def test_fetch_url_content_invalid_timeout_bool_true(self) -> None:
         """Test fetch_url_content with bool True as timeout (should reject)."""
         with pytest.raises(TypeError, match="timeout must be an integer"):
             fetch_url_content("https://example.com", timeout=True)
 
-    def test_fetch_url_content_invalid_timeout_bool_false(self):
+    def test_fetch_url_content_invalid_timeout_bool_false(self) -> None:
         """Test fetch_url_content with bool False as timeout (should reject)."""
         with pytest.raises(TypeError, match="timeout must be an integer"):
             fetch_url_content("https://example.com", timeout=False)
 
     @patch("src.utils.requests.get")
-    def test_fetch_url_content_empty_html_response(self, mock_get):
+    def test_fetch_url_content_empty_html_response(self, mock_get) -> None:
         """Test fetch_url_content with empty HTML response (success with no content)."""
         mock_response = Mock()
         mock_response.status_code = 200
@@ -1291,7 +1291,7 @@ class TestUtilityFunctions:
         assert "Content-Type" in result["headers"]
 
     @patch("src.utils.requests.get")
-    def test_fetch_url_content_whitespace_only_html_response(self, mock_get):
+    def test_fetch_url_content_whitespace_only_html_response(self, mock_get) -> None:
         """Test fetch_url_content with whitespace-only HTML response (success with no content)."""
         mock_response = Mock()
         mock_response.status_code = 200
@@ -1306,7 +1306,7 @@ class TestUtilityFunctions:
         assert result["content"] == ""
         assert "Content-Type" in result["headers"]
 
-    def test_fetch_url_content_exception_during_content_extraction(self):
+    def test_fetch_url_content_exception_during_content_extraction(self) -> None:
         """Test fetch_url_content gracefully handles exceptions during content extraction."""
         with patch("src.utils.requests.get") as mock_get, \
              patch("src.utils.extract_text_from_html", side_effect=RuntimeError("Extraction failed")):
@@ -1326,130 +1326,130 @@ class TestUtilityFunctions:
 class TestResearchConfig:
     """Test ResearchConfig class."""
 
-    def test_config_direct_instantiation_valid(self):
+    def test_config_direct_instantiation_valid(self) -> None:
         """Test direct instantiation with valid values."""
         config = ResearchConfig(api_key="test-key")
         assert config.api_key == "test-key"
         assert config.model == "claude-3-5-sonnet-20241022"
         assert config.max_search_results == 10
 
-    def test_config_direct_instantiation_invalid_api_key_empty(self):
+    def test_config_direct_instantiation_invalid_api_key_empty(self) -> None:
         """Test direct instantiation with empty api_key raises ValueError."""
         with pytest.raises(ValueError, match="api_key cannot be empty"):
             ResearchConfig(api_key="")
 
-    def test_config_direct_instantiation_invalid_api_key_type_int(self):
+    def test_config_direct_instantiation_invalid_api_key_type_int(self) -> None:
         """Test direct instantiation with non-string api_key raises TypeError."""
         with pytest.raises(TypeError, match="api_key must be a string, got int"):
             ResearchConfig(api_key=123)
 
-    def test_config_direct_instantiation_invalid_api_key_type_none(self):
+    def test_config_direct_instantiation_invalid_api_key_type_none(self) -> None:
         """Test direct instantiation with None api_key raises TypeError."""
         with pytest.raises(TypeError, match="api_key must be a string, got NoneType"):
             ResearchConfig(api_key=None)
 
-    def test_config_direct_instantiation_invalid_api_key_type_list(self):
+    def test_config_direct_instantiation_invalid_api_key_type_list(self) -> None:
         """Test direct instantiation with list api_key raises TypeError."""
         with pytest.raises(TypeError, match="api_key must be a string, got list"):
             ResearchConfig(api_key=["key"])
 
-    def test_config_direct_instantiation_invalid_api_key_type_dict(self):
+    def test_config_direct_instantiation_invalid_api_key_type_dict(self) -> None:
         """Test direct instantiation with dict api_key raises TypeError."""
         with pytest.raises(TypeError, match="api_key must be a string, got dict"):
             ResearchConfig(api_key={"key": "value"})
 
-    def test_config_direct_instantiation_invalid_max_search_results(self):
+    def test_config_direct_instantiation_invalid_max_search_results(self) -> None:
         """Test direct instantiation with invalid max_search_results raises ValueError."""
         with pytest.raises(ValueError, match="max_search_results must be greater than 0"):
             ResearchConfig(api_key="test-key", max_search_results=-1)
 
-    def test_config_direct_instantiation_invalid_max_depth(self):
+    def test_config_direct_instantiation_invalid_max_depth(self) -> None:
         """Test direct instantiation with invalid max_depth raises ValueError."""
         with pytest.raises(ValueError, match="max_depth must be greater than 0"):
             ResearchConfig(api_key="test-key", max_depth=0)
 
-    def test_config_direct_instantiation_invalid_timeout(self):
+    def test_config_direct_instantiation_invalid_timeout(self) -> None:
         """Test direct instantiation with invalid timeout raises ValueError."""
         with pytest.raises(ValueError, match="timeout must be greater than 0"):
             ResearchConfig(api_key="test-key", timeout=-5)
 
-    def test_config_direct_instantiation_invalid_cache_ttl(self):
+    def test_config_direct_instantiation_invalid_cache_ttl(self) -> None:
         """Test direct instantiation with invalid cache_ttl raises ValueError."""
         with pytest.raises(ValueError, match="cache_ttl must be non-negative"):
             ResearchConfig(api_key="test-key", cache_ttl=-1)
 
-    def test_config_direct_instantiation_invalid_model_type(self):
+    def test_config_direct_instantiation_invalid_model_type(self) -> None:
         """Test direct instantiation with invalid model type raises TypeError."""
         with pytest.raises(TypeError, match="model must be a string"):
             ResearchConfig(api_key="test-key", model=123)
 
-    def test_config_direct_instantiation_invalid_max_search_results_type(self):
+    def test_config_direct_instantiation_invalid_max_search_results_type(self) -> None:
         """Test direct instantiation with invalid max_search_results type raises TypeError."""
         with pytest.raises(TypeError, match="max_search_results must be an integer"):
             ResearchConfig(api_key="test-key", max_search_results="10")
 
-    def test_config_direct_instantiation_invalid_timeout_type(self):
+    def test_config_direct_instantiation_invalid_timeout_type(self) -> None:
         """Test direct instantiation with invalid timeout type raises TypeError."""
         with pytest.raises(TypeError, match="timeout must be an integer"):
             ResearchConfig(api_key="test-key", timeout=10.5)
 
-    def test_config_direct_instantiation_invalid_max_search_results_bool_true(self):
+    def test_config_direct_instantiation_invalid_max_search_results_bool_true(self) -> None:
         """Test direct instantiation with bool True as max_search_results raises TypeError."""
         with pytest.raises(TypeError, match="max_search_results must be an integer, got bool"):
             ResearchConfig(api_key="test-key", max_search_results=True)
 
-    def test_config_direct_instantiation_invalid_max_search_results_bool_false(self):
+    def test_config_direct_instantiation_invalid_max_search_results_bool_false(self) -> None:
         """Test direct instantiation with bool False as max_search_results raises TypeError."""
         with pytest.raises(TypeError, match="max_search_results must be an integer, got bool"):
             ResearchConfig(api_key="test-key", max_search_results=False)
 
-    def test_config_direct_instantiation_invalid_max_depth_bool_true(self):
+    def test_config_direct_instantiation_invalid_max_depth_bool_true(self) -> None:
         """Test direct instantiation with bool True as max_depth raises TypeError."""
         with pytest.raises(TypeError, match="max_depth must be an integer, got bool"):
             ResearchConfig(api_key="test-key", max_depth=True)
 
-    def test_config_direct_instantiation_invalid_max_depth_bool_false(self):
+    def test_config_direct_instantiation_invalid_max_depth_bool_false(self) -> None:
         """Test direct instantiation with bool False as max_depth raises TypeError."""
         with pytest.raises(TypeError, match="max_depth must be an integer, got bool"):
             ResearchConfig(api_key="test-key", max_depth=False)
 
-    def test_config_direct_instantiation_invalid_timeout_bool_true(self):
+    def test_config_direct_instantiation_invalid_timeout_bool_true(self) -> None:
         """Test direct instantiation with bool True as timeout raises TypeError."""
         with pytest.raises(TypeError, match="timeout must be an integer, got bool"):
             ResearchConfig(api_key="test-key", timeout=True)
 
-    def test_config_direct_instantiation_invalid_timeout_bool_false(self):
+    def test_config_direct_instantiation_invalid_timeout_bool_false(self) -> None:
         """Test direct instantiation with bool False as timeout raises TypeError."""
         with pytest.raises(TypeError, match="timeout must be an integer, got bool"):
             ResearchConfig(api_key="test-key", timeout=False)
 
-    def test_config_direct_instantiation_invalid_cache_ttl_bool_true(self):
+    def test_config_direct_instantiation_invalid_cache_ttl_bool_true(self) -> None:
         """Test direct instantiation with bool True as cache_ttl raises TypeError."""
         with pytest.raises(TypeError, match="cache_ttl must be an integer, got bool"):
             ResearchConfig(api_key="test-key", cache_ttl=True)
 
-    def test_config_direct_instantiation_invalid_cache_ttl_bool_false(self):
+    def test_config_direct_instantiation_invalid_cache_ttl_bool_false(self) -> None:
         """Test direct instantiation with bool False as cache_ttl raises TypeError."""
         with pytest.raises(TypeError, match="cache_ttl must be an integer, got bool"):
             ResearchConfig(api_key="test-key", cache_ttl=False)
 
-    def test_config_direct_instantiation_invalid_cache_ttl_type(self):
+    def test_config_direct_instantiation_invalid_cache_ttl_type(self) -> None:
         """Test direct instantiation with invalid cache_ttl type raises TypeError."""
         with pytest.raises(TypeError, match="cache_ttl must be an integer"):
             ResearchConfig(api_key="test-key", cache_ttl="3600")
 
-    def test_config_direct_instantiation_invalid_cache_enabled_type(self):
+    def test_config_direct_instantiation_invalid_cache_enabled_type(self) -> None:
         """Test direct instantiation with invalid cache_enabled type raises TypeError."""
         with pytest.raises(TypeError, match="cache_enabled must be a boolean"):
             ResearchConfig(api_key="test-key", cache_enabled="true")
 
-    def test_config_with_api_key(self):
+    def test_config_with_api_key(self) -> None:
         """Test creating config with explicit API key."""
         config = ResearchConfig.with_api_key("test-key")
         assert config.api_key == "test-key"
         assert config.model == "claude-3-5-sonnet-20241022"
 
-    def test_config_defaults(self):
+    def test_config_defaults(self) -> None:
         """Test config default values."""
         config = ResearchConfig.with_api_key("test-key")
         assert config.max_search_results == 10
@@ -1457,32 +1457,32 @@ class TestResearchConfig:
         assert config.timeout == 30
         assert config.cache_enabled is True
 
-    def test_config_with_api_key_empty_api_key(self):
+    def test_config_with_api_key_empty_api_key(self) -> None:
         """Test that empty api_key raises ValueError."""
         with pytest.raises(ValueError, match="api_key cannot be empty"):
             ResearchConfig.with_api_key("")
 
-    def test_config_with_api_key_invalid_api_key_type_int(self):
+    def test_config_with_api_key_invalid_api_key_type_int(self) -> None:
         """Test that non-string api_key raises TypeError."""
         with pytest.raises(TypeError, match="api_key must be a string, got int"):
             ResearchConfig.with_api_key(123)
 
-    def test_config_with_api_key_invalid_api_key_type_none(self):
+    def test_config_with_api_key_invalid_api_key_type_none(self) -> None:
         """Test that None api_key raises TypeError."""
         with pytest.raises(TypeError, match="api_key must be a string, got NoneType"):
             ResearchConfig.with_api_key(None)
 
-    def test_config_with_api_key_invalid_api_key_type_list(self):
+    def test_config_with_api_key_invalid_api_key_type_list(self) -> None:
         """Test that list api_key raises TypeError."""
         with pytest.raises(TypeError, match="api_key must be a string, got list"):
             ResearchConfig.with_api_key(["key"])
 
-    def test_config_with_api_key_invalid_api_key_type_dict(self):
+    def test_config_with_api_key_invalid_api_key_type_dict(self) -> None:
         """Test that dict api_key raises TypeError."""
         with pytest.raises(TypeError, match="api_key must be a string, got dict"):
             ResearchConfig.with_api_key({"key": "value"})
 
-    def test_config_with_api_key_invalid_max_search_results(self):
+    def test_config_with_api_key_invalid_max_search_results(self) -> None:
         """Test that non-positive max_search_results raises ValueError."""
         with pytest.raises(ValueError, match="max_search_results must be greater than 0"):
             ResearchConfig.with_api_key("test-key", max_search_results=0)
@@ -1490,7 +1490,7 @@ class TestResearchConfig:
         with pytest.raises(ValueError, match="max_search_results must be greater than 0"):
             ResearchConfig.with_api_key("test-key", max_search_results=-1)
 
-    def test_config_with_api_key_invalid_max_depth(self):
+    def test_config_with_api_key_invalid_max_depth(self) -> None:
         """Test that non-positive max_depth raises ValueError."""
         with pytest.raises(ValueError, match="max_depth must be greater than 0"):
             ResearchConfig.with_api_key("test-key", max_depth=0)
@@ -1498,7 +1498,7 @@ class TestResearchConfig:
         with pytest.raises(ValueError, match="max_depth must be greater than 0"):
             ResearchConfig.with_api_key("test-key", max_depth=-5)
 
-    def test_config_with_api_key_invalid_timeout(self):
+    def test_config_with_api_key_invalid_timeout(self) -> None:
         """Test that non-positive timeout raises ValueError."""
         with pytest.raises(ValueError, match="timeout must be greater than 0"):
             ResearchConfig.with_api_key("test-key", timeout=0)
@@ -1506,12 +1506,12 @@ class TestResearchConfig:
         with pytest.raises(ValueError, match="timeout must be greater than 0"):
             ResearchConfig.with_api_key("test-key", timeout=-10)
 
-    def test_config_with_api_key_invalid_cache_ttl(self):
+    def test_config_with_api_key_invalid_cache_ttl(self) -> None:
         """Test that negative cache_ttl raises ValueError."""
         with pytest.raises(ValueError, match="cache_ttl must be non-negative"):
             ResearchConfig.with_api_key("test-key", cache_ttl=-1)
 
-    def test_config_with_api_key_invalid_max_search_results_type(self):
+    def test_config_with_api_key_invalid_max_search_results_type(self) -> None:
         """Test that non-integer max_search_results raises TypeError."""
         with pytest.raises(TypeError, match="max_search_results must be an integer"):
             ResearchConfig.with_api_key("test-key", max_search_results="10")
@@ -1522,7 +1522,7 @@ class TestResearchConfig:
         with pytest.raises(TypeError, match="max_search_results must be an integer"):
             ResearchConfig.with_api_key("test-key", max_search_results=[10])
 
-    def test_config_with_api_key_invalid_max_depth_type(self):
+    def test_config_with_api_key_invalid_max_depth_type(self) -> None:
         """Test that non-integer max_depth raises TypeError."""
         with pytest.raises(TypeError, match="max_depth must be an integer"):
             ResearchConfig.with_api_key("test-key", max_depth="3")
@@ -1533,7 +1533,7 @@ class TestResearchConfig:
         with pytest.raises(TypeError, match="max_depth must be an integer"):
             ResearchConfig.with_api_key("test-key", max_depth={"value": 3})
 
-    def test_config_with_api_key_invalid_timeout_type(self):
+    def test_config_with_api_key_invalid_timeout_type(self) -> None:
         """Test that non-integer timeout raises TypeError."""
         with pytest.raises(TypeError, match="timeout must be an integer"):
             ResearchConfig.with_api_key("test-key", timeout="30")
@@ -1544,7 +1544,7 @@ class TestResearchConfig:
         with pytest.raises(TypeError, match="timeout must be an integer"):
             ResearchConfig.with_api_key("test-key", timeout=None)
 
-    def test_config_with_api_key_invalid_cache_ttl_type(self):
+    def test_config_with_api_key_invalid_cache_ttl_type(self) -> None:
         """Test that non-integer cache_ttl raises TypeError."""
         with pytest.raises(TypeError, match="cache_ttl must be an integer"):
             ResearchConfig.with_api_key("test-key", cache_ttl="3600")
@@ -1555,7 +1555,7 @@ class TestResearchConfig:
         with pytest.raises(TypeError, match="cache_ttl must be an integer"):
             ResearchConfig.with_api_key("test-key", cache_ttl=[3600])
 
-    def test_config_with_api_key_invalid_model_type(self):
+    def test_config_with_api_key_invalid_model_type(self) -> None:
         """Test that non-string model raises TypeError."""
         with pytest.raises(TypeError, match="model must be a string"):
             ResearchConfig.with_api_key("test-key", model=123)
@@ -1566,12 +1566,12 @@ class TestResearchConfig:
         with pytest.raises(TypeError, match="model must be a string"):
             ResearchConfig.with_api_key("test-key", model=None)
 
-    def test_config_with_api_key_empty_model(self):
+    def test_config_with_api_key_empty_model(self) -> None:
         """Test that empty model raises ValueError."""
         with pytest.raises(ValueError, match="model cannot be empty"):
             ResearchConfig.with_api_key("test-key", model="")
 
-    def test_config_with_api_key_invalid_cache_enabled_type(self):
+    def test_config_with_api_key_invalid_cache_enabled_type(self) -> None:
         """Test that non-boolean cache_enabled raises TypeError."""
         with pytest.raises(TypeError, match="cache_enabled must be a boolean"):
             ResearchConfig.with_api_key("test-key", cache_enabled="true")
@@ -1582,52 +1582,52 @@ class TestResearchConfig:
         with pytest.raises(TypeError, match="cache_enabled must be a boolean"):
             ResearchConfig.with_api_key("test-key", cache_enabled=None)
 
-    def test_config_with_api_key_invalid_max_search_results_bool_true(self):
+    def test_config_with_api_key_invalid_max_search_results_bool_true(self) -> None:
         """Test that bool True as max_search_results raises TypeError."""
         with pytest.raises(TypeError, match="max_search_results must be an integer, got bool"):
             ResearchConfig.with_api_key("test-key", max_search_results=True)
 
-    def test_config_with_api_key_invalid_max_search_results_bool_false(self):
+    def test_config_with_api_key_invalid_max_search_results_bool_false(self) -> None:
         """Test that bool False as max_search_results raises TypeError."""
         with pytest.raises(TypeError, match="max_search_results must be an integer, got bool"):
             ResearchConfig.with_api_key("test-key", max_search_results=False)
 
-    def test_config_with_api_key_invalid_max_depth_bool_true(self):
+    def test_config_with_api_key_invalid_max_depth_bool_true(self) -> None:
         """Test that bool True as max_depth raises TypeError."""
         with pytest.raises(TypeError, match="max_depth must be an integer, got bool"):
             ResearchConfig.with_api_key("test-key", max_depth=True)
 
-    def test_config_with_api_key_invalid_max_depth_bool_false(self):
+    def test_config_with_api_key_invalid_max_depth_bool_false(self) -> None:
         """Test that bool False as max_depth raises TypeError."""
         with pytest.raises(TypeError, match="max_depth must be an integer, got bool"):
             ResearchConfig.with_api_key("test-key", max_depth=False)
 
-    def test_config_with_api_key_invalid_timeout_bool_true(self):
+    def test_config_with_api_key_invalid_timeout_bool_true(self) -> None:
         """Test that bool True as timeout raises TypeError."""
         with pytest.raises(TypeError, match="timeout must be an integer, got bool"):
             ResearchConfig.with_api_key("test-key", timeout=True)
 
-    def test_config_with_api_key_invalid_timeout_bool_false(self):
+    def test_config_with_api_key_invalid_timeout_bool_false(self) -> None:
         """Test that bool False as timeout raises TypeError."""
         with pytest.raises(TypeError, match="timeout must be an integer, got bool"):
             ResearchConfig.with_api_key("test-key", timeout=False)
 
-    def test_config_with_api_key_invalid_cache_ttl_bool_true(self):
+    def test_config_with_api_key_invalid_cache_ttl_bool_true(self) -> None:
         """Test that bool True as cache_ttl raises TypeError."""
         with pytest.raises(TypeError, match="cache_ttl must be an integer, got bool"):
             ResearchConfig.with_api_key("test-key", cache_ttl=True)
 
-    def test_config_with_api_key_invalid_cache_ttl_bool_false(self):
+    def test_config_with_api_key_invalid_cache_ttl_bool_false(self) -> None:
         """Test that bool False as cache_ttl raises TypeError."""
         with pytest.raises(TypeError, match="cache_ttl must be an integer, got bool"):
             ResearchConfig.with_api_key("test-key", cache_ttl=False)
 
-    def test_config_with_api_key_valid_model(self):
+    def test_config_with_api_key_valid_model(self) -> None:
         """Test that valid model is accepted."""
         config = ResearchConfig.with_api_key("test-key", model="gpt-4")
         assert config.model == "gpt-4"
 
-    def test_config_with_api_key_valid_cache_enabled(self):
+    def test_config_with_api_key_valid_cache_enabled(self) -> None:
         """Test that valid cache_enabled is accepted."""
         config1 = ResearchConfig.with_api_key("test-key", cache_enabled=True)
         assert config1.cache_enabled is True
@@ -1636,61 +1636,61 @@ class TestResearchConfig:
         assert config2.cache_enabled is False
 
     @patch.dict(os.environ, {}, clear=True)
-    def test_config_from_env_missing_api_key(self):
+    def test_config_from_env_missing_api_key(self) -> None:
         """Test that missing ANTHROPIC_API_KEY raises ValueError."""
         with pytest.raises(ValueError, match="ANTHROPIC_API_KEY environment variable not set"):
             ResearchConfig.from_env()
 
     @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "MAX_SEARCH_RESULTS": "not_a_number"})
-    def test_config_from_env_invalid_max_search_results(self):
+    def test_config_from_env_invalid_max_search_results(self) -> None:
         """Test that invalid MAX_SEARCH_RESULTS raises descriptive ValueError."""
         with pytest.raises(ValueError, match="MAX_SEARCH_RESULTS must be a valid integer"):
             ResearchConfig.from_env()
 
     @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "MAX_DEPTH": "invalid"})
-    def test_config_from_env_invalid_max_depth(self):
+    def test_config_from_env_invalid_max_depth(self) -> None:
         """Test that invalid MAX_DEPTH raises descriptive ValueError."""
         with pytest.raises(ValueError, match="MAX_DEPTH must be a valid integer"):
             ResearchConfig.from_env()
 
     @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "TIMEOUT": "xyz"})
-    def test_config_from_env_invalid_timeout(self):
+    def test_config_from_env_invalid_timeout(self) -> None:
         """Test that invalid TIMEOUT raises descriptive ValueError."""
         with pytest.raises(ValueError, match="TIMEOUT must be a valid integer"):
             ResearchConfig.from_env()
 
     @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "CACHE_TTL": "not_int"})
-    def test_config_from_env_invalid_cache_ttl(self):
+    def test_config_from_env_invalid_cache_ttl(self) -> None:
         """Test that invalid CACHE_TTL raises descriptive ValueError."""
         with pytest.raises(ValueError, match="CACHE_TTL must be a valid integer"):
             ResearchConfig.from_env()
 
     @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "MAX_SEARCH_RESULTS": "0"})
-    def test_config_from_env_zero_max_search_results(self):
+    def test_config_from_env_zero_max_search_results(self) -> None:
         """Test that zero MAX_SEARCH_RESULTS raises ValueError."""
         with pytest.raises(ValueError, match="MAX_SEARCH_RESULTS must be greater than 0"):
             ResearchConfig.from_env()
 
     @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "MAX_DEPTH": "-5"})
-    def test_config_from_env_negative_max_depth(self):
+    def test_config_from_env_negative_max_depth(self) -> None:
         """Test that negative MAX_DEPTH raises ValueError."""
         with pytest.raises(ValueError, match="MAX_DEPTH must be greater than 0"):
             ResearchConfig.from_env()
 
     @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "TIMEOUT": "-1"})
-    def test_config_from_env_negative_timeout(self):
+    def test_config_from_env_negative_timeout(self) -> None:
         """Test that negative TIMEOUT raises ValueError."""
         with pytest.raises(ValueError, match="TIMEOUT must be greater than 0"):
             ResearchConfig.from_env()
 
     @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "test-key", "CACHE_TTL": "-10"})
-    def test_config_from_env_negative_cache_ttl(self):
+    def test_config_from_env_negative_cache_ttl(self) -> None:
         """Test that negative CACHE_TTL raises ValueError."""
         with pytest.raises(ValueError, match="CACHE_TTL must be non-negative"):
             ResearchConfig.from_env()
 
     @patch.dict(os.environ, {"ANTHROPIC_API_KEY": "env-api-key"}, clear=True)
-    def test_config_from_env_success_defaults(self):
+    def test_config_from_env_success_defaults(self) -> None:
         """Test successful from_env loading with all default values."""
         config = ResearchConfig.from_env()
         assert config.api_key == "env-api-key"
@@ -1710,7 +1710,7 @@ class TestResearchConfig:
         "CACHE_ENABLED": "false",
         "CACHE_TTL": "7200",
     })
-    def test_config_from_env_success_custom_values(self):
+    def test_config_from_env_success_custom_values(self) -> None:
         """Test successful from_env loading with custom values."""
         config = ResearchConfig.from_env()
         assert config.api_key == "custom-key"
@@ -1725,7 +1725,7 @@ class TestResearchConfig:
         "ANTHROPIC_API_KEY": "test-key",
         "CACHE_ENABLED": "true",
     }, clear=True)
-    def test_config_from_env_cache_enabled_true(self):
+    def test_config_from_env_cache_enabled_true(self) -> None:
         """Test from_env with CACHE_ENABLED explicitly set to 'true'."""
         config = ResearchConfig.from_env()
         assert config.cache_enabled is True
@@ -1734,7 +1734,7 @@ class TestResearchConfig:
         "ANTHROPIC_API_KEY": "test-key",
         "CACHE_ENABLED": "True",
     }, clear=True)
-    def test_config_from_env_cache_enabled_capitalized(self):
+    def test_config_from_env_cache_enabled_capitalized(self) -> None:
         """Test from_env with CACHE_ENABLED capitalized (case-insensitive matching)."""
         config = ResearchConfig.from_env()
         assert config.cache_enabled is True  # Case-insensitive: "True".lower() == "true"
@@ -1743,13 +1743,13 @@ class TestResearchConfig:
         "ANTHROPIC_API_KEY": "test-key",
         "CACHE_ENABLED": "1",
     }, clear=True)
-    def test_config_from_env_cache_enabled_non_true_value(self):
+    def test_config_from_env_cache_enabled_non_true_value(self) -> None:
         """Test from_env with CACHE_ENABLED set to non-'true' value."""
         config = ResearchConfig.from_env()
         assert config.cache_enabled is False
 
     @patch.dict(os.environ, {"ANTHROPIC_API_KEY": ""}, clear=True)
-    def test_config_from_env_empty_api_key(self):
+    def test_config_from_env_empty_api_key(self) -> None:
         """Test that empty string ANTHROPIC_API_KEY raises ValueError."""
         with pytest.raises(ValueError, match="ANTHROPIC_API_KEY environment variable not set"):
             ResearchConfig.from_env()
@@ -1758,7 +1758,7 @@ class TestResearchConfig:
         "ANTHROPIC_API_KEY": "test-key",
         "MAX_SEARCH_RESULTS": "1",
     }, clear=True)
-    def test_config_from_env_min_max_search_results(self):
+    def test_config_from_env_min_max_search_results(self) -> None:
         """Test from_env with minimum valid max_search_results value."""
         config = ResearchConfig.from_env()
         assert config.max_search_results == 1
@@ -1767,7 +1767,7 @@ class TestResearchConfig:
         "ANTHROPIC_API_KEY": "test-key",
         "CACHE_TTL": "0",
     }, clear=True)
-    def test_config_from_env_zero_cache_ttl(self):
+    def test_config_from_env_zero_cache_ttl(self) -> None:
         """Test from_env with zero cache_ttl (no expiration)."""
         config = ResearchConfig.from_env()
         assert config.cache_ttl == 0
@@ -1777,26 +1777,26 @@ class TestWebResearcher:
     """Test WebResearcher class."""
 
     @pytest.fixture
-    def config(self):
+    def config(self) -> ResearchConfig:
         """Create test config."""
         return ResearchConfig.with_api_key("test-key")
 
     @pytest.fixture
-    def researcher(self, config):
+    def researcher(self, config) -> WebResearcher:
         """Create test researcher."""
         return WebResearcher(config)
 
-    def test_researcher_initialization(self, researcher):
+    def test_researcher_initialization(self, researcher) -> None:
         """Test researcher initialization."""
         assert researcher.sources == []
         assert researcher.research_history == []
 
-    def test_get_sources(self, researcher):
+    def test_get_sources(self, researcher) -> None:
         """Test getting sources."""
         researcher.sources = ["https://example.com", "https://test.com"]
         assert researcher.get_sources() == ["https://example.com", "https://test.com"]
 
-    def test_clear_history(self, researcher):
+    def test_clear_history(self, researcher) -> None:
         """Test clearing history."""
         researcher.sources = ["https://example.com"]
         researcher.research_history = [{"topic": "test"}]
@@ -1804,7 +1804,7 @@ class TestWebResearcher:
         assert researcher.sources == []
         assert researcher.research_history == []
 
-    def test_clear_history_with_cache(self, config):
+    def test_clear_history_with_cache(self, config) -> None:
         """Test that clear_history also clears the cache."""
         researcher = WebResearcher(config)
         # Populate cache with some data
@@ -1824,7 +1824,7 @@ class TestWebResearcher:
         assert researcher.sources == []
         assert researcher.research_history == []
 
-    def test_clear_history_with_cache_disabled(self):
+    def test_clear_history_with_cache_disabled(self) -> None:
         """Test that clear_history works correctly when cache is disabled."""
         config = ResearchConfig.with_api_key("test-key", cache_enabled=False)
         researcher = WebResearcher(config)
@@ -1844,7 +1844,7 @@ class TestWebResearcher:
         assert researcher.research_history == []
 
     @patch("src.researcher.WebResearcher.search")
-    def test_search_called(self, mock_search, researcher):
+    def test_search_called(self, mock_search, researcher) -> None:
         """Test that search is called properly."""
         mock_search.return_value = [
             {"url": "https://example.com", "title": "Test"}
@@ -1854,7 +1854,7 @@ class TestWebResearcher:
 
     @patch("src.researcher.fetch_url_content")
     @patch("src.researcher.WebResearcher._summarize_content")
-    def test_fetch_and_summarize_caches_success(self, mock_summarize, mock_fetch, researcher):
+    def test_fetch_and_summarize_caches_success(self, mock_summarize, mock_fetch, researcher) -> None:
         """Test that successful fetch results are cached."""
         mock_fetch.return_value = {
             "status": "success",
@@ -1878,7 +1878,7 @@ class TestWebResearcher:
         assert mock_summarize.call_count == 1
 
     @patch("src.researcher.fetch_url_content")
-    def test_fetch_and_summarize_does_not_cache_fetch_errors(self, mock_fetch, researcher):
+    def test_fetch_and_summarize_does_not_cache_fetch_errors(self, mock_fetch, researcher) -> None:
         """Test that fetch errors are NOT cached, allowing retries."""
         mock_fetch.return_value = {
             "status": "error",
@@ -1899,7 +1899,7 @@ class TestWebResearcher:
         # Verify fetch was called twice (once for each call)
         assert mock_fetch.call_count == 2, "Should retry on error, not return cached error"
 
-    def test_fetch_and_summarize_does_not_cache_invalid_url(self, researcher):
+    def test_fetch_and_summarize_does_not_cache_invalid_url(self, researcher) -> None:
         """Test that invalid URL errors are NOT cached."""
         invalid_url = "not a valid url"
         result1 = researcher.fetch_and_summarize(invalid_url)
@@ -1913,7 +1913,7 @@ class TestWebResearcher:
         assert result2 == result1
 
 
-def test_agent_initialization():
+def test_agent_initialization() -> None:
     """Test ResearchAgent initialization."""
     from src.agent import ResearchAgent
 
@@ -1922,7 +1922,7 @@ def test_agent_initialization():
     assert agent.last_research is None
 
 
-def test_agent_get_sources_empty():
+def test_agent_get_sources_empty() -> None:
     """Test that get_sources returns empty list for fresh agent."""
     from src.agent import ResearchAgent
 
@@ -1930,7 +1930,7 @@ def test_agent_get_sources_empty():
     assert agent.get_sources() == []
 
 
-def test_agent_get_sources():
+def test_agent_get_sources() -> None:
     """Test getting sources from agent."""
     from src.agent import ResearchAgent
 
@@ -1939,7 +1939,7 @@ def test_agent_get_sources():
     assert agent.get_sources() == ["https://example.com"]
 
 
-def test_agent_clear_history():
+def test_agent_clear_history() -> None:
     """Test clearing history in agent."""
     from src.agent import ResearchAgent
 
@@ -1954,7 +1954,7 @@ def test_agent_clear_history():
     assert agent.last_research is None
 
 
-def test_agent_clear_history_clears_cache():
+def test_agent_clear_history_clears_cache() -> None:
     """Test that clear_history also clears the cache."""
     from src.agent import ResearchAgent
 
@@ -1979,7 +1979,7 @@ def test_agent_clear_history_clears_cache():
     assert agent.last_research is None
 
 
-def test_agent_clear_history_resets_formatted_report():
+def test_agent_clear_history_resets_formatted_report() -> None:
     """Test that clear_history() makes get_formatted_report() return 'No research conducted yet.'"""
     from src.agent import ResearchAgent
 
@@ -2012,7 +2012,7 @@ def test_agent_clear_history_resets_formatted_report():
 
 
 @patch("src.researcher.WebResearcher.fetch_and_summarize")
-def test_agent_summarize(mock_fetch):
+def test_agent_summarize(mock_fetch) -> None:
     """Test summarizing multiple URLs."""
     from src.agent import ResearchAgent
 
@@ -2033,7 +2033,7 @@ def test_agent_summarize(mock_fetch):
 
 
 @patch("src.researcher.WebResearcher.fetch_and_summarize")
-def test_agent_summarize_with_mixed_results(mock_fetch):
+def test_agent_summarize_with_mixed_results(mock_fetch) -> None:
     """Test summarizing URLs with some failures."""
     from src.agent import ResearchAgent
 
@@ -2057,7 +2057,7 @@ def test_agent_summarize_with_mixed_results(mock_fetch):
     assert "Connection failed" in result["summaries"]["https://invalid.com"]["error"]
 
 
-def test_agent_summarize_empty_urls():
+def test_agent_summarize_empty_urls() -> None:
     """Test summarizing empty URL list."""
     from src.agent import ResearchAgent
 
@@ -2069,7 +2069,7 @@ def test_agent_summarize_empty_urls():
     assert result["summaries"] == {}
 
 
-def test_agent_summarize_invalid_type_none():
+def test_agent_summarize_invalid_type_none() -> None:
     """Test summarize with None instead of list."""
     from src.agent import ResearchAgent
 
@@ -2078,7 +2078,7 @@ def test_agent_summarize_invalid_type_none():
         agent.summarize(None)
 
 
-def test_agent_summarize_invalid_type_string():
+def test_agent_summarize_invalid_type_string() -> None:
     """Test summarize with string instead of list."""
     from src.agent import ResearchAgent
 
@@ -2087,7 +2087,7 @@ def test_agent_summarize_invalid_type_string():
         agent.summarize("https://example.com")
 
 
-def test_agent_summarize_invalid_type_dict():
+def test_agent_summarize_invalid_type_dict() -> None:
     """Test summarize with dict instead of list."""
     from src.agent import ResearchAgent
 
@@ -2096,7 +2096,7 @@ def test_agent_summarize_invalid_type_dict():
         agent.summarize({"url": "https://example.com"})
 
 
-def test_agent_summarize_invalid_type_int():
+def test_agent_summarize_invalid_type_int() -> None:
     """Test summarize with int instead of list."""
     from src.agent import ResearchAgent
 
@@ -2105,7 +2105,7 @@ def test_agent_summarize_invalid_type_int():
         agent.summarize(123)
 
 
-def test_agent_summarize_invalid_item_type_int():
+def test_agent_summarize_invalid_item_type_int() -> None:
     """Test summarize with integer item in URL list."""
     from src.agent import ResearchAgent
 
@@ -2114,7 +2114,7 @@ def test_agent_summarize_invalid_item_type_int():
         agent.summarize([123])
 
 
-def test_agent_summarize_invalid_item_type_none():
+def test_agent_summarize_invalid_item_type_none() -> None:
     """Test summarize with None item in URL list."""
     from src.agent import ResearchAgent
 
@@ -2123,7 +2123,7 @@ def test_agent_summarize_invalid_item_type_none():
         agent.summarize([None])
 
 
-def test_agent_summarize_invalid_item_type_mixed():
+def test_agent_summarize_invalid_item_type_mixed() -> None:
     """Test summarize with mixed string and non-string items."""
     from src.agent import ResearchAgent
 
@@ -2132,7 +2132,7 @@ def test_agent_summarize_invalid_item_type_mixed():
         agent.summarize(["https://example.com", 456])
 
 
-def test_agent_summarize_invalid_item_type_dict_in_list():
+def test_agent_summarize_invalid_item_type_dict_in_list() -> None:
     """Test summarize with dict item in URL list."""
     from src.agent import ResearchAgent
 
@@ -2141,7 +2141,7 @@ def test_agent_summarize_invalid_item_type_dict_in_list():
         agent.summarize([{"url": "https://example.com"}])
 
 
-def test_agent_summarize_invalid_url_format_no_protocol():
+def test_agent_summarize_invalid_url_format_no_protocol() -> None:
     """Test summarize with URL missing protocol."""
     from src.agent import ResearchAgent
 
@@ -2150,7 +2150,7 @@ def test_agent_summarize_invalid_url_format_no_protocol():
         agent.summarize(["example.com"])
 
 
-def test_agent_summarize_invalid_url_format_ftp():
+def test_agent_summarize_invalid_url_format_ftp() -> None:
     """Test summarize with FTP URL (not HTTP/HTTPS)."""
     from src.agent import ResearchAgent
 
@@ -2159,7 +2159,7 @@ def test_agent_summarize_invalid_url_format_ftp():
         agent.summarize(["ftp://example.com"])
 
 
-def test_agent_summarize_invalid_url_format_mixed():
+def test_agent_summarize_invalid_url_format_mixed() -> None:
     """Test summarize with mixed valid and invalid URLs."""
     from src.agent import ResearchAgent
 
@@ -2169,7 +2169,7 @@ def test_agent_summarize_invalid_url_format_mixed():
 
 
 @patch("src.researcher.WebResearcher.fetch_and_summarize")
-def test_agent_summarize_all_errors(mock_fetch):
+def test_agent_summarize_all_errors(mock_fetch) -> None:
     """Test summarizing URLs when all requests fail."""
     from src.agent import ResearchAgent
 
@@ -2196,7 +2196,7 @@ def test_agent_summarize_all_errors(mock_fetch):
         assert "error" in summary_result
 
 
-def test_agent_get_formatted_report_no_research():
+def test_agent_get_formatted_report_no_research() -> None:
     """Test getting formatted report when no research conducted."""
     from src.agent import ResearchAgent
 
@@ -2206,7 +2206,7 @@ def test_agent_get_formatted_report_no_research():
     assert report == "No research conducted yet."
 
 
-def test_agent_get_formatted_report_with_research():
+def test_agent_get_formatted_report_with_research() -> None:
     """Test getting formatted report with completed research."""
     from src.agent import ResearchAgent
 
@@ -2242,7 +2242,7 @@ def test_agent_get_formatted_report_with_research():
     assert "Failed to fetch" not in report
 
 
-def test_agent_get_formatted_report_all_failures():
+def test_agent_get_formatted_report_all_failures() -> None:
     """Test getting formatted report when all findings fail."""
     from src.agent import ResearchAgent
 
@@ -2278,7 +2278,7 @@ def test_agent_get_formatted_report_all_failures():
     assert "## Sources" not in report
 
 
-def test_agent_num_sources_clamping():
+def test_agent_num_sources_clamping() -> None:
     """Test that num_sources is clamped to max_search_results."""
     from src.agent import ResearchAgent
 
@@ -2295,7 +2295,7 @@ def test_agent_num_sources_clamping():
         mock_research.assert_called_once_with(topic="test query", num_sources=5)
 
 
-def test_agent_num_sources_zero():
+def test_agent_num_sources_zero() -> None:
     """Test that num_sources=0 raises ValueError."""
     from src.agent import ResearchAgent
 
@@ -2304,7 +2304,7 @@ def test_agent_num_sources_zero():
         agent.research("test query", num_sources=0)
 
 
-def test_agent_num_sources_negative():
+def test_agent_num_sources_negative() -> None:
     """Test that negative num_sources raises ValueError."""
     from src.agent import ResearchAgent
 
@@ -2313,7 +2313,7 @@ def test_agent_num_sources_negative():
         agent.research("test query", num_sources=-5)
 
 
-def test_agent_num_sources_float():
+def test_agent_num_sources_float() -> None:
     """Test that float num_sources raises ValueError."""
     from src.agent import ResearchAgent
 
@@ -2322,7 +2322,7 @@ def test_agent_num_sources_float():
         agent.research("test query", num_sources=5.5)
 
 
-def test_agent_num_sources_boundary():
+def test_agent_num_sources_boundary() -> None:
     """Test that num_sources at boundary (equals max_search_results) works."""
     from src.agent import ResearchAgent
 
@@ -2338,7 +2338,7 @@ def test_agent_num_sources_boundary():
         mock_research.assert_called_once_with(topic="test query", num_sources=5)
 
 
-def test_agent_num_sources_minimum():
+def test_agent_num_sources_minimum() -> None:
     """Test that num_sources=1 (minimum valid) works."""
     from src.agent import ResearchAgent
 
@@ -2354,7 +2354,7 @@ def test_agent_num_sources_minimum():
         mock_research.assert_called_once_with(topic="test query", num_sources=1)
 
 
-def test_agent_num_sources_bool_true():
+def test_agent_num_sources_bool_true() -> None:
     """Test that bool True as num_sources raises ValueError."""
     from src.agent import ResearchAgent
 
@@ -2363,7 +2363,7 @@ def test_agent_num_sources_bool_true():
         agent.research("test query", num_sources=True)
 
 
-def test_agent_num_sources_bool_false():
+def test_agent_num_sources_bool_false() -> None:
     """Test that bool False as num_sources raises ValueError."""
     from src.agent import ResearchAgent
 
@@ -2372,7 +2372,7 @@ def test_agent_num_sources_bool_false():
         agent.research("test query", num_sources=False)
 
 
-def test_agent_get_formatted_report_numbered_sources_correctly():
+def test_agent_get_formatted_report_numbered_sources_correctly() -> None:
     """Test that successful sources are numbered sequentially (1, 2, 3) when there are mixed success/error findings."""
     from src.agent import ResearchAgent
 
@@ -2431,7 +2431,7 @@ def test_agent_get_formatted_report_numbered_sources_correctly():
     assert "Connection timeout" not in report
 
 
-def test_agent_get_formatted_report_missing_finding_keys():
+def test_agent_get_formatted_report_missing_finding_keys() -> None:
     """Test that missing 'url' and 'summary' keys default to 'N/A' in findings."""
     from src.agent import ResearchAgent
 
@@ -2471,7 +2471,7 @@ def test_agent_get_formatted_report_missing_finding_keys():
     assert "https://second.com" in report
 
 
-def test_agent_get_formatted_report_missing_analysis():
+def test_agent_get_formatted_report_missing_analysis() -> None:
     """Test that missing 'analysis' key defaults to 'No analysis available'."""
     from src.agent import ResearchAgent
 
@@ -2501,7 +2501,7 @@ def test_agent_get_formatted_report_missing_analysis():
     assert "Test summary" in report
 
 
-def test_agent_get_formatted_report_missing_topic():
+def test_agent_get_formatted_report_missing_topic() -> None:
     """Test that missing 'topic' key defaults to 'Unknown Topic'."""
     from src.agent import ResearchAgent
 
@@ -2531,7 +2531,7 @@ def test_agent_get_formatted_report_missing_topic():
     assert "Test summary" in report
 
 
-def test_agent_get_formatted_report_empty_findings():
+def test_agent_get_formatted_report_empty_findings() -> None:
     """Test getting formatted report when findings list is empty."""
     from src.agent import ResearchAgent
 
@@ -2557,7 +2557,7 @@ def test_agent_get_formatted_report_empty_findings():
 
 
 @patch("src.researcher.WebResearcher.research_topic")
-def test_agent_research_success(mock_research_topic):
+def test_agent_research_success(mock_research_topic) -> None:
     """Test that research() returns the result from research_topic and sets last_research."""
     from src.agent import ResearchAgent
 
@@ -2585,7 +2585,7 @@ def test_agent_research_success(mock_research_topic):
 
 
 @patch("src.researcher.WebResearcher.research_topic")
-def test_agent_research_error(mock_research_topic):
+def test_agent_research_error(mock_research_topic) -> None:
     """Test that research() handles error results correctly."""
     from src.agent import ResearchAgent
 
@@ -2608,7 +2608,7 @@ def test_agent_research_error(mock_research_topic):
 
 @patch("src.researcher.fetch_url_content")
 @patch("src.researcher.WebResearcher._summarize_content")
-def test_agent_summarize_updates_sources(mock_summarize, mock_fetch):
+def test_agent_summarize_updates_sources(mock_summarize, mock_fetch) -> None:
     """Test that summarize() adds successful URLs to the sources list via fetch_and_summarize."""
     from src.agent import ResearchAgent
 
@@ -2647,7 +2647,7 @@ def test_agent_summarize_updates_sources(mock_summarize, mock_fetch):
 
 
 @patch("src.researcher.WebResearcher.fetch_and_summarize")
-def test_agent_summarize_with_duplicate_urls(mock_fetch):
+def test_agent_summarize_with_duplicate_urls(mock_fetch) -> None:
     """Test that summarize handles duplicate URLs in the list."""
     from src.agent import ResearchAgent
 
@@ -2673,7 +2673,7 @@ def test_agent_summarize_with_duplicate_urls(mock_fetch):
     assert mock_fetch.call_count == 2
 
 
-def test_agent_research_invalid_topic_type_none():
+def test_agent_research_invalid_topic_type_none() -> None:
     """Test research() with None topic."""
     from src.agent import ResearchAgent
 
@@ -2682,7 +2682,7 @@ def test_agent_research_invalid_topic_type_none():
         agent.research(None)
 
 
-def test_agent_research_invalid_topic_type_int():
+def test_agent_research_invalid_topic_type_int() -> None:
     """Test research() with integer topic."""
     from src.agent import ResearchAgent
 
@@ -2691,7 +2691,7 @@ def test_agent_research_invalid_topic_type_int():
         agent.research(123)
 
 
-def test_agent_research_invalid_topic_type_list():
+def test_agent_research_invalid_topic_type_list() -> None:
     """Test research() with list topic."""
     from src.agent import ResearchAgent
 
@@ -2700,7 +2700,7 @@ def test_agent_research_invalid_topic_type_list():
         agent.research([])
 
 
-def test_agent_research_invalid_topic_type_dict():
+def test_agent_research_invalid_topic_type_dict() -> None:
     """Test research() with dict topic."""
     from src.agent import ResearchAgent
 
@@ -2709,7 +2709,7 @@ def test_agent_research_invalid_topic_type_dict():
         agent.research({"topic": "test"})
 
 
-def test_agent_research_empty_topic():
+def test_agent_research_empty_topic() -> None:
     """Test research() with empty string topic."""
     from src.agent import ResearchAgent
 
@@ -2718,7 +2718,7 @@ def test_agent_research_empty_topic():
         agent.research("")
 
 
-def test_agent_research_whitespace_only_topic():
+def test_agent_research_whitespace_only_topic() -> None:
     """Test research() with whitespace-only topic."""
     from src.agent import ResearchAgent
 
@@ -2731,52 +2731,52 @@ class TestWebResearcherSearch:
     """Test search() method input validation."""
 
     @pytest.fixture
-    def researcher(self):
+    def researcher(self) -> WebResearcher:
         """Create test researcher."""
         config = ResearchConfig.with_api_key("test-key")
         return WebResearcher(config)
 
-    def test_search_invalid_query_type_none(self, researcher):
+    def test_search_invalid_query_type_none(self, researcher) -> None:
         """Test search() with None query."""
         with pytest.raises(TypeError, match="query must be a string"):
             researcher.search(None)
 
-    def test_search_invalid_query_type_int(self, researcher):
+    def test_search_invalid_query_type_int(self, researcher) -> None:
         """Test search() with integer query."""
         with pytest.raises(TypeError, match="query must be a string"):
             researcher.search(123)
 
-    def test_search_invalid_query_type_list(self, researcher):
+    def test_search_invalid_query_type_list(self, researcher) -> None:
         """Test search() with list query."""
         with pytest.raises(TypeError, match="query must be a string"):
             researcher.search([])
 
-    def test_search_empty_query(self, researcher):
+    def test_search_empty_query(self, researcher) -> None:
         """Test search() with empty query."""
         with pytest.raises(ValueError, match="query cannot be empty"):
             researcher.search("")
 
-    def test_search_whitespace_only_query(self, researcher):
+    def test_search_whitespace_only_query(self, researcher) -> None:
         """Test search() with whitespace-only query."""
         with pytest.raises(ValueError, match="query cannot be empty"):
             researcher.search("   \t\n   ")
 
-    def test_search_invalid_num_results_zero(self, researcher):
+    def test_search_invalid_num_results_zero(self, researcher) -> None:
         """Test search() with zero num_results."""
         with pytest.raises(ValueError, match="num_results must be a positive integer"):
             researcher.search("test", num_results=0)
 
-    def test_search_invalid_num_results_negative(self, researcher):
+    def test_search_invalid_num_results_negative(self, researcher) -> None:
         """Test search() with negative num_results."""
         with pytest.raises(ValueError, match="num_results must be a positive integer"):
             researcher.search("test", num_results=-5)
 
-    def test_search_invalid_num_results_float(self, researcher):
+    def test_search_invalid_num_results_float(self, researcher) -> None:
         """Test search() with float num_results."""
         with pytest.raises(ValueError, match="num_results must be a positive integer"):
             researcher.search("test", num_results=5.5)
 
-    def test_search_invalid_num_results_bool(self, researcher):
+    def test_search_invalid_num_results_bool(self, researcher) -> None:
         """Test search() with bool num_results (should reject)."""
         with pytest.raises(ValueError, match="num_results must be a positive integer"):
             researcher.search("test", num_results=True)
@@ -2786,52 +2786,52 @@ class TestWebResearcherResearchTopic:
     """Test research_topic() method input validation."""
 
     @pytest.fixture
-    def researcher(self):
+    def researcher(self) -> WebResearcher:
         """Create test researcher."""
         config = ResearchConfig.with_api_key("test-key")
         return WebResearcher(config)
 
-    def test_research_topic_invalid_topic_type_none(self, researcher):
+    def test_research_topic_invalid_topic_type_none(self, researcher) -> None:
         """Test research_topic() with None topic."""
         with pytest.raises(TypeError, match="topic must be a string"):
             researcher.research_topic(None)
 
-    def test_research_topic_invalid_topic_type_int(self, researcher):
+    def test_research_topic_invalid_topic_type_int(self, researcher) -> None:
         """Test research_topic() with integer topic."""
         with pytest.raises(TypeError, match="topic must be a string"):
             researcher.research_topic(123)
 
-    def test_research_topic_invalid_topic_type_list(self, researcher):
+    def test_research_topic_invalid_topic_type_list(self, researcher) -> None:
         """Test research_topic() with list topic."""
         with pytest.raises(TypeError, match="topic must be a string"):
             researcher.research_topic([])
 
-    def test_research_topic_empty_topic(self, researcher):
+    def test_research_topic_empty_topic(self, researcher) -> None:
         """Test research_topic() with empty topic."""
         with pytest.raises(ValueError, match="topic cannot be empty"):
             researcher.research_topic("")
 
-    def test_research_topic_whitespace_only_topic(self, researcher):
+    def test_research_topic_whitespace_only_topic(self, researcher) -> None:
         """Test research_topic() with whitespace-only topic."""
         with pytest.raises(ValueError, match="topic cannot be empty"):
             researcher.research_topic("   \t\n   ")
 
-    def test_research_topic_invalid_num_sources_zero(self, researcher):
+    def test_research_topic_invalid_num_sources_zero(self, researcher) -> None:
         """Test research_topic() with zero num_sources."""
         with pytest.raises(ValueError, match="num_sources must be a positive integer"):
             researcher.research_topic("test", num_sources=0)
 
-    def test_research_topic_invalid_num_sources_negative(self, researcher):
+    def test_research_topic_invalid_num_sources_negative(self, researcher) -> None:
         """Test research_topic() with negative num_sources."""
         with pytest.raises(ValueError, match="num_sources must be a positive integer"):
             researcher.research_topic("test", num_sources=-5)
 
-    def test_research_topic_invalid_num_sources_float(self, researcher):
+    def test_research_topic_invalid_num_sources_float(self, researcher) -> None:
         """Test research_topic() with float num_sources."""
         with pytest.raises(ValueError, match="num_sources must be a positive integer"):
             researcher.research_topic("test", num_sources=3.5)
 
-    def test_research_topic_invalid_num_sources_bool(self, researcher):
+    def test_research_topic_invalid_num_sources_bool(self, researcher) -> None:
         """Test research_topic() with bool num_sources (should reject)."""
         with pytest.raises(ValueError, match="num_sources must be a positive integer"):
             researcher.research_topic("test", num_sources=True)
