@@ -319,6 +319,11 @@ Only return the JSON list, no other text."""
         summarizes each of the first 3 chunks. Returns a space-joined
         concatenation of all chunk summaries.
 
+        The 3-chunk limit balances cost (API calls to Claude) against coverage:
+        more chunks provide better content coverage but increase API costs.
+        For most URLs, the first 3 chunks (9000 characters) contain the most
+        important information anyway.
+
         Args:
             content: The text content to summarize (will be chunked if too long).
 
@@ -331,7 +336,7 @@ Only return the JSON list, no other text."""
         chunks = chunk_text(content, chunk_size=3000)
 
         summaries: List[str] = []
-        for chunk in chunks[:3]:  # Limit to first 3 chunks
+        for chunk in chunks[:3]:  # Process only first 3 chunks to control API costs
             prompt = f"""Please provide a concise summary of the following content:
 
 {chunk}
