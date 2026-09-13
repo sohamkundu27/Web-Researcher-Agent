@@ -113,32 +113,36 @@ class ResearchConfig:
         if not api_key:
             raise ValueError("ANTHROPIC_API_KEY environment variable not set")
 
+        max_search_results_str = os.getenv("MAX_SEARCH_RESULTS", "10")
         try:
-            max_search_results = int(os.getenv("MAX_SEARCH_RESULTS", "10"))
+            max_search_results = int(max_search_results_str)
         except ValueError:
             raise ValueError(
-                f"MAX_SEARCH_RESULTS must be a valid integer, got '{os.getenv('MAX_SEARCH_RESULTS')}'"
+                f"MAX_SEARCH_RESULTS must be a valid integer, got '{max_search_results_str}'"
             )
 
+        max_depth_str = os.getenv("MAX_DEPTH", "3")
         try:
-            max_depth = int(os.getenv("MAX_DEPTH", "3"))
+            max_depth = int(max_depth_str)
         except ValueError:
             raise ValueError(
-                f"MAX_DEPTH must be a valid integer, got '{os.getenv('MAX_DEPTH')}'"
+                f"MAX_DEPTH must be a valid integer, got '{max_depth_str}'"
             )
 
+        timeout_str = os.getenv("TIMEOUT", "30")
         try:
-            timeout = int(os.getenv("TIMEOUT", "30"))
+            timeout = int(timeout_str)
         except ValueError:
             raise ValueError(
-                f"TIMEOUT must be a valid integer, got '{os.getenv('TIMEOUT')}'"
+                f"TIMEOUT must be a valid integer, got '{timeout_str}'"
             )
 
+        cache_ttl_str = os.getenv("CACHE_TTL", "3600")
         try:
-            cache_ttl = int(os.getenv("CACHE_TTL", "3600"))
+            cache_ttl = int(cache_ttl_str)
         except ValueError:
             raise ValueError(
-                f"CACHE_TTL must be a valid integer, got '{os.getenv('CACHE_TTL')}'"
+                f"CACHE_TTL must be a valid integer, got '{cache_ttl_str}'"
             )
 
         if max_search_results <= 0:
