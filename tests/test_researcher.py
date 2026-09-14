@@ -396,12 +396,12 @@ class TestContentCache:
             # All calls to now() should return the same time (frozen_time)
             mock_datetime.now.return_value = frozen_time
 
-            # Call cleanup when all entries are exactly at expiration (frozen_time >= frozen_time + 5 is False)
+            # Call cleanup before entries have expired (frozen_time < frozen_time + 5s)
             removed = cache.cleanup()
 
-            # Since frozen_time (2026-01-01 12:00:00) is NOT >= frozen_time + 5s,
-            # no entries should be removed
-            assert removed == 0, "At frozen_time, no entries should be expired"
+            # Since frozen_time < frozen_time + 5s, the cleanup condition (now >= expires)
+            # is False, so no entries should be removed
+            assert removed == 0, "No entries should be expired before their expiration time"
             assert len(cache.cache) == 3, "All entries should still be in cache"
 
         # Now test when entries ARE expired
