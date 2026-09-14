@@ -154,13 +154,19 @@ class ResearchConfig:
         if cache_ttl < 0:
             raise ValueError("CACHE_TTL must be non-negative")
 
+        cache_enabled_str = os.getenv("CACHE_ENABLED", "true").lower()
+        if cache_enabled_str not in ("true", "false"):
+            raise ValueError(
+                f"CACHE_ENABLED must be 'true' or 'false', got '{cache_enabled_str}'"
+            )
+
         return cls(
             api_key=api_key,
             model=os.getenv("RESEARCH_MODEL", "claude-3-5-sonnet-20241022"),
             max_search_results=max_search_results,
             max_depth=max_depth,
             timeout=timeout,
-            cache_enabled=os.getenv("CACHE_ENABLED", "true").lower() == "true",
+            cache_enabled=cache_enabled_str == "true",
             cache_ttl=cache_ttl,
         )
 

@@ -1741,10 +1741,10 @@ class TestResearchConfig:
 
     @patch.dict(os.environ, {
         "ANTHROPIC_API_KEY": "test-key",
-        "CACHE_ENABLED": "1",
+        "CACHE_ENABLED": "False",
     }, clear=True)
-    def test_config_from_env_cache_enabled_non_true_value(self) -> None:
-        """Test from_env with CACHE_ENABLED set to non-'true' value."""
+    def test_config_from_env_cache_enabled_false_string(self) -> None:
+        """Test from_env with CACHE_ENABLED explicitly set to 'false'."""
         config = ResearchConfig.from_env()
         assert config.cache_enabled is False
 
@@ -1771,6 +1771,42 @@ class TestResearchConfig:
         """Test from_env with zero cache_ttl (no expiration)."""
         config = ResearchConfig.from_env()
         assert config.cache_ttl == 0
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "CACHE_ENABLED": "yes",
+    }, clear=True)
+    def test_config_from_env_invalid_cache_enabled_yes(self) -> None:
+        """Test from_env rejects CACHE_ENABLED='yes' as invalid."""
+        with pytest.raises(ValueError, match="CACHE_ENABLED must be 'true' or 'false'"):
+            ResearchConfig.from_env()
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "CACHE_ENABLED": "no",
+    }, clear=True)
+    def test_config_from_env_invalid_cache_enabled_no(self) -> None:
+        """Test from_env rejects CACHE_ENABLED='no' as invalid."""
+        with pytest.raises(ValueError, match="CACHE_ENABLED must be 'true' or 'false'"):
+            ResearchConfig.from_env()
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "CACHE_ENABLED": "1",
+    }, clear=True)
+    def test_config_from_env_invalid_cache_enabled_one(self) -> None:
+        """Test from_env rejects CACHE_ENABLED='1' as invalid."""
+        with pytest.raises(ValueError, match="CACHE_ENABLED must be 'true' or 'false'"):
+            ResearchConfig.from_env()
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "CACHE_ENABLED": "0",
+    }, clear=True)
+    def test_config_from_env_invalid_cache_enabled_zero(self) -> None:
+        """Test from_env rejects CACHE_ENABLED='0' as invalid."""
+        with pytest.raises(ValueError, match="CACHE_ENABLED must be 'true' or 'false'"):
+            ResearchConfig.from_env()
 
 
 class TestWebResearcher:
