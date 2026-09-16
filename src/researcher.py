@@ -15,21 +15,38 @@ from src.config import ResearchConfig
 
 
 class CacheEntry(TypedDict):
-    """Type definition for cache entry structure."""
+    """Type definition for cache entry structure.
+
+    Attributes:
+        value: The cached value (any type except None).
+        expires: The datetime when this entry expires and becomes invalid.
+    """
 
     value: Any
     expires: datetime
 
 
 class SearchResult(TypedDict):
-    """Type definition for search result from search method."""
+    """Type definition for search result from search method.
+
+    Attributes:
+        url: The URL of the search result (HTTP or HTTPS URL).
+        title: The title or description of the search result.
+    """
 
     url: str
     title: str
 
 
 class FetchAndSummarizeSuccess(TypedDict):
-    """Type definition for successful fetch_and_summarize result."""
+    """Type definition for successful fetch_and_summarize result.
+
+    Attributes:
+        url: The URL that was successfully fetched and summarized.
+        status: Result status, always "success" for this type.
+        summary: Concise AI-generated summary of the URL content.
+        content_preview: First 500 characters of extracted clean text from the page.
+    """
 
     url: str
     status: str
@@ -38,7 +55,13 @@ class FetchAndSummarizeSuccess(TypedDict):
 
 
 class FetchAndSummarizeError(TypedDict):
-    """Type definition for error fetch_and_summarize result."""
+    """Type definition for error fetch_and_summarize result.
+
+    Attributes:
+        url: The URL that failed to fetch or summarize.
+        error: Error message describing what went wrong (e.g., timeout, invalid URL, network error).
+        status: Result status, always "error" for this type.
+    """
 
     url: str
     error: str
@@ -49,7 +72,16 @@ FetchAndSummarizeResult = Union[FetchAndSummarizeSuccess, FetchAndSummarizeError
 
 
 class ResearchTopicSuccess(TypedDict):
-    """Type definition for successful research_topic result."""
+    """Type definition for successful research_topic result.
+
+    Attributes:
+        topic: The research topic that was investigated.
+        status: Result status, always "success" for this type.
+        findings: List of fetch and summarize results (FetchAndSummarizeResult dicts).
+        analysis: Comprehensive AI-generated analysis synthesizing key insights from findings.
+        sources: List of URLs from all successfully fetched sources.
+        timestamp: ISO format timestamp of when the research was conducted.
+    """
 
     topic: str
     status: str
@@ -60,7 +92,13 @@ class ResearchTopicSuccess(TypedDict):
 
 
 class ResearchTopicError(TypedDict):
-    """Type definition for error research_topic result."""
+    """Type definition for error research_topic result.
+
+    Attributes:
+        topic: The research topic that was requested.
+        status: Result status, always "error" for this type.
+        error: Error message describing what went wrong (e.g., no search results found).
+    """
 
     topic: str
     status: str

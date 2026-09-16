@@ -9,7 +9,15 @@ from bs4 import BeautifulSoup
 
 
 class FetchUrlSuccess(TypedDict):
-    """Successful URL fetch response."""
+    """Successful URL fetch response.
+
+    Attributes:
+        status: Result status, always "success" for this type.
+        url: The URL that was successfully fetched.
+        content: Extracted and cleaned text from the HTML (limited to 5000 characters).
+        status_code: HTTP response status code (e.g., 200 for OK).
+        headers: HTTP response headers as a dictionary.
+    """
 
     status: Literal["success"]
     url: str
@@ -19,7 +27,13 @@ class FetchUrlSuccess(TypedDict):
 
 
 class FetchUrlError(TypedDict):
-    """Error URL fetch response."""
+    """Error URL fetch response.
+
+    Attributes:
+        status: Result status, always "error" for this type.
+        url: The URL that failed to fetch.
+        error: Error message describing what went wrong (e.g., timeout, HTTP error, connection refused).
+    """
 
     status: Literal["error"]
     url: str
