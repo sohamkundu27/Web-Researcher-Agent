@@ -122,7 +122,7 @@ def extract_text_from_html(html: str, max_length: int = 5000) -> str:
 
     Returns:
         Sanitized plain text extracted from the HTML, truncated to max_length
-        characters. Returns empty string if extraction fails.
+        characters.
 
     Raises:
         TypeError: If html is not a string or max_length is not an integer.
@@ -134,23 +134,21 @@ def extract_text_from_html(html: str, max_length: int = 5000) -> str:
         raise TypeError(f"max_length must be an integer, got {type(max_length).__name__}")
     if max_length <= 0:
         raise ValueError(f"max_length must be a positive integer, got {max_length}")
-    try:
-        soup = BeautifulSoup(html, "html.parser")
 
-        # Remove script and style elements
-        for script in soup(["script", "style"]):
-            script.decompose()
+    soup = BeautifulSoup(html, "html.parser")
 
-        # Get text
-        text = soup.get_text()
+    # Remove script and style elements
+    for script in soup(["script", "style"]):
+        script.decompose()
 
-        # Clean up text
-        text = sanitize_text(text)
+    # Get text
+    text = soup.get_text()
 
-        # Limit length
-        return text[:max_length]
-    except Exception:
-        return ""
+    # Clean up text
+    text = sanitize_text(text)
+
+    # Limit length
+    return text[:max_length]
 
 
 def fetch_url_content(url: str, timeout: int = 10) -> FetchUrlResult:
