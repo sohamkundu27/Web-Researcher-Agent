@@ -429,7 +429,7 @@ Summary should be 2-3 sentences max."""
         Returns:
             A comprehensive analysis including key insights, trends, and takeaways
         """
-        summaries = [
+        summaries: List[str] = [
             f.get("summary", f.get("error", ""))
             for f in findings
             if f.get("status") == "success"
