@@ -37,6 +37,21 @@ class TestContentCache:
         time.sleep(0.1)
         assert cache.get("key1") is None
 
+    def test_cache_zero_ttl_immediate_get(self) -> None:
+        """Test that TTL=0 items are not retrievable even with immediate get (no sleep).
+
+        Items with TTL=0 expire at the moment they are set. Due to the boundary
+        condition (items expire when now >= expires), an immediate get() call
+        in the same execution will find the item expired because datetime.now()
+        will be >= the expiration time set milliseconds earlier.
+        """
+        cache = ContentCache(ttl=0)
+        cache.set("key1", "value1")
+        # No sleep - call get immediately
+        result = cache.get("key1")
+        assert result is None, "TTL=0 item should be expired even with immediate get"
+        assert "key1" not in cache.cache, "Expired item should be removed from cache dict"
+
     def test_cache_cleanup_on_expiration(self) -> None:
         """Test that expired items are removed from cache dict."""
         cache = ContentCache(ttl=0)
