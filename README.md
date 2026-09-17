@@ -115,7 +115,7 @@ Main agent class for conducting research.
 
 - `research(topic: str, num_sources: int = 5) -> ResearchTopicResult` - Conduct research on a topic
   - Returns: Dictionary with `topic` and `status` ("success" or "error"). 
-    - On success: also includes `findings` (list of results: each item contains a summary on success or error message on failure), `analysis`, `sources` (list of URLs), `timestamp`
+    - On success: also includes `findings` (list of results; each item is a dict with `url`, `status`, and either `summary`+`content_preview` on success or `error` on failure), `analysis`, `sources` (list of URLs), `timestamp`
     - On error: also includes `error` (error message)
   - Raises:
     - `TypeError`: If `topic` is not a string
