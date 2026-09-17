@@ -794,6 +794,26 @@ class TestUtilityFunctions:
         with pytest.raises(TypeError, match="overlap must be an integer, got bool"):
             chunk_text("text", chunk_size=100, overlap=True)
 
+    def test_chunk_text_empty_string(self) -> None:
+        """Test chunk_text with empty string (all chunks filtered out)."""
+        result = chunk_text("")
+        assert result == []
+
+    def test_chunk_text_whitespace_only(self) -> None:
+        """Test chunk_text with whitespace-only text (all chunks filtered out)."""
+        result = chunk_text("   \n\t  ")
+        assert result == []
+
+    def test_chunk_text_mixed_whitespace_and_content(self) -> None:
+        """Test chunk_text where some chunks have content and some are pure whitespace."""
+        # Text where first half is content, second half is whitespace
+        text = "hello world" + "   \n\t  " * 100
+        result = chunk_text(text, chunk_size=20, overlap=5)
+        # Should have at least the chunk(s) with "hello world"
+        assert len(result) > 0
+        # First chunk should contain "hello world"
+        assert "hello" in result[0]
+
     def test_extract_text_from_html_basic(self) -> None:
         """Test basic HTML text extraction."""
         html = "<html><body><h1>Title</h1><p>Content here</p></body></html>"
