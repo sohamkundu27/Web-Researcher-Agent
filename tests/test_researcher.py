@@ -2082,6 +2082,54 @@ def test_agent_clear_history_resets_formatted_report() -> None:
     assert report_after == "No research conducted yet."
 
 
+@patch("src.researcher.fetch_url_content")
+@patch("src.researcher.WebResearcher._summarize_content")
+def test_agent_clear_history_after_summarize(mock_summarize, mock_fetch) -> None:
+    """Test that clear_history via public API properly resets get_sources and get_formatted_report.
+
+    This tests the realistic workflow: summarize() adds sources, then clear_history()
+    clears them, using only public API methods.
+    """
+    from src.agent import ResearchAgent
+
+    mock_fetch.side_effect = [
+        {
+            "status": "success",
+            "content": "Content 1",
+            "url": "https://example.com",
+            "status_code": 200,
+            "headers": {},
+        },
+        {
+            "status": "success",
+            "content": "Content 2",
+            "url": "https://test.org",
+            "status_code": 200,
+            "headers": {},
+        },
+    ]
+    mock_summarize.side_effect = ["Summary 1", "Summary 2"]
+
+    agent = ResearchAgent(api_key="test-key")
+
+    # Summarize adds sources
+    urls = ["https://example.com", "https://test.org"]
+    result = agent.summarize(urls)
+    assert result["sources_count"] == 2
+    assert len(agent.get_sources()) == 2
+
+    # Verify report shows no research yet (because no research() was called)
+    assert agent.get_formatted_report() == "No research conducted yet."
+
+    # Clear history should reset everything
+    agent.clear_history()
+
+    # Verify get_sources() returns empty list
+    assert agent.get_sources() == []
+    # Verify get_formatted_report() returns default message
+    assert agent.get_formatted_report() == "No research conducted yet."
+
+
 @patch("src.researcher.WebResearcher.fetch_and_summarize")
 def test_agent_summarize(mock_fetch) -> None:
     """Test summarizing multiple URLs."""
