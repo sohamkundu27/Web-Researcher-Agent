@@ -85,7 +85,7 @@ class ResearchTopicSuccess(TypedDict):
 
     topic: str
     status: str
-    findings: List[Dict[str, Any]]
+    findings: List[FetchAndSummarizeResult]
     analysis: str
     sources: List[str]
     timestamp: str
@@ -435,7 +435,7 @@ Summary should be 2-3 sentences max."""
             return error_result
 
         # Fetch and summarize each result
-        findings: List[Dict[str, Any]] = []
+        findings: List[FetchAndSummarizeResult] = []
         for result in search_results:
             url = result.get("url")
             if url:
@@ -457,12 +457,12 @@ Summary should be 2-3 sentences max."""
         self.research_history.append(research_result)
         return research_result
 
-    def _generate_analysis(self, topic: str, findings: List[Dict[str, Any]]) -> str:
+    def _generate_analysis(self, topic: str, findings: List[FetchAndSummarizeResult]) -> str:
         """Generate comprehensive analysis from findings.
 
         Args:
             topic: The research topic being analyzed
-            findings: List of findings dictionaries from sources
+            findings: List of fetch and summarize results from sources
 
         Returns:
             A comprehensive analysis including key insights, trends, and takeaways
