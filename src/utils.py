@@ -242,6 +242,7 @@ def chunk_text(text: str, chunk_size: int = 1000, overlap: int = 100) -> List[st
         )
 
     chunks: List[str] = []
+    # Stride of (chunk_size - overlap) ensures each chunk overlaps with the previous by exactly `overlap` chars.
     for i in range(0, len(text), chunk_size - overlap):
         chunk = text[i : i + chunk_size]
         if chunk.strip():
