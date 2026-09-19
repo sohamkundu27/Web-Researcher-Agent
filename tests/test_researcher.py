@@ -1843,6 +1843,33 @@ class TestResearchConfig:
         with pytest.raises(ValueError, match="CACHE_ENABLED must be 'true' or 'false'"):
             ResearchConfig.from_env()
 
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "CACHE_ENABLED": " true ",
+    }, clear=True)
+    def test_config_from_env_cache_enabled_with_whitespace(self) -> None:
+        """Test from_env strips whitespace from CACHE_ENABLED value."""
+        config = ResearchConfig.from_env()
+        assert config.cache_enabled is True
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "CACHE_ENABLED": "\t false \n",
+    }, clear=True)
+    def test_config_from_env_cache_enabled_with_mixed_whitespace(self) -> None:
+        """Test from_env strips mixed whitespace (tabs, newlines) from CACHE_ENABLED value."""
+        config = ResearchConfig.from_env()
+        assert config.cache_enabled is False
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "CACHE_ENABLED": "  TRUE  ",
+    }, clear=True)
+    def test_config_from_env_cache_enabled_uppercase_with_whitespace(self) -> None:
+        """Test from_env handles uppercase CACHE_ENABLED with whitespace."""
+        config = ResearchConfig.from_env()
+        assert config.cache_enabled is True
+
 
 class TestWebResearcher:
     """Test WebResearcher class."""

@@ -154,7 +154,7 @@ class ResearchConfig:
         if cache_ttl < 0:
             raise ValueError("CACHE_TTL must be non-negative")
 
-        cache_enabled_str = os.getenv("CACHE_ENABLED", "true").lower()
+        cache_enabled_str = os.getenv("CACHE_ENABLED", "true").lower().strip()
         if cache_enabled_str not in ("true", "false"):
             raise ValueError(
                 f"CACHE_ENABLED must be 'true' or 'false', got '{cache_enabled_str}'"
