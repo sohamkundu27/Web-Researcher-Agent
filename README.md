@@ -117,6 +117,8 @@ Main agent class for conducting research.
   - Returns: Dictionary with `topic` and `status` ("success" or "error"). 
     - On success: also includes `findings` (list of results; each item is a dict with `url`, `status`, and either `summary`+`content_preview` on success or `error` on failure), `analysis`, `sources` (list of URLs), `timestamp`
     - On error: also includes `error` (error message)
+  - Parameters:
+    - `num_sources`: Number of sources to fetch. If greater than `max_search_results` from the agent configuration, will be clamped to `max_search_results`.
   - Raises:
     - `TypeError`: If `topic` is not a string
     - `ValueError`: If `topic` is an empty string
