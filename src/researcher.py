@@ -140,14 +140,19 @@ class ContentCache:
         """Retrieve item from cache if not expired.
 
         Args:
-            key: The cache key to retrieve.
+            key: The cache key to retrieve (must be a string).
 
         Returns:
             The cached value if the key exists and has not expired, None otherwise.
             Expired items are automatically deleted from the cache dict when accessed.
             Items are valid only when current time < expiration time; they expire
             when current time >= expiration time.
+
+        Raises:
+            TypeError: If key is not a string.
         """
+        if not isinstance(key, str):
+            raise TypeError(f"key must be a string, got {type(key).__name__}")
         if key in self.cache:
             item = self.cache[key]
             if datetime.now() < item["expires"]:
@@ -160,16 +165,20 @@ class ContentCache:
         """Store item in cache with expiration.
 
         Args:
-            key: The cache key to store the value under. If the key already exists,
-                 its value and expiration time are updated (TTL is reset to now + ttl).
+            key: The cache key to store the value under (must be a string). If the key
+                 already exists, its value and expiration time are updated (TTL is reset
+                 to now + ttl).
             value: The value to cache (any type except None; falsy values like 0, False, "" are OK).
 
         Raises:
+            TypeError: If key is not a string.
             ValueError: If value is None (None is reserved as cache-miss sentinel).
 
         Returns:
             None. The item is added to the cache and will expire after ttl seconds.
         """
+        if not isinstance(key, str):
+            raise TypeError(f"key must be a string, got {type(key).__name__}")
         if value is None:
             raise ValueError("Cannot cache None values; None is reserved for cache-miss semantics")
         self.cache[key] = {

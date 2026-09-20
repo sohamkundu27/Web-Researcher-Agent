@@ -180,6 +180,96 @@ class TestContentCache:
         with pytest.raises(ValueError, match="Cannot cache None values"):
             cache.set("none_key", None)
 
+    def test_cache_set_non_string_key_int(self) -> None:
+        """Test that set() rejects non-string keys (integer)."""
+        cache = ContentCache(ttl=60)
+        with pytest.raises(TypeError, match="key must be a string, got int"):
+            cache.set(123, "value")
+
+    def test_cache_set_non_string_key_float(self) -> None:
+        """Test that set() rejects non-string keys (float)."""
+        cache = ContentCache(ttl=60)
+        with pytest.raises(TypeError, match="key must be a string, got float"):
+            cache.set(3.14, "value")
+
+    def test_cache_set_non_string_key_none(self) -> None:
+        """Test that set() rejects None as a key."""
+        cache = ContentCache(ttl=60)
+        with pytest.raises(TypeError, match="key must be a string, got NoneType"):
+            cache.set(None, "value")
+
+    def test_cache_set_non_string_key_tuple(self) -> None:
+        """Test that set() rejects non-string keys (tuple)."""
+        cache = ContentCache(ttl=60)
+        with pytest.raises(TypeError, match="key must be a string, got tuple"):
+            cache.set(("a", "b"), "value")
+
+    def test_cache_set_non_string_key_list(self) -> None:
+        """Test that set() rejects non-string keys (list is not hashable, but caught by type check first)."""
+        cache = ContentCache(ttl=60)
+        with pytest.raises(TypeError, match="key must be a string, got list"):
+            cache.set(["a", "b"], "value")
+
+    def test_cache_set_non_string_key_dict(self) -> None:
+        """Test that set() rejects non-string keys (dict)."""
+        cache = ContentCache(ttl=60)
+        with pytest.raises(TypeError, match="key must be a string, got dict"):
+            cache.set({"a": 1}, "value")
+
+    def test_cache_set_non_string_key_bool_true(self) -> None:
+        """Test that set() rejects bool True as a key."""
+        cache = ContentCache(ttl=60)
+        with pytest.raises(TypeError, match="key must be a string, got bool"):
+            cache.set(True, "value")
+
+    def test_cache_set_non_string_key_bool_false(self) -> None:
+        """Test that set() rejects bool False as a key."""
+        cache = ContentCache(ttl=60)
+        with pytest.raises(TypeError, match="key must be a string, got bool"):
+            cache.set(False, "value")
+
+    def test_cache_get_non_string_key_int(self) -> None:
+        """Test that get() rejects non-string keys (integer)."""
+        cache = ContentCache(ttl=60)
+        with pytest.raises(TypeError, match="key must be a string, got int"):
+            cache.get(456)
+
+    def test_cache_get_non_string_key_float(self) -> None:
+        """Test that get() rejects non-string keys (float)."""
+        cache = ContentCache(ttl=60)
+        with pytest.raises(TypeError, match="key must be a string, got float"):
+            cache.get(2.71)
+
+    def test_cache_get_non_string_key_none(self) -> None:
+        """Test that get() rejects None as a key."""
+        cache = ContentCache(ttl=60)
+        with pytest.raises(TypeError, match="key must be a string, got NoneType"):
+            cache.get(None)
+
+    def test_cache_get_non_string_key_tuple(self) -> None:
+        """Test that get() rejects non-string keys (tuple)."""
+        cache = ContentCache(ttl=60)
+        with pytest.raises(TypeError, match="key must be a string, got tuple"):
+            cache.get(("x", "y"))
+
+    def test_cache_get_non_string_key_dict(self) -> None:
+        """Test that get() rejects non-string keys (dict)."""
+        cache = ContentCache(ttl=60)
+        with pytest.raises(TypeError, match="key must be a string, got dict"):
+            cache.get({"key": "value"})
+
+    def test_cache_get_non_string_key_bool_true(self) -> None:
+        """Test that get() rejects bool True as a key."""
+        cache = ContentCache(ttl=60)
+        with pytest.raises(TypeError, match="key must be a string, got bool"):
+            cache.get(True)
+
+    def test_cache_get_non_string_key_bool_false(self) -> None:
+        """Test that get() rejects bool False as a key."""
+        cache = ContentCache(ttl=60)
+        with pytest.raises(TypeError, match="key must be a string, got bool"):
+            cache.get(False)
+
     def test_cache_get_nonexistent_key(self) -> None:
         """Test that get() returns None for keys that don't exist in cache."""
         cache = ContentCache(ttl=60)
