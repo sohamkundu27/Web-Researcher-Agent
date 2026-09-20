@@ -2792,6 +2792,35 @@ def test_agent_get_formatted_report_empty_findings() -> None:
     assert "## Sources" not in report
 
 
+def test_agent_get_formatted_report_research_error() -> None:
+    """Test getting formatted report when research failed (status=error, no findings key)."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    agent.last_research = {
+        "topic": "Failed Research Topic",
+        "status": "error",
+        "error": "No search results found",
+    }
+    agent.researcher.sources = []
+
+    report = agent.get_formatted_report()
+
+    # Verify report structure still works for error results
+    assert "# Research Report: Failed Research Topic" in report
+    assert "## Analysis" in report
+    # Analysis defaults to "No analysis available" when missing
+    assert "No analysis available" in report
+    assert "## Findings" in report
+    # Should have no source entries since findings is missing/empty
+    assert "### Source" not in report
+    # With no sources, sources section should not appear
+    assert "## Sources" not in report
+    # Error message from last_research should not appear in the report
+    # (since it's not in the findings, only in the top-level error key)
+    assert "No search results found" not in report
+
+
 @patch("src.researcher.WebResearcher.research_topic")
 def test_agent_research_success(mock_research_topic) -> None:
     """Test that research() returns the result from research_topic and sets last_research."""
