@@ -413,13 +413,17 @@ Summary should be 2-3 sentences max."""
             num_sources: Number of sources to fetch (default: 5, must be positive).
 
         Returns:
-            Dictionary containing:
-            - topic: The research topic
-            - status: "success" or "error"
-            - findings: List of results from each source (each has summary on success or error message on failure)
-            - analysis: Comprehensive analysis of findings
-            - sources: List of URLs used
-            - timestamp: When research was conducted
+            On success (status == "success"):
+                - topic: The research topic
+                - status: "success"
+                - findings: List of fetch_and_summarize results from each source
+                - analysis: Comprehensive AI-generated analysis of findings
+                - sources: List of successfully fetched URLs
+                - timestamp: ISO format timestamp of when research was conducted
+            On error (status == "error"):
+                - topic: The research topic
+                - status: "error"
+                - error: Error message describing what went wrong
 
         Raises:
             TypeError: If topic is not a string or num_sources is not an integer.
