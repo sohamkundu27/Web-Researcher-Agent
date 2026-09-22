@@ -1960,6 +1960,24 @@ class TestResearchConfig:
         config = ResearchConfig.from_env()
         assert config.cache_enabled is True
 
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "RESEARCH_MODEL": "  claude-opus-4  ",
+    }, clear=True)
+    def test_config_from_env_research_model_with_whitespace(self) -> None:
+        """Test from_env strips whitespace from RESEARCH_MODEL value."""
+        config = ResearchConfig.from_env()
+        assert config.model == "claude-opus-4"
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "RESEARCH_MODEL": "\t claude-3-5-sonnet-20241022 \n",
+    }, clear=True)
+    def test_config_from_env_research_model_with_mixed_whitespace(self) -> None:
+        """Test from_env strips mixed whitespace (tabs, newlines) from RESEARCH_MODEL value."""
+        config = ResearchConfig.from_env()
+        assert config.model == "claude-3-5-sonnet-20241022"
+
 
 class TestWebResearcher:
     """Test WebResearcher class."""

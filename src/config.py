@@ -160,9 +160,11 @@ class ResearchConfig:
                 f"CACHE_ENABLED must be 'true' or 'false', got '{cache_enabled_str}'"
             )
 
+        model = os.getenv("RESEARCH_MODEL", "claude-3-5-sonnet-20241022").strip()
+
         return cls(
             api_key=api_key,
-            model=os.getenv("RESEARCH_MODEL", "claude-3-5-sonnet-20241022"),
+            model=model,
             max_search_results=max_search_results,
             max_depth=max_depth,
             timeout=timeout,
