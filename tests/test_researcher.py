@@ -2889,6 +2889,55 @@ def test_agent_research_error(mock_research_topic) -> None:
     assert agent.last_research == expected_result
 
 
+@patch("src.researcher.WebResearcher.research_topic")
+def test_agent_research_updates_last_research_on_subsequent_calls(mock_research_topic) -> None:
+    """Test that calling research() multiple times updates last_research to the most recent result."""
+    from src.agent import ResearchAgent
+
+    first_result = {
+        "topic": "Python",
+        "status": "success",
+        "findings": [
+            {"status": "success", "url": "https://python.org", "summary": "Python site"},
+        ],
+        "analysis": "Python is a language.",
+        "sources": ["https://python.org"],
+        "timestamp": "2026-01-01T00:00:00",
+    }
+
+    second_result = {
+        "topic": "JavaScript",
+        "status": "success",
+        "findings": [
+            {"status": "success", "url": "https://js.org", "summary": "JS site"},
+        ],
+        "analysis": "JavaScript powers the web.",
+        "sources": ["https://js.org"],
+        "timestamp": "2026-01-02T00:00:00",
+    }
+
+    mock_research_topic.side_effect = [first_result, second_result]
+
+    agent = ResearchAgent(api_key="test-key")
+
+    # First research call
+    result1 = agent.research("Python", num_sources=5)
+    assert result1 == first_result
+    assert agent.last_research == first_result
+    report1 = agent.get_formatted_report()
+    assert "Python" in report1
+    assert "JavaScript" not in report1
+
+    # Second research call should update last_research
+    result2 = agent.research("JavaScript", num_sources=5)
+    assert result2 == second_result
+    assert agent.last_research == second_result
+    assert agent.last_research != first_result, "last_research should be updated to second call"
+    report2 = agent.get_formatted_report()
+    assert "JavaScript" in report2
+    assert "Python" not in report2, "Formatted report should reflect only the latest research"
+
+
 @patch("src.researcher.fetch_url_content")
 @patch("src.researcher.WebResearcher._summarize_content")
 def test_agent_summarize_updates_sources(mock_summarize, mock_fetch) -> None:
