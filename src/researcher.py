@@ -472,14 +472,25 @@ Summary should be 2-3 sentences max."""
         return research_result
 
     def _generate_analysis(self, topic: str, findings: List[FetchAndSummarizeResult]) -> str:
-        """Generate comprehensive analysis from findings.
+        """Generate comprehensive analysis from findings using Claude.
+
+        Filters findings to extract only successful results, combines their summaries,
+        and uses Claude to synthesize them into a comprehensive analysis. Failed fetches
+        are silently skipped (not included in the analysis).
 
         Args:
-            topic: The research topic being analyzed
-            findings: List of fetch and summarize results from sources
+            topic: The research topic being analyzed (used in the prompt to Claude).
+            findings: List of fetch and summarize results from sources. Results with
+                     status != "success" are filtered out and not analyzed.
 
         Returns:
-            A comprehensive analysis including key insights, trends, and takeaways
+            A string containing the AI-generated analysis. If no successful findings
+            exist, returns "Unable to generate analysis from available findings.".
+            If Claude returns no content for a successful request, returns empty string.
+            On success, the analysis covers:
+            - Key insights and trends from the research findings
+            - Main takeaways across sources
+            - Important considerations and implications
         """
         summaries: List[str] = []
         for f in findings:
