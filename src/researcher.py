@@ -481,11 +481,11 @@ Summary should be 2-3 sentences max."""
         Returns:
             A comprehensive analysis including key insights, trends, and takeaways
         """
-        summaries: List[str] = [
-            f.get("summary", f.get("error", ""))
-            for f in findings
-            if f.get("status") == "success"
-        ]
+        summaries: List[str] = []
+        for f in findings:
+            if f.get("status") == "success":
+                success_result = cast(FetchAndSummarizeSuccess, f)
+                summaries.append(success_result.get("summary", ""))
 
         if not summaries:
             return "Unable to generate analysis from available findings."
