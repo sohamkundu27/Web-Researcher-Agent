@@ -109,7 +109,7 @@ class ResearchConfig:
                        variable cannot be parsed as the expected type or violates
                        validation constraints (e.g., negative timeout).
         """
-        api_key = os.getenv("ANTHROPIC_API_KEY")
+        api_key = os.getenv("ANTHROPIC_API_KEY", "").strip()
         if not api_key:
             raise ValueError("ANTHROPIC_API_KEY environment variable not set")
 

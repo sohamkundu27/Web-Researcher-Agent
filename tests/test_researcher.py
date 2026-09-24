@@ -1880,6 +1880,30 @@ class TestResearchConfig:
             ResearchConfig.from_env()
 
     @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "  test-key  ",
+    }, clear=True)
+    def test_config_from_env_api_key_with_whitespace(self) -> None:
+        """Test from_env strips whitespace from ANTHROPIC_API_KEY value."""
+        config = ResearchConfig.from_env()
+        assert config.api_key == "test-key"
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "\t test-key-here \n",
+    }, clear=True)
+    def test_config_from_env_api_key_with_mixed_whitespace(self) -> None:
+        """Test from_env strips mixed whitespace (tabs, newlines) from ANTHROPIC_API_KEY value."""
+        config = ResearchConfig.from_env()
+        assert config.api_key == "test-key-here"
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "   \t  \n  ",
+    }, clear=True)
+    def test_config_from_env_api_key_whitespace_only(self) -> None:
+        """Test from_env rejects ANTHROPIC_API_KEY that is only whitespace."""
+        with pytest.raises(ValueError, match="ANTHROPIC_API_KEY environment variable not set"):
+            ResearchConfig.from_env()
+
+    @patch.dict(os.environ, {
         "ANTHROPIC_API_KEY": "test-key",
         "MAX_SEARCH_RESULTS": "1",
     }, clear=True)
