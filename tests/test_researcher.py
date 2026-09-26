@@ -3083,6 +3083,95 @@ def test_agent_research_whitespace_only_topic() -> None:
         agent.research("   \t\n   ")
 
 
+@patch("src.researcher.WebResearcher._generate_analysis")
+@patch("src.researcher.WebResearcher.search")
+@patch("src.researcher.fetch_url_content")
+@patch("src.researcher.WebResearcher._summarize_content")
+def test_agent_summarize_then_research_accumulates_sources(mock_summarize, mock_fetch, mock_search, mock_analysis) -> None:
+    """Test that calling summarize() then research() accumulates sources properly.
+
+    This tests the realistic workflow where:
+    1. User calls summarize() which adds URLs to researcher.sources
+    2. User calls research() which adds more URLs to researcher.sources via search results
+    3. get_formatted_report() shows the research with all accumulated sources
+    """
+    from src.agent import ResearchAgent
+
+    # Mock fetch for summarize() calls (2 URLs)
+    # Mock fetch for research() call (1 URL from search)
+    mock_fetch.side_effect = [
+        # summarize() calls
+        {
+            "status": "success",
+            "content": "Summary content 1",
+            "url": "https://summary1.com",
+            "status_code": 200,
+            "headers": {},
+        },
+        {
+            "status": "success",
+            "content": "Summary content 2",
+            "url": "https://summary2.com",
+            "status_code": 200,
+            "headers": {},
+        },
+        # research() calls
+        {
+            "status": "success",
+            "content": "Research content 1",
+            "url": "https://research1.com",
+            "status_code": 200,
+            "headers": {},
+        },
+    ]
+    mock_summarize.side_effect = ["Summary 1", "Summary 2", "Research Summary 1"]
+
+    # Mock search to return 1 URL for research()
+    mock_search.return_value = [
+        {
+            "url": "https://research1.com",
+            "title": "Research Result 1",
+        }
+    ]
+
+    # Mock analysis generation
+    mock_analysis.return_value = "Test analysis of research findings."
+
+    agent = ResearchAgent(api_key="test-key")
+
+    # Step 1: Call summarize() with URLs
+    summary_urls = ["https://summary1.com", "https://summary2.com"]
+    summary_result = agent.summarize(summary_urls)
+    assert summary_result["status"] == "success"
+    assert summary_result["sources_count"] == 2
+    assert len(agent.get_sources()) == 2
+    assert "https://summary1.com" in agent.get_sources()
+    assert "https://summary2.com" in agent.get_sources()
+
+    # Verify formatted report still shows "No research conducted yet"
+    # because summarize() doesn't update last_research
+    assert agent.get_formatted_report() == "No research conducted yet."
+
+    # Step 2: Call research() which should accumulate sources
+    research_result = agent.research("Test Topic", num_sources=1)
+    assert research_result["status"] == "success"
+    assert research_result["topic"] == "Test Topic"
+
+    # Step 3: Verify all sources are accumulated
+    all_sources = agent.get_sources()
+    assert len(all_sources) == 3, "Should have 3 total sources (2 from summarize + 1 from research)"
+    assert "https://summary1.com" in all_sources
+    assert "https://summary2.com" in all_sources
+    assert "https://research1.com" in all_sources
+
+    # Step 4: Verify get_formatted_report() includes the research and all sources
+    report = agent.get_formatted_report()
+    assert "Test Topic" in report
+    assert "https://summary1.com" in report
+    assert "https://summary2.com" in report
+    assert "https://research1.com" in report
+
+
 class TestWebResearcherSearch:
     """Test search() method input validation."""
 
