@@ -2,7 +2,7 @@
 
 import hashlib
 import re
-from typing import List, Dict, Any, TypedDict, Union, Literal
+from typing import List, Dict, Any, TypedDict, Union, Literal, cast
 from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
@@ -192,19 +192,19 @@ def fetch_url_content(url: str, timeout: int = 10) -> FetchUrlResult:
         response = requests.get(url, timeout=timeout)
         response.raise_for_status()
 
-        return {
+        return cast(FetchUrlSuccess, {
             "status": "success",
             "url": url,
             "content": extract_text_from_html(response.text),
             "status_code": response.status_code,
             "headers": dict(response.headers),
-        }
+        })
     except Exception as e:
-        return {
+        return cast(FetchUrlError, {
             "status": "error",
             "url": url,
             "error": str(e),
-        }
+        })
 
 
 def chunk_text(text: str, chunk_size: int = 1000, overlap: int = 100) -> List[str]:
