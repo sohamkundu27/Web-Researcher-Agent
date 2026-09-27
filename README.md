@@ -77,9 +77,11 @@ print(result)
 ### Advanced Configuration
 
 ```python
+import os
 from src.agent import ResearchAgent
 
 agent = ResearchAgent(
+    api_key=os.getenv("ANTHROPIC_API_KEY"),
     model="claude-3-5-sonnet-20241022",
     max_search_results=10,
     max_depth=3
