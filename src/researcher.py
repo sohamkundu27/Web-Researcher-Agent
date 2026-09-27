@@ -265,7 +265,9 @@ class WebResearcher:
             raise TypeError(f"query must be a string, got {type(query).__name__}")
         if not query.strip():
             raise ValueError("query cannot be empty")
-        if type(num_results) is not int or isinstance(num_results, bool) or num_results <= 0:
+        if type(num_results) is not int or isinstance(num_results, bool):
+            raise TypeError(f"num_results must be an integer, got {type(num_results).__name__}")
+        if num_results <= 0:
             raise ValueError(f"num_results must be a positive integer, got {num_results}")
         prompt = f"""Generate {num_results} relevant URLs for the following search query:
 
@@ -434,7 +436,9 @@ Summary should be 2-3 sentences max."""
             raise TypeError(f"topic must be a string, got {type(topic).__name__}")
         if not topic.strip():
             raise ValueError("topic cannot be empty")
-        if type(num_sources) is not int or isinstance(num_sources, bool) or num_sources <= 0:
+        if type(num_sources) is not int or isinstance(num_sources, bool):
+            raise TypeError(f"num_sources must be an integer, got {type(num_sources).__name__}")
+        if num_sources <= 0:
             raise ValueError(f"num_sources must be a positive integer, got {num_sources}")
 
         # Generate search queries

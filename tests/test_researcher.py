@@ -3218,13 +3218,23 @@ class TestWebResearcherSearch:
 
     def test_search_invalid_num_results_float(self, researcher) -> None:
         """Test search() with float num_results."""
-        with pytest.raises(ValueError, match="num_results must be a positive integer"):
+        with pytest.raises(TypeError, match="num_results must be an integer"):
             researcher.search("test", num_results=5.5)
 
     def test_search_invalid_num_results_bool(self, researcher) -> None:
         """Test search() with bool num_results (should reject)."""
-        with pytest.raises(ValueError, match="num_results must be a positive integer"):
+        with pytest.raises(TypeError, match="num_results must be an integer"):
             researcher.search("test", num_results=True)
+
+    def test_search_invalid_num_results_string(self, researcher) -> None:
+        """Test search() with string num_results."""
+        with pytest.raises(TypeError, match="num_results must be an integer"):
+            researcher.search("test", num_results="5")
+
+    def test_search_invalid_num_results_list(self, researcher) -> None:
+        """Test search() with list num_results."""
+        with pytest.raises(TypeError, match="num_results must be an integer"):
+            researcher.search("test", num_results=[5])
 
 
 class TestWebResearcherResearchTopic:
@@ -3273,10 +3283,20 @@ class TestWebResearcherResearchTopic:
 
     def test_research_topic_invalid_num_sources_float(self, researcher) -> None:
         """Test research_topic() with float num_sources."""
-        with pytest.raises(ValueError, match="num_sources must be a positive integer"):
+        with pytest.raises(TypeError, match="num_sources must be an integer"):
             researcher.research_topic("test", num_sources=3.5)
 
     def test_research_topic_invalid_num_sources_bool(self, researcher) -> None:
         """Test research_topic() with bool num_sources (should reject)."""
-        with pytest.raises(ValueError, match="num_sources must be a positive integer"):
+        with pytest.raises(TypeError, match="num_sources must be an integer"):
             researcher.research_topic("test", num_sources=True)
+
+    def test_research_topic_invalid_num_sources_string(self, researcher) -> None:
+        """Test research_topic() with string num_sources."""
+        with pytest.raises(TypeError, match="num_sources must be an integer"):
+            researcher.research_topic("test", num_sources="5")
+
+    def test_research_topic_invalid_num_sources_list(self, researcher) -> None:
+        """Test research_topic() with list num_sources."""
+        with pytest.raises(TypeError, match="num_sources must be an integer"):
+            researcher.research_topic("test", num_sources=[5])
