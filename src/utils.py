@@ -105,6 +105,7 @@ def sanitize_text(text: str) -> str:
         raise TypeError(f"text must be a string, got {type(text).__name__}")
     text = " ".join(text.split())
     text = re.sub(r"[^\w\s.,!?-]", "", text)
+    # Normalize whitespace again, as character removal may create adjacent spaces.
     text = " ".join(text.split())
     return text.strip()
 
