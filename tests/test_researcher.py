@@ -616,8 +616,8 @@ class TestUtilityFunctions:
         text = "don't can't won't"
         result = sanitize_text(text)
         # Apostrophes are removed, leaving "dont cant wont"
+        assert result == "dont cant wont"
         assert "don't" not in result
-        assert "dont" in result or result  # Either apostrophe removed or text modified
         # The regex [^\w\s.,!?-] removes apostrophes
         assert "'" not in result
 
