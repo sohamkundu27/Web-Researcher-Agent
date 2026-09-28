@@ -2419,6 +2419,15 @@ def test_agent_summarize_invalid_item_type_dict_in_list() -> None:
         agent.summarize([{"url": "https://example.com"}])
 
 
+def test_agent_summarize_invalid_item_type_list_in_list() -> None:
+    """Test summarize with list item in URL list."""
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key")
+    with pytest.raises(TypeError, match="all urls must be strings.*index 0.*list"):
+        agent.summarize([["https://example.com"]])
+
+
 def test_agent_summarize_invalid_url_format_no_protocol() -> None:
     """Test summarize with URL missing protocol."""
     from src.agent import ResearchAgent
