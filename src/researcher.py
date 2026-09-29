@@ -1,7 +1,7 @@
 """Web research functionality for Web Researcher Agent."""
 
 import json
-from typing import List, Dict, Any, Optional, TypedDict, Union, cast
+from typing import List, Dict, Any, Optional, TypedDict, Union, cast, Literal
 from datetime import datetime, timedelta
 
 from anthropic import Anthropic
@@ -50,7 +50,7 @@ class FetchAndSummarizeSuccess(TypedDict):
     """
 
     url: str
-    status: str
+    status: Literal["success"]
     summary: str
     content_preview: str
 
@@ -66,7 +66,7 @@ class FetchAndSummarizeError(TypedDict):
 
     url: str
     error: str
-    status: str
+    status: Literal["error"]
 
 
 FetchAndSummarizeResult = Union[FetchAndSummarizeSuccess, FetchAndSummarizeError]
@@ -85,7 +85,7 @@ class ResearchTopicSuccess(TypedDict):
     """
 
     topic: str
-    status: str
+    status: Literal["success"]
     findings: List[FetchAndSummarizeResult]
     analysis: str
     sources: List[str]
@@ -102,7 +102,7 @@ class ResearchTopicError(TypedDict):
     """
 
     topic: str
-    status: str
+    status: Literal["error"]
     error: str
 
 

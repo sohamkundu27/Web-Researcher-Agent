@@ -1,6 +1,6 @@
 """Main agent for Web Researcher Agent."""
 
-from typing import Dict, Any, List, Optional, TypedDict
+from typing import Dict, Any, List, Optional, TypedDict, Literal
 
 from src.config import ResearchConfig
 from src.researcher import WebResearcher, ResearchTopicResult, FetchAndSummarizeResult
@@ -18,7 +18,7 @@ class SummarizeResult(TypedDict):
         sources_count: Number of URLs that were summarized (len of input urls list).
     """
 
-    status: str
+    status: Literal["success"]
     summaries: Dict[str, FetchAndSummarizeResult]
     sources_count: int
 
