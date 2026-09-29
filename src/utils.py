@@ -126,7 +126,8 @@ def extract_text_from_html(html: str, max_length: int = 5000) -> str:
         characters.
 
     Raises:
-        TypeError: If html is not a string or max_length is not an integer.
+        TypeError: If html is not a string or max_length is not an integer
+            (bool is rejected as bool is a subclass of int).
         ValueError: If max_length is not a positive integer.
     """
     if not isinstance(html, str):
@@ -178,6 +179,7 @@ def fetch_url_content(url: str, timeout: int = 10) -> FetchUrlResult:
 
     Raises:
         TypeError: If url is not a string or timeout is not an integer
+            (bool is rejected as bool is a subclass of int).
         ValueError: If url is not a valid HTTP(S) URL or timeout is not positive
     """
     if not isinstance(url, str):
@@ -216,15 +218,17 @@ def chunk_text(text: str, chunk_size: int = 1000, overlap: int = 100) -> List[st
 
     Args:
         text: The text to chunk (must be a string)
-        chunk_size: Size of each chunk in characters (default: 1000, must be positive)
+        chunk_size: Size of each chunk in characters (default: 1000, must be positive).
         overlap: Number of characters to overlap between consecutive chunks (default: 100,
-                 must be non-negative and less than chunk_size)
+                 must be non-negative and less than chunk_size).
 
     Returns:
         A list of text chunks, each at most chunk_size characters. Empty chunks are excluded.
 
     Raises:
-        TypeError: If text, chunk_size, or overlap is not the correct type
+        TypeError: If text, chunk_size, or overlap is not the correct type.
+            For integer parameters chunk_size and overlap, bool is rejected
+            as bool is a subclass of int.
         ValueError: If chunk_size is not positive, overlap is negative, or overlap >= chunk_size
     """
     if not isinstance(text, str):

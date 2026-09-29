@@ -81,9 +81,9 @@ class ResearchAgent:
             timestamp. On error, includes error message instead of findings/analysis/sources/timestamp.
 
         Raises:
-            TypeError: If topic is not a string
-            ValueError: If topic is an empty string
-            ValueError: If num_sources is not a positive integer
+            TypeError: If topic is not a string.
+            ValueError: If topic is an empty string, or if num_sources is not a positive integer
+                (bool is rejected as bool is a subclass of int).
         """
         if not isinstance(topic, str):
             raise TypeError(f"topic must be a string, got {type(topic).__name__}")

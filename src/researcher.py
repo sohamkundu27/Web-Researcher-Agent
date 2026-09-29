@@ -258,7 +258,8 @@ class WebResearcher:
             Returns an empty list if JSON parsing fails or no results could be generated.
 
         Raises:
-            TypeError: If query is not a string or num_results is not an integer.
+            TypeError: If query is not a string or num_results is not an integer
+                (bool is rejected as bool is a subclass of int).
             ValueError: If query is empty or num_results is not positive.
         """
         if not isinstance(query, str):
@@ -429,7 +430,8 @@ Summary should be 2-3 sentences max."""
                 - error: Error message describing what went wrong
 
         Raises:
-            TypeError: If topic is not a string or num_sources is not an integer.
+            TypeError: If topic is not a string or num_sources is not an integer
+                (bool is rejected as bool is a subclass of int).
             ValueError: If topic is empty or num_sources is not positive.
         """
         if not isinstance(topic, str):
