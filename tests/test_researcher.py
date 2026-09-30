@@ -520,6 +520,57 @@ class TestContentCache:
             assert removed == 3, "All entries should be removed when time >= expiration"
             assert len(cache.cache) == 0, "Cache should be empty after cleanup"
 
+    def test_cache_set_overwrites_expired_entry(self) -> None:
+        """Test that set() correctly overwrites an expired entry still in the cache.
+
+        When set() is called on a key that's already in the cache as an expired entry
+        (not yet deleted by get() or cleanup()), the entry should be overwritten with
+        a fresh expiration time. This is a common pattern: refresh a stale cached value.
+        """
+        from datetime import datetime, timedelta
+        from unittest.mock import patch
+
+        cache = ContentCache(ttl=100)
+        frozen_time_initial = datetime(2026, 1, 1, 12, 0, 0)
+        frozen_time_expired = datetime(2026, 1, 1, 12, 1, 0)  # 60 seconds later
+
+        # Set an entry at time T=0 with TTL=10 (will expire at T=10)
+        with patch("src.researcher.datetime") as mock_datetime:
+            mock_datetime.now.return_value = frozen_time_initial
+            cache.set("key", "old_value")
+            initial_expires = cache.cache["key"]["expires"]
+
+        # Verify the entry is in the cache
+        assert len(cache.cache) == 1
+        assert cache.cache["key"]["value"] == "old_value"
+
+        # Move time forward to after expiration (T=60, well after T=10)
+        # Note: we don't call get() or cleanup(), so the entry is still in the cache dict
+        with patch("src.researcher.datetime") as mock_datetime:
+            mock_datetime.now.return_value = frozen_time_expired
+
+            # Overwrite with a new value and fresh TTL
+            cache.set("key", "new_value")
+            new_expires = cache.cache["key"]["expires"]
+
+        # Verify the entry was overwritten with new expiration time
+        assert cache.cache["key"]["value"] == "new_value"
+        assert new_expires != initial_expires, "Expiration time should be updated"
+        assert new_expires > initial_expires, \
+            "New expiration should be later (reset from refresh time, not original time)"
+
+        # Verify the entry is now valid from the refresh time
+        expected_new_expires = frozen_time_expired + timedelta(seconds=100)
+        assert new_expires == expected_new_expires, \
+            "Expiration should be set from refresh time (T=60 + 100, not T=0 + 100)"
+
+        # Verify get() returns the new value
+        with patch("src.researcher.datetime") as mock_datetime:
+            # At T=60, the new entry should be valid (T=60 < T=160)
+            mock_datetime.now.return_value = frozen_time_expired
+            result = cache.get("key")
+            assert result == "new_value"
+
 
 class TestUtilityFunctions:
     """Test utility functions."""
