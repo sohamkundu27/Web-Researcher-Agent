@@ -2002,6 +2002,24 @@ class TestResearchConfig:
         config = ResearchConfig.from_env()
         assert config.model == "claude-3-5-sonnet-20241022"
 
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "RESEARCH_MODEL": "",
+    }, clear=True)
+    def test_config_from_env_empty_research_model(self) -> None:
+        """Test from_env rejects empty RESEARCH_MODEL string."""
+        with pytest.raises(ValueError, match="RESEARCH_MODEL cannot be empty"):
+            ResearchConfig.from_env()
+
+    @patch.dict(os.environ, {
+        "ANTHROPIC_API_KEY": "test-key",
+        "RESEARCH_MODEL": "   ",
+    }, clear=True)
+    def test_config_from_env_research_model_whitespace_only(self) -> None:
+        """Test from_env rejects RESEARCH_MODEL that is only whitespace."""
+        with pytest.raises(ValueError, match="RESEARCH_MODEL cannot be empty"):
+            ResearchConfig.from_env()
+
 
 class TestWebResearcher:
     """Test WebResearcher class."""

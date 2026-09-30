@@ -161,6 +161,8 @@ class ResearchConfig:
             )
 
         model = os.getenv("RESEARCH_MODEL", "claude-3-5-sonnet-20241022").strip()
+        if not model:
+            raise ValueError("RESEARCH_MODEL cannot be empty")
 
         return cls(
             api_key=api_key,
