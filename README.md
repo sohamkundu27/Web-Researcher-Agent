@@ -69,7 +69,13 @@ export ANTHROPIC_API_KEY="your-api-key-here"
 ```python
 from src.agent import ResearchAgent
 
-agent = ResearchAgent()
+try:
+    agent = ResearchAgent()
+except ValueError as e:
+    print(f"Error: {e}")
+    print("Please set the ANTHROPIC_API_KEY environment variable")
+    exit(1)
+
 result = agent.research(topic="Latest developments in quantum computing")
 print(result)
 ```
