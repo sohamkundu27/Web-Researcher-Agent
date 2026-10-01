@@ -2416,6 +2416,27 @@ def test_agent_summarize_empty_urls() -> None:
     assert result["summaries"] == {}
 
 
+@patch("src.researcher.WebResearcher.fetch_and_summarize")
+def test_agent_summarize_single_url(mock_fetch) -> None:
+    """Test summarizing a single URL (boundary case)."""
+    from src.agent import ResearchAgent
+
+    mock_fetch.return_value = {
+        "status": "success",
+        "summary": "Single URL summary",
+        "url": "https://example.com",
+    }
+
+    agent = ResearchAgent(api_key="test-key")
+    result = agent.summarize(["https://example.com"])
+
+    assert result["status"] == "success"
+    assert result["sources_count"] == 1
+    assert len(result["summaries"]) == 1
+    assert result["summaries"]["https://example.com"]["summary"] == "Single URL summary"
+    assert result["summaries"]["https://example.com"]["status"] == "success"
+
+
 def test_agent_summarize_invalid_type_none() -> None:
     """Test summarize with None instead of list."""
     from src.agent import ResearchAgent
