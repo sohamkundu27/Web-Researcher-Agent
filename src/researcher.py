@@ -305,7 +305,7 @@ Only return the JSON list, no other text."""
         The URL is added to the sources list on successful fetch.
 
         Args:
-            url: The URL to fetch and summarize (must be a valid HTTP(S) URL).
+            url: The URL to fetch and summarize (must be a valid HTTP(S) URL string).
 
         Returns:
             On success (status == "success"):
@@ -317,10 +317,15 @@ Only return the JSON list, no other text."""
                 - url: The requested URL
                 - status: "error"
                 - error: Error message describing what went wrong
+
+        Raises:
+            TypeError: If url is not a string.
+            ValueError: If url is not a valid HTTP(S) URL.
         """
+        if not isinstance(url, str):
+            raise TypeError(f"url must be a string, got {type(url).__name__}")
         if not is_valid_url(url):
-            error_result: FetchAndSummarizeError = {"error": f"Invalid URL: {url}", "url": url, "status": "error"}
-            return error_result
+            raise ValueError(f"url must be a valid HTTP(S) URL, got '{url}'")
 
         # Check cache
         if self.cache:

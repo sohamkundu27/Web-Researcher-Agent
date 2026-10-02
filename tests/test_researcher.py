@@ -2198,18 +2198,26 @@ class TestWebResearcher:
         # Verify fetch was called twice (once for each call)
         assert mock_fetch.call_count == 2, "Should retry on error, not return cached error"
 
-    def test_fetch_and_summarize_does_not_cache_invalid_url(self, researcher) -> None:
-        """Test that invalid URL errors are NOT cached."""
+    def test_fetch_and_summarize_invalid_url_format(self, researcher) -> None:
+        """Test that invalid URL format raises ValueError."""
         invalid_url = "not a valid url"
-        result1 = researcher.fetch_and_summarize(invalid_url)
+        with pytest.raises(ValueError, match="url must be a valid HTTP\\(S\\) URL"):
+            researcher.fetch_and_summarize(invalid_url)
 
-        # Verify error was returned but NOT cached
-        assert result1["status"] == "error"
-        assert len(researcher.cache.cache) == 0, "Invalid URL errors should not be cached"
+    def test_fetch_and_summarize_invalid_url_type_int(self, researcher) -> None:
+        """Test that non-string URL raises TypeError."""
+        with pytest.raises(TypeError, match="url must be a string, got int"):
+            researcher.fetch_and_summarize(123)
 
-        # Second call should validate again (not return from cache)
-        result2 = researcher.fetch_and_summarize(invalid_url)
-        assert result2 == result1
+    def test_fetch_and_summarize_invalid_url_type_none(self, researcher) -> None:
+        """Test that None URL raises TypeError."""
+        with pytest.raises(TypeError, match="url must be a string, got NoneType"):
+            researcher.fetch_and_summarize(None)
+
+    def test_fetch_and_summarize_invalid_url_type_list(self, researcher) -> None:
+        """Test that list URL raises TypeError."""
+        with pytest.raises(TypeError, match="url must be a string, got list"):
+            researcher.fetch_and_summarize([])
 
 
 def test_agent_initialization() -> None:
