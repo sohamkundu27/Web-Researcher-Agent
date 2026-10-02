@@ -81,16 +81,18 @@ class ResearchAgent:
             timestamp. On error, includes error message instead of findings/analysis/sources/timestamp.
 
         Raises:
-            TypeError: If topic is not a string.
-            ValueError: If topic is an empty string, or if num_sources is not a positive integer
+            TypeError: If topic is not a string, or if num_sources is not an integer
                 (bool is rejected as bool is a subclass of int).
+            ValueError: If topic is an empty string, or if num_sources is not a positive integer.
         """
         if not isinstance(topic, str):
             raise TypeError(f"topic must be a string, got {type(topic).__name__}")
         if not topic.strip():
             raise ValueError("topic cannot be empty")
-        if type(num_sources) is not int or isinstance(num_sources, bool) or num_sources <= 0:
-            raise ValueError("num_sources must be a positive integer")
+        if type(num_sources) is not int or isinstance(num_sources, bool):
+            raise TypeError(f"num_sources must be an integer, got {type(num_sources).__name__}")
+        if num_sources <= 0:
+            raise ValueError(f"num_sources must be a positive integer, got {num_sources}")
 
         if num_sources > self.config.max_search_results:
             num_sources = self.config.max_search_results

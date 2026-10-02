@@ -2695,7 +2695,7 @@ def test_agent_num_sources_float() -> None:
     from src.agent import ResearchAgent
 
     agent = ResearchAgent(api_key="test-key")
-    with pytest.raises(ValueError, match="num_sources must be a positive integer"):
+    with pytest.raises(TypeError, match="num_sources must be an integer"):
         agent.research("test query", num_sources=5.5)
 
 
@@ -2732,20 +2732,20 @@ def test_agent_num_sources_minimum() -> None:
 
 
 def test_agent_num_sources_bool_true() -> None:
-    """Test that bool True as num_sources raises ValueError."""
+    """Test that bool True as num_sources raises TypeError."""
     from src.agent import ResearchAgent
 
     agent = ResearchAgent(api_key="test-key")
-    with pytest.raises(ValueError, match="num_sources must be a positive integer"):
+    with pytest.raises(TypeError, match="num_sources must be an integer"):
         agent.research("test query", num_sources=True)
 
 
 def test_agent_num_sources_bool_false() -> None:
-    """Test that bool False as num_sources raises ValueError."""
+    """Test that bool False as num_sources raises TypeError."""
     from src.agent import ResearchAgent
 
     agent = ResearchAgent(api_key="test-key")
-    with pytest.raises(ValueError, match="num_sources must be a positive integer"):
+    with pytest.raises(TypeError, match="num_sources must be an integer"):
         agent.research("test query", num_sources=False)
 
 
