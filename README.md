@@ -128,9 +128,8 @@ Main agent class for conducting research.
   - Parameters:
     - `num_sources`: Number of sources to fetch. If greater than `max_search_results` from the agent configuration, will be clamped to `max_search_results`.
   - Raises:
-    - `TypeError`: If `topic` is not a string
-    - `ValueError`: If `topic` is an empty string
-    - `ValueError`: If `num_sources` is not a positive integer
+    - `TypeError`: If `topic` is not a string, or if `num_sources` is not an integer (bool is rejected as bool is a subclass of int)
+    - `ValueError`: If `topic` is an empty string, or if `num_sources` is not a positive integer
 
 - `summarize(urls: List[str]) -> SummarizeResult` - Summarize content from multiple URLs
   - Returns: Dictionary with keys: `status` ("success"), `summaries` (mapping of URL to summary result), `sources_count` (number of URLs)
