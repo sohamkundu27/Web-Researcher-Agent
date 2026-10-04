@@ -2581,6 +2581,48 @@ def test_agent_summarize_all_errors(mock_fetch) -> None:
         assert "error" in summary_result
 
 
+@patch("src.researcher.WebResearcher.fetch_and_summarize")
+def test_agent_summarize_result_structure_with_content_preview(mock_fetch) -> None:
+    """Test that summarize result structure includes content_preview for successful fetches."""
+    from src.agent import ResearchAgent
+
+    mock_fetch.side_effect = [
+        {
+            "status": "success",
+            "url": "https://example.com",
+            "summary": "Test summary",
+            "content_preview": "This is the first 500 characters of the content...",
+        },
+        {
+            "status": "error",
+            "url": "https://failed.com",
+            "error": "Connection failed",
+        },
+    ]
+
+    agent = ResearchAgent(api_key="test-key")
+    urls = ["https://example.com", "https://failed.com"]
+    result = agent.summarize(urls)
+
+    assert result["status"] == "success"
+    assert result["sources_count"] == 2
+
+    # Verify successful result includes all expected fields
+    success_result = result["summaries"]["https://example.com"]
+    assert success_result["status"] == "success"
+    assert success_result["url"] == "https://example.com"
+    assert success_result["summary"] == "Test summary"
+    assert success_result["content_preview"] == "This is the first 500 characters of the content..."
+
+    # Verify error result has expected fields
+    error_result = result["summaries"]["https://failed.com"]
+    assert error_result["status"] == "error"
+    assert error_result["url"] == "https://failed.com"
+    assert error_result["error"] == "Connection failed"
+    # Error results should not have content_preview
+    assert "content_preview" not in error_result
+
+
 def test_agent_get_formatted_report_no_research() -> None:
     """Test getting formatted report when no research conducted."""
     from src.agent import ResearchAgent
