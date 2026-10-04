@@ -1,6 +1,9 @@
 """Example usage of the Web Researcher Agent."""
 
+from typing import Any
+
 from src.agent import ResearchAgent
+from src.researcher import ResearchTopicResult
 
 
 def main() -> None:
@@ -15,6 +18,7 @@ def main() -> None:
     Prints results for each example to stdout.
     """
     # Initialize agent with API key from environment
+    agent: ResearchAgent | None = None
     try:
         agent = ResearchAgent()
     except ValueError as e:
@@ -27,35 +31,41 @@ def main() -> None:
     print("Example 1: Basic Research")
     print("=" * 60)
 
-    topic = "Artificial Intelligence in Healthcare"
+    topic: str = "Artificial Intelligence in Healthcare"
     print(f"\nResearching: {topic}\n")
 
-    result = agent.research(topic, num_sources=3)
+    result: ResearchTopicResult = agent.research(topic, num_sources=3)
 
     if result["status"] == "success":
-        print(f"Topic: {result['topic']}")
-        print(f"Timestamp: {result['timestamp']}")
+        topic_str: str = result.get("topic", "Unknown")
+        print(f"Topic: {topic_str}")
+        print(f"Timestamp: {result.get('timestamp', 'N/A')}")
         print("\nAnalysis:")
         print(result.get("analysis", "No analysis available"))
 
-        print(f"\n\nFindings ({len(result.get('findings', []))} sources):")
-        for i, finding in enumerate(result.get("findings", []), 1):
+        findings_list: list[Any] = result.get("findings", [])
+        print(f"\n\nFindings ({len(findings_list)} sources):")
+        for i, finding in enumerate(findings_list, 1):
             if finding.get("status") == "success":
-                print(f"\n{i}. {finding.get('url', 'Unknown URL')}")
-                print(f"   Summary: {finding.get('summary', 'N/A')[:200]}...")
+                url: str = finding.get("url", "Unknown URL")
+                summary_text: str = finding.get("summary", "N/A")
+                print(f"\n{i}. {url}")
+                print(f"   Summary: {summary_text[:200]}...")
 
-        print(f"\n\nSources used ({len(result.get('sources', []))}):")
-        for i, source in enumerate(result.get("sources", []), 1):
+        sources_list: list[Any] = result.get("sources", [])
+        print(f"\n\nSources used ({len(sources_list)}):")
+        for i, source in enumerate(sources_list, 1):
             print(f"{i}. {source}")
     else:
-        print(f"Error: {result.get('error', 'Unknown error')}")
+        error_msg: str = result.get("error", "Unknown error")
+        print(f"Error: {error_msg}")
 
     # Example 2: Get formatted report
     print("\n" + "=" * 60)
     print("Example 2: Formatted Report")
     print("=" * 60)
 
-    report = agent.get_formatted_report()
+    report: str = agent.get_formatted_report()
     print("\n" + report)
 
     # Example 3: Summarize specific URLs
@@ -63,21 +73,24 @@ def main() -> None:
     print("Example 3: Summarize Specific URLs")
     print("=" * 60)
 
-    urls = [
+    urls: list[str] = [
         "https://www.wikipedia.org/wiki/Artificial_intelligence",
         "https://www.wikipedia.org/wiki/Machine_learning",
     ]
 
     print(f"\nSummarizing {len(urls)} URLs...")
-    summary_result = agent.summarize(urls)
+    summary_result: dict[str, Any] = agent.summarize(urls)
 
     if summary_result["status"] == "success":
-        for url, summary_data in summary_result["summaries"].items():
+        summaries_dict: dict[str, Any] = summary_result.get("summaries", {})
+        for url, summary_data in summaries_dict.items():
             print(f"\nURL: {url}")
             if summary_data.get("status") == "success":
-                print(f"Summary: {summary_data.get('summary', 'N/A')[:300]}...")
+                summary: str = summary_data.get("summary", "N/A")
+                print(f"Summary: {summary[:300]}...")
             else:
-                print(f"Error: {summary_data.get('error', 'Unknown error')}")
+                error: str = summary_data.get("error", "Unknown error")
+                print(f"Error: {error}")
 
 
 if __name__ == "__main__":
