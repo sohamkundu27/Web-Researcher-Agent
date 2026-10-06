@@ -2366,6 +2366,37 @@ def test_agent_clear_history_after_summarize(mock_summarize, mock_fetch) -> None
     assert agent.get_formatted_report() == "No research conducted yet."
 
 
+def test_agent_clear_history_with_cache_disabled() -> None:
+    """Test that clear_history works correctly when cache is disabled via kwargs.
+
+    This verifies that ResearchAgent properly supports cache_enabled=False
+    passed through **kwargs, and that clear_history works correctly in this case.
+    """
+    from src.agent import ResearchAgent
+
+    agent = ResearchAgent(api_key="test-key", cache_enabled=False)
+
+    # Verify cache is None when disabled
+    assert agent.researcher.cache is None
+
+    # Add some sources and history to the agent
+    agent.researcher.sources = ["https://example.com"]
+    agent.researcher.research_history = [{"topic": "test"}]
+    agent.last_research = {"topic": "test", "status": "success"}
+
+    # Clear everything - should not raise an error even though cache is None
+    agent.clear_history()
+
+    # Verify all state is cleared
+    assert agent.researcher.sources == []
+    assert agent.researcher.research_history == []
+    assert agent.last_research is None
+    # Verify get_sources returns empty list
+    assert agent.get_sources() == []
+    # Verify get_formatted_report returns default message
+    assert agent.get_formatted_report() == "No research conducted yet."
+
+
 @patch("src.researcher.WebResearcher.fetch_and_summarize")
 def test_agent_summarize(mock_fetch) -> None:
     """Test summarizing multiple URLs."""
