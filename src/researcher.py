@@ -287,7 +287,6 @@ Only return the JSON list, no other text."""
 
         try:
             content = response.content[0].text
-            # Parse JSON from response
             results = json.loads(content)
             return cast(List[SearchResult], results) if isinstance(results, list) else []
         except (json.JSONDecodeError, IndexError, TypeError):
@@ -327,13 +326,11 @@ Only return the JSON list, no other text."""
         if not is_valid_url(url):
             raise ValueError(f"url must be a valid HTTP(S) URL, got '{url}'")
 
-        # Check cache
         if self.cache:
             cached = self.cache.get(url)
             if cached is not None:
                 return cast(FetchAndSummarizeResult, cached)
 
-        # Fetch content
         fetch_result = fetch_url_content(url, timeout=self.config.timeout)
 
         if fetch_result["status"] == "error":
@@ -349,7 +346,6 @@ Only return the JSON list, no other text."""
             no_content_error: FetchAndSummarizeError = {"error": "No content extracted", "url": url, "status": "error"}
             return no_content_error
 
-        # Summarize content
         summary = self._summarize_content(content)
 
         result: FetchAndSummarizeSuccess = {
@@ -359,7 +355,6 @@ Only return the JSON list, no other text."""
             "content_preview": content[:500],
         }
 
-        # Cache result
         if self.cache:
             self.cache.set(url, result)
 
@@ -388,7 +383,6 @@ Only return the JSON list, no other text."""
             Returns empty string if no chunks are available or Claude
             returns no content for all chunks.
         """
-        # Chunk content if too long
         chunks = chunk_text(content, chunk_size=3000)
 
         summaries: List[str] = []
@@ -448,7 +442,6 @@ Summary should be 2-3 sentences max."""
         if num_sources <= 0:
             raise ValueError(f"num_sources must be a positive integer, got {num_sources}")
 
-        # Generate search queries
         search_results = self.search(topic, num_results=num_sources)
 
         if not search_results:
@@ -459,7 +452,6 @@ Summary should be 2-3 sentences max."""
             }
             return error_result
 
-        # Fetch and summarize each result
         findings: List[FetchAndSummarizeResult] = []
         for result in search_results:
             url = result.get("url")
@@ -467,7 +459,6 @@ Summary should be 2-3 sentences max."""
                 summary = self.fetch_and_summarize(url)
                 findings.append(summary)
 
-        # Generate comprehensive analysis
         analysis = self._generate_analysis(topic, findings)
 
         research_result: ResearchTopicSuccess = {

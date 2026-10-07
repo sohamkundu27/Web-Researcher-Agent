@@ -139,17 +139,11 @@ def extract_text_from_html(html: str, max_length: int = 5000) -> str:
 
     soup = BeautifulSoup(html, "html.parser")
 
-    # Remove script and style elements
     for script in soup(["script", "style"]):
         script.decompose()
 
-    # Get text
     text = soup.get_text()
-
-    # Clean up text
     text = sanitize_text(text)
-
-    # Limit length
     return text[:max_length]
 
 
