@@ -1,6 +1,6 @@
 """Example usage of the Web Researcher Agent."""
 
-from typing import Any
+from typing import Any, Optional
 
 from src.agent import ResearchAgent
 from src.researcher import ResearchTopicResult
@@ -18,7 +18,7 @@ def main() -> None:
     Prints results for each example to stdout.
     """
     # Initialize agent with API key from environment
-    agent: ResearchAgent | None = None
+    agent: Optional[ResearchAgent] = None
     try:
         agent = ResearchAgent()
     except ValueError as e:
