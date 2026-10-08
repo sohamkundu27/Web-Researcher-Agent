@@ -1,6 +1,6 @@
 """Example usage of the Web Researcher Agent."""
 
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
 
 from src.agent import ResearchAgent
 from src.researcher import ResearchTopicResult
@@ -43,7 +43,7 @@ def main() -> None:
         print("\nAnalysis:")
         print(result.get("analysis", "No analysis available"))
 
-        findings_list: list[Any] = result.get("findings", [])
+        findings_list: List[Any] = result.get("findings", [])
         print(f"\n\nFindings ({len(findings_list)} sources):")
         for i, finding in enumerate(findings_list, 1):
             if finding.get("status") == "success":
@@ -52,7 +52,7 @@ def main() -> None:
                 print(f"\n{i}. {url}")
                 print(f"   Summary: {summary_text[:200]}...")
 
-        sources_list: list[Any] = result.get("sources", [])
+        sources_list: List[Any] = result.get("sources", [])
         print(f"\n\nSources used ({len(sources_list)}):")
         for i, source in enumerate(sources_list, 1):
             print(f"{i}. {source}")
@@ -73,16 +73,16 @@ def main() -> None:
     print("Example 3: Summarize Specific URLs")
     print("=" * 60)
 
-    urls: list[str] = [
+    urls: List[str] = [
         "https://www.wikipedia.org/wiki/Artificial_intelligence",
         "https://www.wikipedia.org/wiki/Machine_learning",
     ]
 
     print(f"\nSummarizing {len(urls)} URLs...")
-    summary_result: dict[str, Any] = agent.summarize(urls)
+    summary_result: Dict[str, Any] = agent.summarize(urls)
 
     if summary_result["status"] == "success":
-        summaries_dict: dict[str, Any] = summary_result.get("summaries", {})
+        summaries_dict: Dict[str, Any] = summary_result.get("summaries", {})
         for url, summary_data in summaries_dict.items():
             print(f"\nURL: {url}")
             if summary_data.get("status") == "success":
