@@ -231,7 +231,12 @@ class WebResearcher:
                    config.cache_enabled is True; otherwise None.
             sources: List of URLs that have been successfully processed during research.
             research_history: List of research results from all completed research() calls.
+
+        Raises:
+            TypeError: If config is not a ResearchConfig instance.
         """
+        if not isinstance(config, ResearchConfig):
+            raise TypeError(f"config must be a ResearchConfig instance, got {type(config).__name__}")
         self.config: ResearchConfig = config
         self.client: Anthropic = Anthropic()
         self.cache: Optional[ContentCache] = ContentCache(ttl=config.cache_ttl) if config.cache_enabled else None

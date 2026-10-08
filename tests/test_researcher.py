@@ -2090,6 +2090,31 @@ class TestWebResearcher:
         assert researcher.sources == []
         assert researcher.research_history == []
 
+    def test_researcher_invalid_config_type_none(self) -> None:
+        """Test that WebResearcher rejects None as config."""
+        with pytest.raises(TypeError, match="config must be a ResearchConfig instance, got NoneType"):
+            WebResearcher(None)
+
+    def test_researcher_invalid_config_type_dict(self) -> None:
+        """Test that WebResearcher rejects dict as config."""
+        with pytest.raises(TypeError, match="config must be a ResearchConfig instance, got dict"):
+            WebResearcher({"api_key": "test"})
+
+    def test_researcher_invalid_config_type_string(self) -> None:
+        """Test that WebResearcher rejects string as config."""
+        with pytest.raises(TypeError, match="config must be a ResearchConfig instance, got str"):
+            WebResearcher("invalid-config")
+
+    def test_researcher_invalid_config_type_int(self) -> None:
+        """Test that WebResearcher rejects integer as config."""
+        with pytest.raises(TypeError, match="config must be a ResearchConfig instance, got int"):
+            WebResearcher(42)
+
+    def test_researcher_invalid_config_type_list(self) -> None:
+        """Test that WebResearcher rejects list as config."""
+        with pytest.raises(TypeError, match="config must be a ResearchConfig instance, got list"):
+            WebResearcher([])
+
     def test_get_sources(self, researcher) -> None:
         """Test getting sources."""
         researcher.sources = ["https://example.com", "https://test.com"]
