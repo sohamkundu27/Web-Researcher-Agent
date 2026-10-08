@@ -19,8 +19,7 @@ class CacheEntry(TypedDict):
 
     Attributes:
         value: The cached value (any type except None).
-        expires: The expiration datetime for this entry. Entry is valid if
-            now < expires, and expired if now >= expires.
+        expires: The absolute expiration time as a datetime object.
     """
 
     value: Any
